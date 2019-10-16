@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">2 in 1</string>
     <string name="facebook_app_id">460580454665271</string>
+    <string name="twitter_app_id">16870803</string>
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">fMmvuglWQZjkql1iz0689PBNR</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">U7dItzqzr3vVd1URujVYhGxz2XaQCm2dl8pgcTlsiKP2LgIqFy </string>
 </resources>
