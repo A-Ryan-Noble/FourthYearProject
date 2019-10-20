@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">2 in 1</string>
+    <string name="welcomeMsg">Welcome to 2 in 1 . \n\n Please the following links to sign in.</string>
+    <string name="welcomeMsg2">Please click to sign in to the account </string>
+    <string name="Twitter">Twitter</string>
+    <string name="Fb">Facebook</string>
+    <string name="goBack">Go Back</string>
+
     <string name="facebook_app_id">763430430754593</string>
     <string name="fb_login_protocol_scheme">fb763430430754593</string>
 
