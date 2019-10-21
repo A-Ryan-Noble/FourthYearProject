@@ -4,8 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
@@ -18,11 +18,13 @@ import com.facebook.login.widget.LoginButton;
 
 import java.util.Arrays;
 
-public class facebookSignIn extends AppCompatActivity {
+public class FacebookSignIn extends AppCompatActivity {
 
     private CallbackManager callbackManager;
     Intent returnIntent;
     private LoginButton fbLoginBtn;
+
+    TextView loginTxt;
 
     private static final String EMAIL = "email";
 
@@ -31,7 +33,9 @@ public class facebookSignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_sign_in);
 
-        returnIntent = new Intent();
+        Button goBack = findViewById(R.id.mainMenu);
+
+        loginTxt  = findViewById(R.id.loginTxtView);
 
         fbLoginBtn = findViewById(R.id.fbLoginButton);
         fbLoginBtn.setReadPermissions(Arrays.asList(EMAIL));
@@ -41,7 +45,7 @@ public class facebookSignIn extends AppCompatActivity {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+
 
         //callback registration
         fbLoginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -60,6 +64,11 @@ public class facebookSignIn extends AppCompatActivity {
                 // App code here
             }
         });
+
+        //        This allows for: Then you can later perform the actual login, such as in a custom button's OnClickListener:
+        //        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+
+        returnIntent = new Intent();
 
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
@@ -82,11 +91,26 @@ public class facebookSignIn extends AppCompatActivity {
                 // App code here
             }
         });
+
+
+        if (isLoggedIn){
+
+            final GlobalVariables globalVariable = (GlobalVariables) getApplicationContext();
+            globalVariable.setFbSignedIn(true);
+
+            loginTxt.setText("You are Logged in already.\nIf this isn't you can logout");
+        }
+        else{
+            loginTxt.setText(getResources().getString(R.string.welcomeMsg2));
+        }
     }
 
-    public void goBack(View view){
+    public void goBack(View view) {
+        Intent returnIntent = new Intent();
 
-//        Intent temp = returnIntent;
+        returnIntent.putExtra("result", "Cancelled");
+        setResult(RESULT_OK, returnIntent);
+
         finish();
     }
 
@@ -95,5 +119,4 @@ public class facebookSignIn extends AppCompatActivity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 }

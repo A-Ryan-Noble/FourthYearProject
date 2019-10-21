@@ -6,7 +6,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".TwitterSignIn">
+
+    <com.twitter.sdk.android.core.identity.TwitterLoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="102dp"
+        android:layout_marginEnd="114dp"
+        android:layout_marginBottom="200dp" />
 
     <TextView
         android:id="@+id/loginTxtView"
@@ -25,38 +36,17 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/mainMenu2"
-        android:layout_width="121dp"
+        android:id="@+id/mainMenu"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fbLoginButton"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="145dp"
-        android:layout_marginTop="170dp"
-        android:layout_marginEnd="145dp"
-        android:layout_marginBottom="133dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="340dp"
+        android:layout_marginEnd="100dp"
         android:text="@string/goBack"
-        android:textSize="18sp" />
-
-    <com.twitter.sdk.android.core.identity.TwitterLoginButton
-        android:id="@+id/twitterLoginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="108dp"
-        android:layout_marginTop="336dp"
-        android:layout_marginEnd="108dp" />
-
-    <TextView
-        android:id="@+id/twitterBtnClickResult"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="125dp"
-        android:textSize="28sp" />
-
+        android:onClick="goBack"
+        android:textSize="18sp"
+        android:visibility="visible" />
 </RelativeLayout>

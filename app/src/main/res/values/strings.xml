@@ -10,6 +10,6 @@
     <string name="fb_login_protocol_scheme">fb763430430754593</string>
 
     <string name="twitter_app_id">16870803</string>
-    <string name="com.twitter.sdk.android.CONSUMER_KEY">fMmvuglWQZjkql1iz0689PBNR</string>
-    <string name="com.twitter.sdk.android.CONSUMER_SECRET">U7dItzqzr3vVd1URujVYhGxz2XaQCm2dl8pgcTlsiKP2LgIqFy </string>
+    <string name="twitter_CONSUMER_KEY">fMmvuglWQZjkql1iz0689PBNR</string>
+    <string name="twitter_CONSUMER_SECRET">U7dItzqzr3vVd1URujVYhGxz2XaQCm2dl8pgcTlsiKP2LgIqFy </string>
 </resources>

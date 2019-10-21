@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,13 +24,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void fbBtnClick(View view) {
-        Intent fbIntent = new Intent(this, facebookSignIn.class);
+        Intent fbIntent = new Intent(this, FacebookSignIn.class);
         startActivityForResult(fbIntent, FB_CODE);
     }
 
 
     public void twitterBtnClick(View view) {
-        Intent twitterIntent = new Intent(this, twitterSignIn.class);
+        Intent twitterIntent = new Intent(this, TwitterSignIn.class);
         startActivityForResult(twitterIntent, TWITTER_CODE);
     }
 
@@ -37,32 +38,69 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
-        Boolean fbFail = false, twitFail = false;
+        /*if (resultCode == RESULT_OK) {
+            if (requestCode == FB_CODE) {
+            else if (intent.getStringExtra("result") == "Failed") {
+//            fbFail = true;
+                } else if (intent.getStringExtra("result") == "Cancelled") {
 
-        if (resultCode == RESULT_CANCELED | resultCode != RESULT_OK) {
-
-        } else {
-            if (intent.getStringExtra("result") == "Failed") {
-                fbFail = true;
-            } else if (intent.getStringExtra("result") == "Cancelled") {
-
-            } else {
-                // logged in
+                } else {
+                    // logged in
+                    loginResult.setText("Facbook logged in");
+                }
             }
 
             if (requestCode == TWITTER_CODE) {
                 if (intent.getStringExtra("result") == "Failed") {
-                    twitFail = true;
+//                twitFail = true;
                 } else if (intent.getStringExtra("result") == "Cancelled") {
 
                 } else {
                     // logged in
                 }
             }
-        }
+        }*/
 
-        if (fbFail && twitFail){
-            loginResult.setText("Facebook & Twitter Logins failed");
+        if (resultCode == RESULT_CANCELED | resultCode != RESULT_OK) {
+
         }
+        else {
+            if (requestCode == FB_CODE) {
+                if (intent.getStringExtra("result") == "Failed") {
+//                fbFail = true;
+                } else if (intent.getStringExtra("result") == "Cancelled") {
+
+                }
+            } else {
+                // logged in
+            }
+        }
+        if (requestCode == TWITTER_CODE) {
+            if (intent.getStringExtra("result") == "Failed") {
+//                    twitFail = true;
+            } else if (intent.getStringExtra("result") == "Cancelled") {
+
+            } else {
+                // logged in
+            }
+        }
+        final GlobalVariables globalVar = (GlobalVariables) getApplicationContext();
+
+        if (globalVar.getTwitterSessionId()>0){
+            Toast.makeText(this, "Twitter id = " + globalVar.getTwitterSessionId(), Toast.LENGTH_SHORT).show();
+            loginResult.setText("Twitter id = " + globalVar.getTwitterSessionId());
+        }
+//        if (!globalVar.getFbSignedIn() && !globalVar.getTwitterSignedIn()){
+        //if (!globalVar.getFbSignedIn() &&!globalVar.getTwitterSignedIn()){
+        //  Toast.makeText(this, "Not Signed in on Facebook or Twitter", Toast.LENGTH_SHORT).show();
+        //}
+//        else
+//        if (globalVar.getFbSignedIn()){
+//            Toast.makeText(this, "Facebook not Signed in", Toast.LENGTH_SHORT).show();
+//                loginResult.setText("Facebook Signed in");
+//        }
+    /*    else if (!globalVar.getTwitterSignedIn()){
+            Toast.makeText(this, "Twitter not Signed in", Toast.LENGTH_SHORT).show();
+        }*/
     }
 }
