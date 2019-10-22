@@ -4,7 +4,7 @@ import android.app.Application;
 
 public class GlobalVariables extends Application {
 
-    private long TwitterSessionId;
+    private long TwitterSessionId = 0;
 
     public long getTwitterSessionId() {
         return TwitterSessionId;
@@ -14,7 +14,7 @@ public class GlobalVariables extends Application {
         TwitterSessionId = twitterSessionId;
     }
 
-    private Boolean fbSignedIn;
+    private Boolean fbSignedIn = false;
     private Boolean twitterSignedIn = false;
 
     public Boolean getFbSignedIn() {

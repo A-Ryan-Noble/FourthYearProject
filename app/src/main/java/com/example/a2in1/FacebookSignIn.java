@@ -45,8 +45,6 @@ public class FacebookSignIn extends AppCompatActivity {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
-
-
         //callback registration
         fbLoginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -68,6 +66,8 @@ public class FacebookSignIn extends AppCompatActivity {
         //        This allows for: Then you can later perform the actual login, such as in a custom button's OnClickListener:
         //        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
 
+        final GlobalVariables globalVariable = (GlobalVariables) getApplicationContext();
+
         returnIntent = new Intent();
 
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -76,6 +76,9 @@ public class FacebookSignIn extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 returnIntent.putExtra("result", "Successful");
                 setResult(RESULT_OK, returnIntent);
+                globalVariable.setFbSignedIn(true);
+                finish();
+
             }
 
             @Override
@@ -92,25 +95,20 @@ public class FacebookSignIn extends AppCompatActivity {
             }
         });
 
-
-        if (isLoggedIn){
-
-            final GlobalVariables globalVariable = (GlobalVariables) getApplicationContext();
-            globalVariable.setFbSignedIn(true);
-
-            loginTxt.setText("You are Logged in already.\nIf this isn't you can logout");
+        if (!isLoggedIn) {
+            globalVariable.setFbSignedIn(false);
+        loginTxt.setText(getResources().getString(R.string.signInMsg));
         }
-        else{
-            loginTxt.setText(getResources().getString(R.string.welcomeMsg2));
+        else {
+            globalVariable.setFbSignedIn(true);
+            loginTxt.setText(getResources().getString(R.string.signedIn) + "\nFacebook");
         }
     }
 
-    public void goBack(View view) {
+    public void goBack(View view){
         Intent returnIntent = new Intent();
-
         returnIntent.putExtra("result", "Cancelled");
-        setResult(RESULT_OK, returnIntent);
-
+        setResult(RESULT_CANCELED, returnIntent);
         finish();
     }
 

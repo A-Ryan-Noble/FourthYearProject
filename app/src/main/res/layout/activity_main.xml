@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:background="#1DA1F2"
             android:onClick="twitterBtnClick"
-            android:text="@string/Twitter"
+            android:text="@string/twtr"
             android:textAlignment="center"
             android:textColor="#14171A"
             android:textSize="30sp"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:background="#4267B2"
             android:onClick="fbBtnClick"
-            android:text="@string/Fb"
+            android:text="@string/fb"
             android:textAlignment="center"
             android:textSize="30sp"
             android:textStyle="bold" />
