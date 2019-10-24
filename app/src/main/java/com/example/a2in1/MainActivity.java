@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,15 +14,21 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int FB_CODE = 1;
     private static final int TWITTER_CODE = 2;
+    private static final int BOTH_ACCOUNTS_CODE = 3;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main01);
 
         loginResult = findViewById(R.id.btnsClickResult);
 
         checkLogin();
+    }
+    public void signInOut(View view){
+        Intent socialsAcc = new Intent(this,AccountsSignInOut.class);
+        startActivityForResult(socialsAcc,BOTH_ACCOUNTS_CODE);
     }
 
     public void fbBtnClick(View view) {
@@ -44,7 +49,15 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == RESULT_CANCELED | resultCode != RESULT_OK) {
             Log.d(null, "Activity returned: Not Okay / Cancelled");
         } else {
-            if (requestCode == FB_CODE) {
+            if (requestCode == BOTH_ACCOUNTS_CODE) {
+                if (intent.getStringExtra("result") == "Failed") {
+                    Log.d(null, "Accounts Activity: Failed");
+                } else {
+                    // logged in
+                    Log.d(null, "Account(S) Activity: BothLogged In");
+                }
+            }
+            /*if (requestCode == FB_CODE) {
                 if (intent.getStringExtra("result") == "Failed") {
                     Log.d(null, "Facebook Activity: Failed");
                 } else {
@@ -62,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     // logged in
                     Log.d(null, "Twitter Activity: Logged In");
                 }
-            }
+            }*/
         }
         checkLogin();
     }
@@ -70,14 +83,19 @@ public class MainActivity extends AppCompatActivity {
     private void checkLogin() {
         final GlobalVariables globalVar = (GlobalVariables) getApplicationContext();
 
+        // if both are Signed in
         if (globalVar.getFbSignedIn() && globalVar.getTwitterSignedIn()) {
             loginResult.setText("Facebook & Twitter are Logged in");
         } else{
-            if (globalVar.getFbSignedIn()) {
+            // if facebook is only signed in
+            if (globalVar.getFbSignedIn() && !globalVar.getTwitterSignedIn()) {
                 loginResult.setText("Facebook Signed in");
-            } else if (globalVar.getTwitterSignedIn()) {
+            }
+            // if Twitter is only signed in
+            if (!globalVar.getFbSignedIn() && globalVar.getTwitterSignedIn()) {
                 loginResult.setText("Twitter Signed in");
             }
+            // Both aren't signed in
             else if (!globalVar.getFbSignedIn() && !globalVar.getTwitterSignedIn()) {
                 loginResult.setText("Sign in through the buttons above");
             }

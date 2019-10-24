@@ -1,28 +1,41 @@
 package com.example.a2in1;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 
-public class FacebookSignIn extends AppCompatActivity {
+//public class FacebookSignIn extends AppCompatActivity {
+public class FacebookSignIn extends AccountsSignInOut {
 
     private CallbackManager callbackManager;
-    Intent returnIntent;
+    private Intent returnIntent;
     private LoginButton fbLoginBtn;
+    private GlobalVariables globalVariable;
+    private boolean isLoggedIn;
 
     TextView loginTxt;
 
@@ -33,43 +46,34 @@ public class FacebookSignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_sign_in);
 
-        Button goBack = findViewById(R.id.mainMenu);
-
         loginTxt  = findViewById(R.id.loginTxtView);
 
         fbLoginBtn = findViewById(R.id.fbLoginButton);
-        fbLoginBtn.setReadPermissions(Arrays.asList(EMAIL));
+        fbLoginBtn.setReadPermissions(Arrays.asList("email", "public_profile"));
 
+        globalVariable = (GlobalVariables) getApplicationContext();
+        returnIntent = new Intent();
+
+        fbAccount();
+
+        if (!isLoggedIn) {
+            globalVariable.setFbSignedIn(false);
+            loginTxt.setText(getResources().getString(R.string.signInMsg));
+        }
+        else {
+            globalVariable.setFbSignedIn(true);
+            loginTxt.setText(getResources().getString(R.string.signedIn) + "\nFacebook");
+        }
+    }
+
+    protected void fbAccount() {
         callbackManager = CallbackManager.Factory.create();
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
-        //callback registration
-        fbLoginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                // App code here
-            }
+        isLoggedIn = accessToken != null && !accessToken.isExpired();
 
-            @Override
-            public void onCancel() {
-                // App code here
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                // App code here
-            }
-        });
-
-        //        This allows for: Then you can later perform the actual login, such as in a custom button's OnClickListener:
-        //        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-
-        final GlobalVariables globalVariable = (GlobalVariables) getApplicationContext();
-
-        returnIntent = new Intent();
-
+        // This allows for: Then you can later perform the actual login, such as in a custom button's OnClickListener:
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
             @Override
@@ -78,35 +82,51 @@ public class FacebookSignIn extends AppCompatActivity {
                 setResult(RESULT_OK, returnIntent);
                 globalVariable.setFbSignedIn(true);
                 finish();
-
             }
 
             @Override
             public void onCancel() {
                 returnIntent.putExtra("result", "Cancelled");
-                setResult(RESULT_OK, returnIntent);
+                setResult(RESULT_CANCELED, returnIntent);
+                finish();
             }
 
             @Override
             public void onError(FacebookException error) {
                 returnIntent.putExtra("result", "Failed");
-                setResult(RESULT_OK, returnIntent);
-                // App code here
+                setResult(RESULT_CANCELED,returnIntent);
+
+                Log.e("Exception",error.toString());
+                finish();
             }
         });
 
-        if (!isLoggedIn) {
-            globalVariable.setFbSignedIn(false);
-        loginTxt.setText(getResources().getString(R.string.signInMsg));
-        }
-        else {
-            globalVariable.setFbSignedIn(true);
-            loginTxt.setText(getResources().getString(R.string.signedIn) + "\nFacebook");
-        }
+        // Method dealing for when logout button is clicked
+        new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
+                if (currentAccessToken == null) {
+
+                    returnIntent.putExtra("result", "Successful");
+                    setResult(RESULT_OK, returnIntent);
+                    globalVariable.setFbSignedIn(false);
+                    Log.d("Logout", "FB Logout");
+                    signOutAlert("Facebook");
+                    finish();
+                }
+            }
+        };
+    }
+
+    private void signOutAlert(final String accountName){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(getResources().getString(R.string.confirmTitle));
+        builder.setMessage(getResources().getString(R.string.loggingOut) + " " + accountName);
+        builder.show();
     }
 
     public void goBack(View view){
-        Intent returnIntent = new Intent();
         returnIntent.putExtra("result", "Cancelled");
         setResult(RESULT_CANCELED, returnIntent);
         finish();

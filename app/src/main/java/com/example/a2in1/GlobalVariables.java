@@ -3,17 +3,6 @@ package com.example.a2in1;
 import android.app.Application;
 
 public class GlobalVariables extends Application {
-
-    private long TwitterSessionId = 0;
-
-    public long getTwitterSessionId() {
-        return TwitterSessionId;
-    }
-
-    public void setTwitterSessionId(long twitterSessionId) {
-        TwitterSessionId = twitterSessionId;
-    }
-
     private Boolean fbSignedIn = false;
     private Boolean twitterSignedIn = false;
 
