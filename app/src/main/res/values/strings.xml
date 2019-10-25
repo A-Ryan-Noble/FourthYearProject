@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">2 in 1</string>
     <string name="welcomeMsg">Welcome to 2 in 1 . \n\n Please the following links to sign in.</string>
-    <string name="signInMsg">Please click to sign in to the account(s): </string>
-    <string name="signOutMsg"> You may wish to logout of one or both of the account(s): </string>
+    <string name="signInMsg">Please click to sign in to the account: </string>
     <string name="signedIn">Your already signed in to</string>
     <string name="goBack">Go Back</string>
     <string name="logout">Log out</string>
@@ -12,11 +11,10 @@
     <string name="cancel">Cancel</string>
     <string name="confirmTitle">Confirmation</string>
     <string name="loggingOut">Signing out of: </string>
-    <string name="accounts">Sign in / Logout</string>
-
 
     <string name="facebook_app_id">763430430754593</string>
     <string name="fb_login_protocol_scheme">fb763430430754593</string>
+
     <string name="twitter_app_id">16870803</string>
     <string name="twitter_CONSUMER_KEY">fMmvuglWQZjkql1iz0689PBNR</string>
     <string name="twitter_CONSUMER_SECRET">U7dItzqzr3vVd1URujVYhGxz2XaQCm2dl8pgcTlsiKP2LgIqFy </string>

@@ -1,6 +1,5 @@
 package com.example.a2in1;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,26 +14,19 @@ import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 
-//public class FacebookSignIn extends AppCompatActivity {
-public class FacebookSignIn extends AccountsSignInOut {
+public class FacebookSignIn extends AppCompatActivity {
+//public class FacebookSignIn extends AccountsSignInOut {
 
     private CallbackManager callbackManager;
     private Intent returnIntent;
     private LoginButton fbLoginBtn;
-    private GlobalVariables globalVariable;
+    private GlobalVariables globalVar;
     private boolean isLoggedIn;
 
     TextView loginTxt;
@@ -51,17 +43,17 @@ public class FacebookSignIn extends AccountsSignInOut {
         fbLoginBtn = findViewById(R.id.fbLoginButton);
         fbLoginBtn.setReadPermissions(Arrays.asList("email", "public_profile"));
 
-        globalVariable = (GlobalVariables) getApplicationContext();
+        globalVar = (GlobalVariables) getApplicationContext();
         returnIntent = new Intent();
 
         fbAccount();
 
         if (!isLoggedIn) {
-            globalVariable.setFbSignedIn(false);
+            globalVar.setFbSignedIn(false);
             loginTxt.setText(getResources().getString(R.string.signInMsg));
         }
         else {
-            globalVariable.setFbSignedIn(true);
+            globalVar.setFbSignedIn(true);
             loginTxt.setText(getResources().getString(R.string.signedIn) + "\nFacebook");
         }
     }
@@ -80,7 +72,7 @@ public class FacebookSignIn extends AccountsSignInOut {
             public void onSuccess(LoginResult loginResult) {
                 returnIntent.putExtra("result", "Successful");
                 setResult(RESULT_OK, returnIntent);
-                globalVariable.setFbSignedIn(true);
+                globalVar.setFbSignedIn(true);
                 finish();
             }
 
@@ -109,7 +101,7 @@ public class FacebookSignIn extends AccountsSignInOut {
 
                     returnIntent.putExtra("result", "Successful");
                     setResult(RESULT_OK, returnIntent);
-                    globalVariable.setFbSignedIn(false);
+                    globalVar.setFbSignedIn(false);
                     Log.d("Logout", "FB Logout");
                     signOutAlert("Facebook");
                     finish();

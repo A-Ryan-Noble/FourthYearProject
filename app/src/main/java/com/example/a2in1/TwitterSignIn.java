@@ -10,9 +10,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.SessionManager;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterAuthToken;
@@ -24,9 +26,10 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 public class TwitterSignIn extends AppCompatActivity {
 
+    private TextView txtView;
     private TwitterLoginButton twitterLoginBtn;
     private TwitterSession session;
-    private TextView txtView;
+
     private Intent returnIntent;
     private GlobalVariables globalVar;
 
@@ -35,9 +38,9 @@ public class TwitterSignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //Configures twitter sdk
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY), getResources().getString(R.string.twitter_CONSUMER_SECRET));
+        TwitterAuthConfig authConfig=new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY),getResources().getString(R.string.twitter_CONSUMER_SECRET));
 
-        TwitterConfig twitterConfig = new TwitterConfig.Builder(this)
+        TwitterConfig twitterConfig=new TwitterConfig.Builder(this)
                 .twitterAuthConfig(authConfig)
                 .build();
         Twitter.initialize(twitterConfig);
@@ -45,15 +48,27 @@ public class TwitterSignIn extends AppCompatActivity {
         setContentView(R.layout.activity_twitter_sign_in);
 
         globalVar = (GlobalVariables) getApplicationContext();
-
         returnIntent = new Intent();
 
         twitterLoginBtn = (TwitterLoginButton) findViewById(R.id.login_button);
+        Button goBack = findViewById(R.id.mainMenu);
         txtView = findViewById(R.id.loginTxtView);
 
-        twitter();
+        final GlobalVariables globalVar = (GlobalVariables) getApplicationContext();
+
+        if (checkLoggedIn()){
+            txtView.setText(getResources().getString(R.string.signedIn)+ "\nTwitter");
+            globalVar.setTwitterSignedIn(true);
+        }
+        else {
+            txtView.setText(getResources().getString(R.string.signInMsg));
+            globalVar.setTwitterSignedIn(false);
+        }
+
+        twitterAccount();
     }
-    protected void twitter(){
+
+    private void twitterAccount(){
         twitterLoginBtn.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
@@ -61,12 +76,12 @@ public class TwitterSignIn extends AppCompatActivity {
 
                 session = TwitterCore.getInstance().getSessionManager().getActiveSession();
 
+                //                    TwitterCore.getInstance().getSessionManager().clearActiveSession();
+
                 TwitterAuthToken authToken = session.getAuthToken();
 
                 String token = authToken.token;
                 String secret = authToken.secret;
-
-                System.out.println(session.getId());
 
                 globalVar.setTwitterSignedIn(true);
 
@@ -84,15 +99,6 @@ public class TwitterSignIn extends AppCompatActivity {
                 globalVar.setTwitterSignedIn(false);
             }
         });
-
-        if (checkLoggedIn()){
-            txtView.setText(getResources().getString(R.string.signedIn)+ "\nTwitter");
-            globalVar.setTwitterSignedIn(true);
-        }
-        else {
-            txtView.setText(getResources().getString(R.string.signInMsg));
-            globalVar.setTwitterSignedIn(false);
-        }
     }
 
     @Override
@@ -104,7 +110,6 @@ public class TwitterSignIn extends AppCompatActivity {
     }
 
     public void goBack(View view){
-        Intent returnIntent = new Intent();
         returnIntent.putExtra("result", "Cancelled");
         setResult(RESULT_CANCELED, returnIntent);
         finish();
@@ -114,7 +119,7 @@ public class TwitterSignIn extends AppCompatActivity {
 
         TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
         if ( session != null){
-            final Button signOut = (Button)findViewById(R.id.logout_button);
+            Button signOut = (Button)findViewById(R.id.logout_button);
 
              /*
                 Switches the available buttons if user is logged in they can logout.
@@ -126,9 +131,8 @@ public class TwitterSignIn extends AppCompatActivity {
             signOut.setEnabled(true);
             signOut.setOnClickListener(new View.OnClickListener() {
                 @Override
-                // User clicked ok & is logged out of account
                 public void onClick(View v) {
-                    signOutAlert("Twitter");
+                    twitterSignOut();
                 }
             });
             return true;
@@ -136,22 +140,24 @@ public class TwitterSignIn extends AppCompatActivity {
         return false;
     }
 
-    private void signOutAlert(final String accountName){
+    private void twitterSignOut(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle(getResources().getString(R.string.confirmTitle));
-        builder.setMessage(getResources().getString(R.string.loggingOut) + " " + accountName);
+        builder.setMessage(getResources().getString(R.string.loggingOut) + " Twitter");
         builder.setPositiveButton(R.string.ok,  new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                // User clicked ok & is logged out of twitter
                 TwitterCore.getInstance().getSessionManager().clearActiveSession();
+                Log.d("Logout","Twitter Logout");
+
                 globalVar.setTwitterSignedIn(false);
                 setResult(RESULT_OK, returnIntent);
-                Log.d("Logout",accountName+ " Logout");
                 finish();
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {/*Does Nothing*/}
+            public void onClick(DialogInterface dialog, int id) {}
         });
         builder.show();
     }

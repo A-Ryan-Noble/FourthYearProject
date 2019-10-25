@@ -47,6 +47,7 @@ public class AccountsSignInOut extends AppCompatActivity {
     private TwitterLoginButton twitterLoginBtn;
     private TwitterSession session;
 
+    private Button signOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +68,8 @@ public class AccountsSignInOut extends AppCompatActivity {
         fbLoginBtn = findViewById(R.id.fbLoginButton);
         fbLoginBtn.setReadPermissions(Arrays.asList("email", "public_profile"));
 
-        twitterLoginBtn = (TwitterLoginButton) findViewById(R.id.login_button);
-
+        twitterLoginBtn = (TwitterLoginButton) findViewById(R.id.twitterLoginButton);
+        signOut = (Button)findViewById(R.id.logout_button);
 
         globalVar = (GlobalVariables) getApplicationContext();
         returnIntent = new Intent();
@@ -139,11 +140,11 @@ public class AccountsSignInOut extends AppCompatActivity {
 
                 System.out.println(session.getId());
 
-                globalVar.setTwitterSignedIn(true);
-
                 returnIntent.putExtra("result", "Successful");
                 setResult(RESULT_OK, returnIntent);
                 globalVar.setTwitterSignedIn(true);
+
+                accountLoggedIn();
 
                 finish();
             }
@@ -204,23 +205,26 @@ public class AccountsSignInOut extends AppCompatActivity {
     }
 
     private void accountLoggedIn(){
+
+        boolean twtrLoggedIn = checkTwitterLogin();
+
         // if both Twitter & Facebook are Logged in
-        if (isLoggedIn && checkTwitterLogin()){
+        if (isLoggedIn && twtrLoggedIn){
             globalVar.setFbSignedIn(true);
             globalVar.setTwitterSignedIn(true);
-            loginLogoutTxt.setText(getResources().getString(R.string.signOutMsg));
+         //   loginLogoutTxt.setText(getResources().getString(R.string.signOutMsg));
         }
         // if Facebook is only logged out
-        if(!isLoggedIn && checkTwitterLogin()){
+        if(!isLoggedIn && twtrLoggedIn){
             globalVar.setFbSignedIn(false);
             globalVar.setTwitterSignedIn(true);
-            loginLogoutTxt.setText(getResources().getString(R.string.signOutMsg));
+           // loginLogoutTxt.setText(getResources().getString(R.string.signOutMsg));
         }
         // if Twitter is logged out
-        if (isLoggedIn && !checkTwitterLogin()){
+        if (isLoggedIn && !twtrLoggedIn){
             globalVar.setFbSignedIn(true);
             globalVar.setTwitterSignedIn(false);
-            loginLogoutTxt.setText(getResources().getString(R.string.signOutMsg));
+           // loginLogoutTxt.setText(getResources().getString(R.string.signOutMsg));
         }
         // both are logged out
         else {
@@ -229,8 +233,10 @@ public class AccountsSignInOut extends AppCompatActivity {
             loginLogoutTxt.setText(getResources().getString(R.string.signInMsg));
         }
     }
-
+/*
+ Different main activity version
     public boolean checkTwitterLogin(){
+
 
         TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
         if ( session != null){
@@ -240,7 +246,7 @@ public class AccountsSignInOut extends AppCompatActivity {
                 Switches the available buttons if user is logged in they can logout.
                     The opposite is also true
               */
-            twitterLoginBtn.setClickable(false);
+     /*       twitterLoginBtn.setEnabled(false);
             twitterLoginBtn.setVisibility(View.INVISIBLE);
             signOut.setClickable(true);
             signOut.setEnabled(true);
@@ -253,7 +259,40 @@ public class AccountsSignInOut extends AppCompatActivity {
             });
             return true;
         }
+        twitterLoginBtn.setClickable(true);
+        twitterLoginBtn.setVisibility(View.VISIBLE);
+        signOut.setClickable(false);
+        signOut.setEnabled(false);
+
         return false;
+    }
+    */
+    public boolean checkTwitterLogin(){
+
+        TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
+        if ( session != null){
+
+            /*
+             * Switches the Twitter login button with my created button used for twitter logout
+             */
+            twitterLoginBtn.setEnabled(false);
+            signOut.setEnabled(true);
+            signOut.setOnClickListener(new View.OnClickListener() {
+                @Override
+                // User clicked ok & is logged out of account
+                public void onClick(View v) {
+                    signOutAlert(getResources().getString(R.string.twtr));
+                }
+            });
+            return true;
+        }
+        twitterLoginBtn.setEnabled(true);
+        signOut.setEnabled(false);
+        return false;
+    }
+
+    public void twitterLogOutBtn(View view){
+        signOutAlert(getResources().getString(R.string.twtr));
     }
 
     @Override
