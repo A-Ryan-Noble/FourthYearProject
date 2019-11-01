@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:background="#1DA1F2"
             android:onClick="twitterBtnClick"
-            android:text="@string/twtr"
+            android:text="@string/twitter"
             android:textAlignment="center"
             android:textColor="#14171A"
             android:textSize="30sp"
