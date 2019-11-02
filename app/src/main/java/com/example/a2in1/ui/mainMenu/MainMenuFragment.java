@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.a2in1.R; // Similar to the getResources call
+import com.example.a2in1.R; // Similar to the getResources method call
 
 public class MainMenuFragment extends Fragment {
 

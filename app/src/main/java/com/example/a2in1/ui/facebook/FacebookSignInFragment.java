@@ -35,11 +35,15 @@ public class FacebookSignInFragment extends Fragment {
     private GlobalVariables globalVar;
     private boolean isLoggedIn;
 
+    private Fragment frag;
+
     TextView loginTxt;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_facebook_sign_in, container, false);
+
+        frag = (Fragment)getFragmentManager().findFragmentById(R.id.facebookFragment);
 
         loginTxt  = root.findViewById(R.id.loginTxtView);
 
@@ -82,9 +86,6 @@ public class FacebookSignInFragment extends Fragment {
 
             @Override
             public void onCancel() {
-                //          returnIntent.putExtra("result", "Cancelled");
-                //        setResult(RESULT_CANCELED, returnIntent);
-                //      finish();
             }
 
             @Override
@@ -108,7 +109,7 @@ public class FacebookSignInFragment extends Fragment {
     }
 
     private void signOutAlert(final String accountName){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(frag.getContext());
 
         builder.setTitle(getResources().getString(R.string.confirmTitle));
         builder.setMessage(getResources().getString(R.string.loggingOut) + " " + accountName);
