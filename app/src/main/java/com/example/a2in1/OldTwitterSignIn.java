@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.a2in1.ui.twitter.TwitterSignInFragment;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.SessionManager;
@@ -25,7 +24,7 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
-public class TwitterSignIn extends AppCompatActivity {
+public class OldTwitterSignIn extends AppCompatActivity {
 
     private TextView txtView;
     private TwitterLoginButton twitterLoginBtn;
@@ -49,7 +48,7 @@ public class TwitterSignIn extends AppCompatActivity {
         setContentView(R.layout.activity_twitter_sign_in);
 
         globalVar = (GlobalVariables) getApplicationContext();
-        returnIntent = new Intent(this,TwitterSignInFragment.class);
+        returnIntent = new Intent();
 
         twitterLoginBtn = (TwitterLoginButton) findViewById(R.id.login_button);
         Button goBack = findViewById(R.id.mainMenu);
