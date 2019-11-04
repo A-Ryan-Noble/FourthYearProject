@@ -1,24 +1,24 @@
 package com.example.a2in1;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.a2in1.ui.twitter.TwitterSignInFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.TwitterAuthProvider;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.SessionManager;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterAuthToken;
 import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
@@ -27,77 +27,56 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 public class TwitterSignIn extends AppCompatActivity {
 
-    private TextView txtView;
     private TwitterLoginButton twitterLoginBtn;
-    private TwitterSession session;
-
     private Intent returnIntent;
-    private GlobalVariables globalVar;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
+    private static String tag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //Configures twitter sdk
-        TwitterAuthConfig authConfig=new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY),getResources().getString(R.string.twitter_CONSUMER_SECRET));
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY), getResources().getString(R.string.twitter_CONSUMER_SECRET));
 
-        TwitterConfig twitterConfig=new TwitterConfig.Builder(this)
+        TwitterConfig twitterConfig = new TwitterConfig.Builder(this)
                 .twitterAuthConfig(authConfig)
                 .build();
         Twitter.initialize(twitterConfig);
 
         setContentView(R.layout.activity_twitter_sign_in);
 
-        globalVar = (GlobalVariables) getApplicationContext();
-        returnIntent = new Intent(this,TwitterSignInFragment.class);
+        tag = "Twitter";
+
+        returnIntent = new Intent(this, TwitterSignInFragment.class);
 
         twitterLoginBtn = (TwitterLoginButton) findViewById(R.id.login_button);
-        Button goBack = findViewById(R.id.mainMenu);
-        txtView = findViewById(R.id.loginTxtView);
 
-        final GlobalVariables globalVar = (GlobalVariables) getApplicationContext();
+        // Initializes the Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
 
-        if (checkLoggedIn()){
-            txtView.setText(getResources().getString(R.string.signedIn)+ "\nTwitter");
-            globalVar.setTwitterSignedIn(true);
-        }
-        else {
-            txtView.setText(getResources().getString(R.string.signInMsg));
-            globalVar.setTwitterSignedIn(false);
-        }
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {}
+        };
 
-        twitterAccount();
-    }
-
-    private void twitterAccount(){
         twitterLoginBtn.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
-                TwitterSession twitterSession = result.data;
+                Log.d(tag,"Successful Login");
 
-                session = TwitterCore.getInstance().getSessionManager().getActiveSession();
+                firebaseTwitterSessionSignIn(result.data);
 
-                //                    TwitterCore.getInstance().getSessionManager().clearActiveSession();
-
-                TwitterAuthToken authToken = session.getAuthToken();
-
-                String token = authToken.token;
-                String secret = authToken.secret;
-
-                globalVar.setTwitterSignedIn(true);
-
-                returnIntent.putExtra("result", "Successful");
+                returnIntent.putExtra("result", "LoggedIn");
                 setResult(RESULT_OK, returnIntent);
-                globalVar.setTwitterSignedIn(true);
-
                 finish();
             }
-
             @Override
             public void failure(TwitterException exception) {
-                returnIntent.putExtra("result", "Failed");
-                setResult(RESULT_OK, returnIntent);
-                globalVar.setTwitterSignedIn(false);
+                Log.e(tag,"login failed");
             }
         });
     }
@@ -105,7 +84,6 @@ public class TwitterSignIn extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         // Passes the activity result to the login button.
         twitterLoginBtn.onActivityResult(requestCode, resultCode, data);
     }
@@ -116,50 +94,31 @@ public class TwitterSignIn extends AppCompatActivity {
         finish();
     }
 
-    public boolean checkLoggedIn(){
-
-        TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
-        if ( session != null){
-            Button signOut = (Button)findViewById(R.id.logout_button);
-
-             /*
-                Switches the available buttons if user is logged in they can logout.
-                    The opposite is also true
-              */
-            twitterLoginBtn.setClickable(false);
-            twitterLoginBtn.setVisibility(View.INVISIBLE);
-            signOut.setClickable(true);
-            signOut.setEnabled(true);
-            signOut.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    twitterSignOut();
-                }
-            });
-            return true;
-        }
-        return false;
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
-    private void twitterSignOut(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mAuth.removeAuthStateListener(mAuthListener);
+    }
 
-        builder.setTitle(getResources().getString(R.string.confirmTitle));
-        builder.setMessage(getResources().getString(R.string.loggingOut) + " Twitter");
-        builder.setPositiveButton(R.string.ok,  new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked ok & is logged out of twitter
-                TwitterCore.getInstance().getSessionManager().clearActiveSession();
-                Log.d("Logout","Twitter Logout");
+    // method used for signing in to twitter using firebase
+    private void firebaseTwitterSessionSignIn(TwitterSession session){
+        AuthCredential credential = TwitterAuthProvider.getCredential(session.getAuthToken().token, session.getAuthToken().secret);
 
-                globalVar.setTwitterSignedIn(false);
-                setResult(RESULT_OK, returnIntent);
-                finish();
+        mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (!task.isSuccessful()){
+                    Log.d(tag,"Auth firebase twitter failed");
+                }
+                Log.d(tag,"Auth firebase twitter Sucessful");
+
             }
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {}
-        });
-        builder.show();
     }
 }

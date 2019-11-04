@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">2 in 1</string>
-    <string name="welcomeMsg">Welcome to 2 in 1 . \n\n Please feel free to sign in using the .</string>
+    <string name="welcomeMsg">Welcome to 2 in 1 . \n\n Please feel free to sign in using the Menu button on the top left.</string>
     <string name="signInMsg">Please click to sign in to the account: </string>
-    <string name="signedIn">Your already signed in</string>
-    <string name="goBack">Go Back</string>
+    <string name="fbSignedIn"> Your already signed in.\n\nYou can click below to logout</string>
+    <string name="signedIn"> Your already signed in.\n\nClick below to logout or go back</string>
+    <string name="mainMenu">Home</string>
     <string name="logout">Log out</string>
     <string name="fb">Facebook</string>
     <string name="twitter">Twitter</string>

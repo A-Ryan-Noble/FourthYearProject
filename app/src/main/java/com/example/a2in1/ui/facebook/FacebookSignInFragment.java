@@ -31,23 +31,22 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class FacebookSignInFragment extends Fragment {
 
     private CallbackManager callbackManager;
-    private LoginButton fbLoginBtn;
     private GlobalVariables globalVar;
     private boolean isLoggedIn;
 
-    private Fragment frag;
+    private static String tag;
 
-    TextView loginTxt;
+    private TextView loginTxt;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_facebook_sign_in, container, false);
+        View root = inflater.inflate(R.layout.fragment_facebook_sign_in_out, container, false);
 
-        frag = (Fragment)getFragmentManager().findFragmentById(R.id.facebookFragment);
+        tag = "Facebook";
 
         loginTxt  = root.findViewById(R.id.loginTxtView);
 
-        fbLoginBtn = root.findViewById(R.id.fbLoginButton);
+        LoginButton fbLoginBtn = root.findViewById(R.id.fbLoginButton);
         fbLoginBtn.setReadPermissions(Arrays.asList("email", "public_profile"));
 
         //Since the login button is inside a fragment, this allows for activity result to be controlled
@@ -63,13 +62,13 @@ public class FacebookSignInFragment extends Fragment {
         }
         else {
             globalVar.setFbSignedIn(true);
-            loginTxt.setText(getResources().getString(R.string.signedIn) + "\nFacebook");
+            loginTxt.setText(getResources().getString(R.string.fbSignedIn));
         }
 
         return root;
     }
 
-    protected void fbAccount() {
+    private void fbAccount() {
         callbackManager = CallbackManager.Factory.create();
 
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
@@ -82,15 +81,15 @@ public class FacebookSignInFragment extends Fragment {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 globalVar.setFbSignedIn(true);
+                Log.d(tag,"Facebook Login");
             }
 
             @Override
-            public void onCancel() {
-            }
+            public void onCancel() {}
 
             @Override
             public void onError(FacebookException error) {
-                Log.e("Error",error.toString());
+                Log.e(tag, error.toString());
             }
         });
 
@@ -101,7 +100,7 @@ public class FacebookSignInFragment extends Fragment {
                 if (currentAccessToken == null) {
 
                     globalVar.setFbSignedIn(false);
-                    Log.d("Logout", "FB Logout");
+                    Log.d(tag, "FB Logout");
                     signOutAlert("Facebook");
                 }
             }
@@ -109,7 +108,7 @@ public class FacebookSignInFragment extends Fragment {
     }
 
     private void signOutAlert(final String accountName){
-        AlertDialog.Builder builder = new AlertDialog.Builder(frag.getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         builder.setTitle(getResources().getString(R.string.confirmTitle));
         builder.setMessage(getResources().getString(R.string.loggingOut) + " " + accountName);

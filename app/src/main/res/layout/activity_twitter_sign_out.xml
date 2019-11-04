@@ -8,17 +8,6 @@
     android:orientation="vertical"
     tools:context=".TwitterSignIn">
 
-    <com.twitter.sdk.android.core.identity.TwitterLoginButton
-        android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="102dp"
-        android:layout_marginEnd="114dp"
-        android:layout_marginBottom="200dp" />
-
     <TextView
         android:id="@+id/loginTxtView"
         android:layout_width="wrap_content"
@@ -29,7 +18,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="62dp"
         android:layout_marginEnd="6dp"
-        android:text="@string/signInMsg"
+        android:text="@string/signedIn"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textSize="28sp"
