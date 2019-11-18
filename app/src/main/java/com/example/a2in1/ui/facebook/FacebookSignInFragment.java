@@ -34,7 +34,7 @@ public class FacebookSignInFragment extends Fragment {
     private GlobalVariables globalVar;
     private boolean isLoggedIn;
 
-    private static String tag;
+    private static String tag = "Facebook Sign in";
 
     private TextView loginTxt;
 
@@ -42,12 +42,10 @@ public class FacebookSignInFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_facebook_sign_in_out, container, false);
 
-        tag = "Facebook";
-
         loginTxt  = root.findViewById(R.id.loginTxtView);
 
         LoginButton fbLoginBtn = root.findViewById(R.id.fbLoginButton);
-        fbLoginBtn.setReadPermissions(Arrays.asList("email", "public_profile"));
+        fbLoginBtn.setReadPermissions(Arrays.asList("email", "public_profile","user_status"));
 
         //Since the login button is inside a fragment, this allows for activity result to be controlled
         fbLoginBtn.setFragment(this);

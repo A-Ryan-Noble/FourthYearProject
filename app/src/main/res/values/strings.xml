@@ -13,6 +13,7 @@
     <string name="confirmTitle">Confirmation</string>
     <string name="loggingOut">Signing out of: </string>
 
+
     <!--  Important Facebook & Twitter values -->
     <string name="facebook_app_id">763430430754593</string>
     <string name="fb_login_protocol_scheme">fb763430430754593</string>
@@ -23,4 +24,8 @@
     <!--  Navigation list menu  -->
     <string name="action_settings">Settings</string>
     <string name="homeScreen">Home</string>
+    <string name="accountSection">Account Details</string>
+    <string name="fbSocialFeed">Facebook Feed</string>
+    <string name="fbFeedGet">View Page</string>
+
 </resources>

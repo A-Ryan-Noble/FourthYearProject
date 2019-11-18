@@ -21,4 +21,9 @@
         android:name="com.example.a2in1.ui.twitter.TwitterSignInFragment"
         android:label="@string/twitter"/>
 
+    <fragment
+        android:id="@+id/nav_FbContentButton"
+        android:name="com.example.a2in1.ui.facebook.FacebookUsersPage"
+        android:label="@string/fbSocialFeed"/>
+
 </navigation>
