@@ -26,6 +26,9 @@
             <item
                 android:id="@+id/nav_FbContentButton"
                 android:title="@string/fbFeedGet"/>
+            <item
+                android:id="@+id/nav_FBPosting"
+                android:title="@string/fbPosting"/>
         </menu>
     </item>
 </menu>

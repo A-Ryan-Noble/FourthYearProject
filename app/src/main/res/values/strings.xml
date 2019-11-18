@@ -12,7 +12,10 @@
     <string name="cancel">Cancel</string>
     <string name="confirmTitle">Confirmation</string>
     <string name="loggingOut">Signing out of: </string>
-
+    <string name="createPost">Create Post</string>
+    <string name="post">Post</string>
+    <string name="postTxt">Post a status update</string>
+    <string name="postWish">Wish to post</string>
 
     <!--  Important Facebook & Twitter values -->
     <string name="facebook_app_id">763430430754593</string>
@@ -26,6 +29,9 @@
     <string name="homeScreen">Home</string>
     <string name="accountSection">Account Details</string>
     <string name="fbSocialFeed">Facebook Feed</string>
-    <string name="fbFeedGet">View Page</string>
+    <string name="fbFeedGet">View Your Posts</string>
+    <string name="fbPosting">Posting to Facebook</string>
+
+
 
 </resources>

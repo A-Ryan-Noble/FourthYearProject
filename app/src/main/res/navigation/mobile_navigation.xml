@@ -26,4 +26,8 @@
         android:name="com.example.a2in1.ui.facebook.FacebookUsersPage"
         android:label="@string/fbSocialFeed"/>
 
+    <fragment
+        android:id="@+id/nav_FBPosting"
+        android:name="com.example.a2in1.ui.facebook.FacebookPosting"
+        android:label="@string/fbPosting"/>
 </navigation>
