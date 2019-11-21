@@ -1,118 +1,163 @@
 package com.example.a2in1.ui.facebook;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
-import com.example.a2in1.FacebookGraphRequest;
 import com.example.a2in1.R;
+import com.facebook.AccessToken;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class FacebookUsersPage extends Fragment {
 
-    private List postsList;
     private ListView list;
-    private ArrayList<String> userPosts;
-    //  GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
-    //                    @Override
-    //                    public void onCompleted(JSONObject object, GraphResponse response) {
-    //                        try {
-    //                            JSONArray obj = object.getJSONObject("posts").getJSONArray("data"); // This gets the posts data
-    //                            for (int i = 0; i < obj.length(); i++) {
-    //                                String msg = obj.getJSONObject(i).getString("message"); // This gets only the message part of the array
-    //                                Log.d(tag, msg);
-    //                                posts.add(msg);
-    //                            }
-    //                            callback.OntLoggedInUserPosts(posts);
-    //                        } catch (JSONException e) {
-    //                            Log.e(tag, e.toString());
-    //                        }
-    //                    }
-    //                }
-    //        );
-
     private String tag = "FacebookUsersPage";
 
-    private boolean isPosts;
-
-    ArrayAdapter<String> arrayAdapter;
+    private int MAX_SIZE = 20;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_facebook_users_page, container, false);
 
         list = root.findViewById(R.id.postsList);
 
-
-        // if no posts are
-        if (!isPosts) {
-            postsList = itemsPopulate(new FacebookGraphRequest().getLoggedInUserPosts());
-            Toast.makeText(getContext(), "FB feed loaded", Toast.LENGTH_SHORT).show();
-
-            ArrayList<String> userPosts = new ArrayList<>(postsList.size());
-            Log.d("zzz", "fb feed loaded");
-
-
-            //isPosts = true; // stops this from being constantly called after already being called
-
-            /* //             Reloads fragment
-            Fragment fragment = getFragmentManager().findFragmentById(R.id.nav_FbContentButton);
-            final FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.detach(fragment).attach(fragment).commit();
-*/
-
-            if (userPosts.size() == 0) {
-                List<String> temp = new ArrayList<>();
-                temp.add("List not yet updated with any of your posts");
-
-                arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, temp);
-                arrayAdapter.notifyDataSetChanged();
-
-                list.invalidateViews();
-                list.setAdapter(arrayAdapter);
+        Button refreshBtn = root.findViewById(R.id.refreshBtn);
+        refreshBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            //Re downloads the list
+            public void onClick(View v) {
+                new postsOfUser().execute();
             }
+        });
 
-        } else {
-            arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, itemsPopulate(userPosts));  // passes List to ArrayAdapter
+        Toast.makeText(getContext(), "Searching for Feed", Toast.LENGTH_SHORT).show();
+
+        new postsOfUser().execute();
+        return root;
+    }
+
+    class postsOfUser extends AsyncTask<String, String, String> { // pass list view here
+
+        String[] userPosts = new String[MAX_SIZE];
+
+        StringBuffer buffer;
+
+        private AccessToken accessToken = AccessToken.getCurrentAccessToken();
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Toast.makeText(getContext(), "Data is downloading", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String access_token = "&access_token=" + accessToken.getToken();
+//            https://graph.facebook.com/v4.0/me?fields=posts.limit(20)&access_token=EAAK2VfZBixyEBAFc8b05vSlRqjv67pVbOvya3CZAviEIeidcfEJZBNDoI720xenukNHyAu6entvsJsZCmda9f9NeGgFjcZBZB9yxmh2EsoYokQ8FugzKtNcZBEVYTFf7nTZCFmZAazd6v0yZCmOebojHL9SCPRInZB2vlZAOnsu19XX0dIKZCohkwJiaX8cma6OVAGhviH4nY2z0gnhacSaHWhBqd
+            HttpURLConnection conn = null;
+            BufferedReader reader = null;
+
+            try {
+                URL url = new URL("https://graph.facebook.com/v4.0/me?fields=posts.limit(20)" + access_token);
+                conn = (HttpURLConnection) url.openConnection();
+                conn.connect();
+
+                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                buffer = new StringBuffer();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    buffer.append((line + "\n"));
+                    Log.d(tag, " " + line);
+                }
+
+                return buffer.toString();
+            } catch (MalformedURLException e) {
+                Log.e(tag, "Malformed URL: " + e.getMessage());
+            } catch (IOException e) {
+                Log.e(tag, "IO Exception: " + e.getMessage());
+            }
+            // closes everything that was opened
+            finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    Log.e(tag, e.getMessage());
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Toast.makeText(getContext(), "Executed", Toast.LENGTH_LONG).show();
+
+            newItemsPopulate(s);
+            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, userPosts);
+
             arrayAdapter.notifyDataSetChanged();
 
             list.invalidateViews();
             list.setAdapter(arrayAdapter);
 
-            Toast.makeText(getContext(), "Searching for Feed", Toast.LENGTH_SHORT).show();
+            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String itemValue = list.getItemAtPosition(position).toString(); // gets the text of the list item clicked
+
+                    if (itemValue != "") { // not blank item text
+                        Toast.makeText(getContext(), itemValue, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
-        return root;
-    }
-    //     Populates the list in the ArrayAdapter with the posts
-    private ArrayList itemsPopulate(List userPosts) {
-        ArrayList<String> arrayList = new ArrayList<>(userPosts.size());
-        // loop to add posts to the list
-        for (int i =0; i < userPosts.size();i++){
-            arrayList.add(userPosts.get(i).toString());
+
+        private void newItemsPopulate(String result) {
+            for (int i = 0; i < userPosts.length; i++) {
+                userPosts[i] = "";
+            }
+            listUpdate(result);
         }
-        return arrayList;
+
+        private void listUpdate(String feed) {
+            String[] temp;
+            try {
+                JSONObject feedUser = new JSONObject(feed);
+
+                JSONArray obj = feedUser.getJSONObject("posts").getJSONArray("data"); // this gets the posts data
+                for (int i = 0; i < obj.length(); i++) {
+                    userPosts[i] = obj.getJSONObject(i).getString("message"); // This gets only the message part of the array
+                }
+            } catch (JSONException e) {
+                Log.e(tag, e.getMessage());
+            }
+        }
     }
 }
-
-//      postsList = itemsPopulate(posts);
-//
-//                ArrayList<String> userPosts = new ArrayList<>(postsList.size());
-//                Log.e("zzz","fb feed loaded");
-//
-//                ArrayAdapter<String> arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, itemsPopulate(userPosts));  // passes List to ArrayAdapter
-//                arrayAdapter.notifyDataSetChanged();
-//                list.invalidateViews();
-//                list.setAdapter(arrayAdapter);
-//
-//
-//                Toast.makeText(getContext(),"FB feed loaded",Toast.LENGTH_SHORT).show();

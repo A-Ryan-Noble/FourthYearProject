@@ -16,6 +16,7 @@
     <string name="post">Post</string>
     <string name="postTxt">Post a status update</string>
     <string name="postWish">Wish to post</string>
+    <string name="refresh">Refresh</string>
 
     <!--  Important Facebook & Twitter values -->
     <string name="facebook_app_id">763430430754593</string>

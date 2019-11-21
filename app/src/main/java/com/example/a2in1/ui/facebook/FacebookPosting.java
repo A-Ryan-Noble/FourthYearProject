@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.a2in1.R;
 import com.facebook.CallbackManager;
+import com.facebook.Profile;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 
@@ -28,6 +29,9 @@ public class FacebookPosting extends Fragment {
         View root = inflater.inflate(R.layout.fragment_facebook_posting, container, false);
 
         final CheckBox checkedText = root.findViewById(R.id.checkedText);
+        String oldText =getResources().getString(R.string.postWish);
+        String username = Profile.getCurrentProfile().getFirstName();
+        checkedText.setText("I, "+username+ " "+ oldText);
 
         Button PostBtn = root.findViewById(R.id.fbPostSubmitBtn);
         PostBtn.setOnClickListener(new View.OnClickListener() {
