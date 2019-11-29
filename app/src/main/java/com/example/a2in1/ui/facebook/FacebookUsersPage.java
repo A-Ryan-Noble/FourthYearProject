@@ -1,5 +1,10 @@
 package com.example.a2in1.ui.facebook;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +18,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
+
+import com.example.a2in1.MainActivity;
+import com.example.a2in1.NotificationReciever;
 import com.example.a2in1.R;
 import com.facebook.AccessToken;
 
@@ -45,14 +54,31 @@ public class FacebookUsersPage extends Fragment {
             @Override
             //Re downloads the list
             public void onClick(View v) {
+//                new NotificationMaker().makeSocialNotification("Facebook","Data is downloading",getContext());
+                sendNotification();
                 new postsOfUser().execute();
             }
         });
 
         Toast.makeText(getContext(), "Searching for Feed", Toast.LENGTH_SHORT).show();
 
-        new postsOfUser().execute();
+//        new postsOfUser().execute();
         return root;
+    }
+
+    public void sendNotification() {
+    Intent intent = new Intent(getContext(), NotificationReciever.class);
+    PendingIntent pendingIntent = PendingIntent.getActivity(getContext(),0,intent,0);
+
+        Notification notif = new Notification.Builder(getContext())
+                .setSmallIcon(R.drawable.ic_menu_camera)
+                .setContentTitle("Facebook data")
+                .setContentText("Downloading Posts")
+                .setContentIntent(pendingIntent)
+                .build();
+
+        NotificationManager manager = (NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(0,notif);
     }
 
     class postsOfUser extends AsyncTask<String, String, String> { // pass list view here
@@ -117,8 +143,6 @@ public class FacebookUsersPage extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            Toast.makeText(getContext(), "Executed", Toast.LENGTH_LONG).show();
-
             newItemsPopulate(s);
             ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, userPosts);
 
@@ -147,7 +171,6 @@ public class FacebookUsersPage extends Fragment {
         }
 
         private void listUpdate(String feed) {
-            String[] temp;
             try {
                 JSONObject feedUser = new JSONObject(feed);
 
