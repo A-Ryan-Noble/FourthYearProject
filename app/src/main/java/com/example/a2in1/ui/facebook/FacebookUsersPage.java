@@ -18,11 +18,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.a2in1.MainActivity;
-import com.example.a2in1.NotificationReciever;
+import com.example.a2in1.Notifications;
 import com.example.a2in1.R;
 import com.facebook.AccessToken;
 
@@ -67,7 +65,7 @@ public class FacebookUsersPage extends Fragment {
     }
 
     public void sendNotification() {
-    Intent intent = new Intent(getContext(), NotificationReciever.class);
+    Intent intent = new Intent(getContext(), Notifications.class);
     PendingIntent pendingIntent = PendingIntent.getActivity(getContext(),0,intent,0);
 
         Notification notif = new Notification.Builder(getContext())

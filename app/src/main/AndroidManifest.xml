@@ -31,7 +31,7 @@
             android:label="@string/twitter">
         </activity>
 
-        <activity android:name=".NotificationReciever">
+        <activity android:name=".Notifications">
         </activity>
 
         <meta-data
