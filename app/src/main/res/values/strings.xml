@@ -17,6 +17,7 @@
     <string name="postTxt">Post a status update</string>
     <string name="postWish">Wish to post</string>
     <string name="refresh">Refresh</string>
+    <string name="downloadFeed">Download Feed</string>
 
     <!--  Important Facebook & Twitter values -->
     <string name="facebook_app_id">763430430754593</string>
@@ -33,6 +34,9 @@
     <string name="fbFeedGet">View Your Posts</string>
     <string name="fbPosting">Posting to Facebook</string>
 
+    <!-- Settings Preference Screen -->
+    <string name="maxPostNumInput">Post amount</string>
+    <string name="settings">App Settings</string>
 
 
 </resources>

@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.a2in1.GlobalVariables;
 import com.example.a2in1.MainActivity;
 import com.example.a2in1.R;
 import com.example.a2in1.TwitterSignIn;
@@ -75,10 +74,8 @@ public class TwitterSignInFragment extends Fragment {
                     Log.d(tag, "Twitter login Activity: Cancelled");
                 } else if ((intent.getStringExtra("result") == "LoggedIn")) {
                     Log.d(tag, "Twitter Activity: Logged In");
-                    new GlobalVariables().setTwitterSignedIn(true);
                 } else {
                     Log.d(tag, "Twitter Activity: Logged out");
-                    new GlobalVariables().setTwitterSignedIn(false);
                 }
                 // Acts as a fragment refresher
                 getFragmentManager().beginTransaction().detach(this).attach(this).commit();

@@ -2,6 +2,7 @@ package com.example.a2in1;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -90,6 +91,14 @@ public class TwitterSignOut extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 TwitterCore.getInstance().getSessionManager().clearActiveSession();
                 mAuth.signOut();
+
+                // Logged in status put into SharedPreferences for later
+                SharedPreferences mPreferences = getSharedPreferences("savedDataFile", MODE_PRIVATE);
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putBoolean("TwitterLoggedIn",false);
+                editor.commit();
+
+
                 Log.d(tag, "Signed out of Twitter");
                 returnIntent.putExtra("result", "LoggedOut");
                 setResult(RESULT_OK, returnIntent);

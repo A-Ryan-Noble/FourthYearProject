@@ -1,10 +1,12 @@
 package com.example.a2in1.ui.facebook;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,9 +20,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.a2in1.Notifications;
 import com.example.a2in1.R;
 import com.facebook.AccessToken;
 
@@ -46,37 +49,20 @@ public class FacebookUsersPage extends Fragment {
         View root = inflater.inflate(R.layout.fragment_facebook_users_page, container, false);
 
         list = root.findViewById(R.id.postsList);
+        final Button refreshBtn = root.findViewById(R.id.refreshBtn);
 
-        Button refreshBtn = root.findViewById(R.id.refreshBtn);
+        refreshBtn.setText("Download Feed");
+//        refreshBtn.setText(R.string.downloadFeed);
         refreshBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             //Re downloads the list
             public void onClick(View v) {
-//                new NotificationMaker().makeSocialNotification("Facebook","Data is downloading",getContext());
-                sendNotification();
+
+                refreshBtn.setText("Refresh Feed");
                 new postsOfUser().execute();
             }
         });
-
-        Toast.makeText(getContext(), "Searching for Feed", Toast.LENGTH_SHORT).show();
-
-//        new postsOfUser().execute();
         return root;
-    }
-
-    public void sendNotification() {
-    Intent intent = new Intent(getContext(), Notifications.class);
-    PendingIntent pendingIntent = PendingIntent.getActivity(getContext(),0,intent,0);
-
-        Notification notif = new Notification.Builder(getContext())
-                .setSmallIcon(R.drawable.ic_menu_camera)
-                .setContentTitle("Facebook data")
-                .setContentText("Downloading Posts")
-                .setContentIntent(pendingIntent)
-                .build();
-
-        NotificationManager manager = (NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(0,notif);
     }
 
     class postsOfUser extends AsyncTask<String, String, String> { // pass list view here
@@ -90,8 +76,10 @@ public class FacebookUsersPage extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Toast.makeText(getContext(), "Data is downloading", Toast.LENGTH_SHORT).show();
-        }
+//            Toast.makeText(getContext(), "Data is downloading", Toast.LENGTH_SHORT).show();
+
+            makeNotify("Downloading Feed","Facebook Feed is being downloaded",FacebookUsersPage.class,"FB feed Download",false);
+            }
 
         @Override
         protected String doInBackground(String... params) {
@@ -179,6 +167,38 @@ public class FacebookUsersPage extends Fragment {
             } catch (JSONException e) {
                 Log.e(tag, e.getMessage());
             }
+        }
+
+        // makeNotify Method that creates a notification on the user's phone
+        public void makeNotify(String title, String msg, Class name, String id, boolean openable){
+
+            NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context .NOTIFICATION_SERVICE);
+
+            NotificationChannel notificationChannel = new NotificationChannel(id, id+" channel", NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setDescription("Description of channel");
+
+            if (notificationChannel != null){
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+
+            Intent openIntent = new Intent(getContext(), name);
+            PendingIntent openApp = PendingIntent.getActivity(getContext(),0,openIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getContext(), id)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(title)
+                    .setContentText(msg)
+                    .setLights(Color.RED, 1000, 1000)
+                    .setColor(Color.BLUE)
+                    .setAutoCancel(true)
+                    .setDefaults(Notification.DEFAULT_ALL); // Vibrate,Sound & Lights are set
+
+            if (openable){
+                notificationBuilder.setContentIntent(openApp);// When notification is clicked it will open
+            }
+
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getContext());
+            notificationManagerCompat.notify(1000, notificationBuilder.build());
         }
     }
 }

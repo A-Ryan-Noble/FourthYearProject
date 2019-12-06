@@ -1,6 +1,7 @@
 package com.example.a2in1.ui.facebook;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,6 @@ import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.example.a2in1.GlobalVariables;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -26,15 +26,16 @@ import java.util.Arrays;
 
 import com.example.a2in1.R;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
+import static android.content.Context.MODE_PRIVATE;
 
 public class FacebookSignInFragment extends Fragment {
 
     private CallbackManager callbackManager;
-    private GlobalVariables globalVar;
+
+
     private boolean isLoggedIn;
 
-    private static String tag = "Facebook Sign in";
+    private String log = "FacebookSignInFragment";
 
     private TextView loginTxt;
 
@@ -50,16 +51,12 @@ public class FacebookSignInFragment extends Fragment {
         //Since the login button is inside a fragment, this allows for activity result to be controlled
         fbLoginBtn.setFragment(this);
 
-        globalVar = (GlobalVariables) getApplicationContext();
-
         fbAccount();
 
         if (!isLoggedIn) {
-            globalVar.setFbSignedIn(false);
             loginTxt.setText(getResources().getString(R.string.signInMsg));
         }
         else {
-            globalVar.setFbSignedIn(true);
             loginTxt.setText(getResources().getString(R.string.fbSignedIn));
         }
 
@@ -78,8 +75,14 @@ public class FacebookSignInFragment extends Fragment {
 
             @Override
             public void onSuccess(LoginResult loginResult) {
-                globalVar.setFbSignedIn(true);
-                Log.d(tag,"Facebook Login");
+
+                // Logged in status put into SharedPreferences for later
+                SharedPreferences mPreferences = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putBoolean("FBLoggedIn",true);
+                editor.commit();
+
+                Log.d(log,"Facebook Logged in");
             }
 
             @Override
@@ -87,7 +90,7 @@ public class FacebookSignInFragment extends Fragment {
 
             @Override
             public void onError(FacebookException error) {
-                Log.e(tag, error.toString());
+                Log.e(log, error.toString());
             }
         });
 
@@ -97,8 +100,13 @@ public class FacebookSignInFragment extends Fragment {
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
                 if (currentAccessToken == null) {
 
-                    globalVar.setFbSignedIn(false);
-                    Log.d(tag, "FB Logout");
+                    // Logged in status put into SharedPreferences for later
+                    SharedPreferences mPreferences = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = mPreferences.edit();
+                    editor.putBoolean("FBLoggedIn",false);
+                    editor.commit();
+
+                    Log.d(log, "FB Logout");
                     signOutAlert("Facebook");
                 }
             }

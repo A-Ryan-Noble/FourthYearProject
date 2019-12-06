@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -116,8 +117,13 @@ public class TwitterSignIn extends AppCompatActivity {
                 if (!task.isSuccessful()){
                     Log.d(tag,"Auth firebase twitter failed");
                 }
-                Log.d(tag,"Auth firebase twitter Sucessful");
+                Log.d(tag,"Auth firebase twitter Successful");
 
+                //Logged In Added to SharedPreferences for later
+                SharedPreferences mPreferences = getSharedPreferences("savedDataFile", MODE_PRIVATE);
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putBoolean("TwitterLoggedIn",true);
+                editor.commit();
             }
         });
     }
