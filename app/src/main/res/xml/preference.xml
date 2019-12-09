@@ -1,13 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditTextPreference
-        android:key="MaxPosts"
-        android:summary="The max number of posts in your Feed"
-        android:title="@string/maxPostNumInput"
-        android:inputType="number"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:dialogLayout="@layout/preference_edit_text"
-        />
+    <PreferenceCategory
+        android:id="@+id/AccountSettings"
+        android:key="FeedAmounts"
+        android:title="@string/accountSection">
+
+        <EditTextPreference
+            android:dialogLayout="@layout/preference_edit_text"
+            android:inputType="number"
+            android:key="MaxFbPosts"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="The max number of Facebook posts in your Feed"
+            android:title="@string/maxFbPostNumInput" />
+
+        <EditTextPreference
+            android:dialogLayout="@layout/preference_edit_text"
+            android:inputType="number"
+            android:key="MaxTweets"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="How many Tweets in your feed?"
+            android:title="@string/maxTweetNumInput" />
+
+        <Preference
+            android:key="acc"
+            android:title="@string/accountSection"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:id = "@+id/NotificationSettings"
+        android:title="@string/notify">
+
+        <SwitchPreference
+            android:key="notificationSwitch"
+            android:persistent="false"
+            android:summaryOff="Notifications are Disabled"
+            android:summaryOn="Notifications are enabled"
+            app:defaultValue="true" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

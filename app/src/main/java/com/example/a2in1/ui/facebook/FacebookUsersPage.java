@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -26,6 +27,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.a2in1.R;
 import com.facebook.AccessToken;
+import com.facebook.Profile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,12 +40,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class FacebookUsersPage extends Fragment {
 
     private ListView list;
     private String tag = "FacebookUsersPage";
-
-    private int MAX_SIZE = 20;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_facebook_users_page, container, false);
@@ -51,8 +53,13 @@ public class FacebookUsersPage extends Fragment {
         list = root.findViewById(R.id.postsList);
         final Button refreshBtn = root.findViewById(R.id.refreshBtn);
 
+        String title = getContext().getResources().getString(R.string.fbSocialFeed);
+        String loggedInUser =  Profile.getCurrentProfile().getFirstName();
+
+//        getActivity().getActionBar().setTitle("e");
+//    getActivity().setTitle("e");//         .setTitle(title + " for : "+ loggedInUser);
+
         refreshBtn.setText("Download Feed");
-//        refreshBtn.setText(R.string.downloadFeed);
         refreshBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             //Re downloads the list
@@ -67,7 +74,12 @@ public class FacebookUsersPage extends Fragment {
 
     class postsOfUser extends AsyncTask<String, String, String> { // pass list view here
 
-        String[] userPosts = new String[MAX_SIZE];
+        String tag = this.getClass().getSimpleName();
+
+        // Gets value from the the SharedPreferences
+        int limit = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE).getInt("MaxFbNum",20);
+
+        String[] userPosts;
 
         StringBuffer buffer;
 
@@ -76,20 +88,28 @@ public class FacebookUsersPage extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-//            Toast.makeText(getContext(), "Data is downloading", Toast.LENGTH_SHORT).show();
-
-            makeNotify("Downloading Feed","Facebook Feed is being downloaded",FacebookUsersPage.class,"FB feed Download",false);
+            if(limit>20)
+            {
+                limit = 20;
             }
+            userPosts = new String[limit];
+
+            String username = Profile.getCurrentProfile().getName();
+            makeNotify("Feed Updated ",username+ " you feed is being downloaded",FacebookUsersPage.class,"FB feed Download",false);
+        }
 
         @Override
         protected String doInBackground(String... params) {
             String access_token = "&access_token=" + accessToken.getToken();
-//            https://graph.facebook.com/v4.0/me?fields=posts.limit(20)&access_token=EAAK2VfZBixyEBAFc8b05vSlRqjv67pVbOvya3CZAviEIeidcfEJZBNDoI720xenukNHyAu6entvsJsZCmda9f9NeGgFjcZBZB9yxmh2EsoYokQ8FugzKtNcZBEVYTFf7nTZCFmZAazd6v0yZCmOebojHL9SCPRInZB2vlZAOnsu19XX0dIKZCohkwJiaX8cma6OVAGhviH4nY2z0gnhacSaHWhBqd
+
             HttpURLConnection conn = null;
             BufferedReader reader = null;
 
+            String link = "https://graph.facebook.com/v4.0/me?fields=posts.limit(" + limit + ")" +access_token;
+
             try {
-                URL url = new URL("https://graph.facebook.com/v4.0/me?fields=posts.limit(20)" + access_token);
+//                URL url = new URL("https://graph.facebook.com/v4.0/me?fields=posts.limit(20)" + access_token);
+                URL url = new URL(link);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.connect();
 

@@ -5,7 +5,7 @@
     <string name="fbSignedIn"> Your already signed in.\n\nYou can click below to logout</string>
     <string name="signedIn"> Your already signed in.\nClick below to logout or go back</string>
     <string name="mainMenu">Home</string>
-    <string name="logout">Log out</string>
+    <string name="logout">Sign out</string>
     <string name="fb">Facebook</string>
     <string name="twitter">Twitter</string>
     <string name="ok">OK</string>
@@ -35,8 +35,11 @@
     <string name="fbPosting">Posting to Facebook</string>
 
     <!-- Settings Preference Screen -->
-    <string name="maxPostNumInput">Post amount</string>
-    <string name="settings">App Settings</string>
+    <string name="maxFbPostNumInput">Limit Facebook posts amount</string>
+    <string name="maxTweetNumInput">Limit Tweets amount</string>
+    <string name="settings">Settings</string>
+    <string name="notify">Notifications</string>
+    
 
 
 </resources>

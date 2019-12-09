@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
+    private String log = this.getClass().getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,21 +84,26 @@ public class MainActivity extends AppCompatActivity {
             case R.id.logOutMenu: logoutOfSites();
                 Toast.makeText(this,"Logout Selected",Toast.LENGTH_SHORT).show();
                 return true;
-            default: return super.onOptionsItemSelected(item);
+
+                default: return super.onOptionsItemSelected(item);
         }
     }
 
     // User is logged out of Facebook and Twitter
-    private void logoutOfSites() {
-        SharedPreferences mPreferences = getApplicationContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
+    public void logoutOfSites() {
+        SharedPreferences mPreferences = getBaseContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
 
-        // Gets the sharedprefrences for both sites loggedin status
-        boolean isFbLoggedIn = mPreferences.getBoolean("FBLoggedIn",false);
+
+        // Gets the sharedprefrences for both sites logged in status
+//        boolean isFbLoggedIn = mPreferences.getBoolean("FBLoggedIn",false);
         boolean isTwitterLoggedIn = mPreferences.getBoolean("TwitterLoggedIn",false);
 
+
+//        Toast.makeText(getBaseContext(), "FB logged in?: " + isFbLoggedIn, Toast.LENGTH_SHORT).show();
+
         // checks if facebook is logged in
-//        if (AccessToken.getCurrentAccessToken() != null) {
-        if (isFbLoggedIn) {
+        if (AccessToken.getCurrentAccessToken() != null) {
+//        if (isFbLoggedIn) {
             LoginManager.getInstance().logOut();
 
             SharedPreferences.Editor editor = mPreferences.edit();
@@ -113,41 +120,12 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = mPreferences.edit();
             editor.putBoolean("TwitterLoggedIn",false);
             editor.commit();
-
+//
             TwitterCore.getInstance().getSessionManager().clearActiveSession();
-
+//
             Log.d("Logout","Logged out of Twitter");
         }
-        startActivity(new Intent(getBaseContext(),MainActivity.class));
-    }
-
-    // makeNotify Method that creates a notification on the user's phone
-    public void Notification(String title, String msg,String id){
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        NotificationChannel notificationChannel = new NotificationChannel(id, id+" channel", NotificationManager.IMPORTANCE_HIGH);
-        notificationChannel.setDescription("Description of channel");
-
-        if (notificationChannel != null){
-            notificationManager.createNotificationChannel(notificationChannel);
-        }
-
-        Intent openIntent = new Intent(getBaseContext(),MainActivity.class);
-        PendingIntent openApp = PendingIntent.getActivity(getBaseContext(),0,openIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext(), id)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(title)
-                .setContentText(msg)
-                .setLights(Color.BLUE, 1000, 1000)
-                .setColor(Color.RED)
-                .setContentIntent(openApp) // When notification is clicked it will open Main Activity
-                .setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_ALL); // Vibrate,Sound & Lights are set
-
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getBaseContext());
-        notificationManagerCompat.notify(1000, notificationBuilder.build());
+        showNotification("Logged Out", "You have been logged out of your Social media on 2in1");
     }
 
     @Override
@@ -156,4 +134,34 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+    private void showNotification(String title, String msg) {
+        Log.d(log, "Notification method called");
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        String id = "2in1 Notification";
+        NotificationChannel notificationChannel = new NotificationChannel(id, title, NotificationManager.IMPORTANCE_HIGH);
+        notificationChannel.setDescription(msg);
+
+        notificationManager.createNotificationChannel(notificationChannel);
+
+        Intent openIntent = new Intent(getBaseContext(), MainActivity.class);
+
+        PendingIntent openApp = PendingIntent.getActivity(getBaseContext(), 0, openIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext(), id)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(title)
+                .setContentText(msg)
+                .setLights(Color.BLUE, 1000, 1000)
+                .setColor(Color.MAGENTA)
+                .setContentIntent(openApp) // When notification is clicked it will open Main Activity
+                .setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL); // Vibrate,Sound & Lights are all set
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getBaseContext());
+        notificationManagerCompat.notify(1000, notificationBuilder.build());
+    }
+
 }
