@@ -18,6 +18,11 @@
     <string name="postWish">Wish to post</string>
     <string name="refresh">Refresh</string>
     <string name="downloadFeed">Download Feed</string>
+    <string name="aboutQuestion">What is 2 in 1?</string>
+    <string name="aboutMsg">2 in 1 is Android application made by Ryan Noble ,B00097070, for his fourth year thesis project.</string>
+    <string name="aboutMsg2">Submitted and created as part of Bachelor of Science (Honours).</string>
+    <string name="aboutMsg3">2 in 1 is an app that implements both Facebook SDK and Twitter SDK into the android application.</string>
+
 
     <!--  Important Facebook & Twitter values -->
     <string name="facebook_app_id">763430430754593</string>
@@ -35,11 +40,11 @@
     <string name="fbPosting">Posting to Facebook</string>
 
     <!-- Settings Preference Screen -->
+    <string name="about">About</string>
     <string name="maxFbPostNumInput">Limit Facebook posts amount</string>
     <string name="maxTweetNumInput">Limit Tweets amount</string>
     <string name="settings">Settings</string>
     <string name="notify">Notifications</string>
-    
-
+    <string name="about2in1App">About this App</string>
 
 </resources>

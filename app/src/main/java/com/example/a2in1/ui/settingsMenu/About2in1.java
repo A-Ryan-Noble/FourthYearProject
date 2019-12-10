@@ -6,13 +6,13 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.a2in1.R;
 
-public class ViewAccounts extends PreferenceFragmentCompat {
+public class About2in1 extends PreferenceFragmentCompat {
     private String log = getClass().getSimpleName();
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
-        addPreferencesFromResource(R.xml.view_accounts);
+        addPreferencesFromResource(R.xml.about_app);
 
         //
     }

@@ -25,11 +25,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.material.navigation.NavigationView;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterSession;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,15 +78,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
 
-            case R.id.action_settings: Toast.makeText(this,"Settings Selected",Toast.LENGTH_SHORT).show();
+            case R.id.action_settings:
+//                Toast.makeText(this,"Settings Selected",Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this,SettingsActivity.class));
                 return true;
 
             case R.id.logOutMenu: logoutOfSites();
-                Toast.makeText(this,"Logout Selected",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"Logout Selected", Toast.LENGTH_SHORT).show();
                 return true;
 
-                default: return super.onOptionsItemSelected(item);
+            default: return super.onOptionsItemSelected(item);
         }
     }
 
@@ -93,39 +95,54 @@ public class MainActivity extends AppCompatActivity {
     public void logoutOfSites() {
         SharedPreferences mPreferences = getBaseContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
 
-
         // Gets the sharedprefrences for both sites logged in status
-//        boolean isFbLoggedIn = mPreferences.getBoolean("FBLoggedIn",false);
+        boolean isFbLoggedIn = mPreferences.getBoolean("FBLoggedIn",false);
         boolean isTwitterLoggedIn = mPreferences.getBoolean("TwitterLoggedIn",false);
 
-
-//        Toast.makeText(getBaseContext(), "FB logged in?: " + isFbLoggedIn, Toast.LENGTH_SHORT).show();
+        boolean loggedOut = false;
 
         // checks if facebook is logged in
-        if (AccessToken.getCurrentAccessToken() != null) {
-//        if (isFbLoggedIn) {
+        if (isFbLoggedIn) {
             LoginManager.getInstance().logOut();
 
             SharedPreferences.Editor editor = mPreferences.edit();
             editor.putBoolean("FBLoggedIn",false);
             editor.commit();
 
+            loggedOut = true;
+
             Log.d("Logout","Logged out of Facebook");
         }
 
         // checks if Twitter is logged in
 //        if (TwitterCore.getInstance().getSessionManager().getActiveSession() != null) {
-        if (isTwitterLoggedIn) {
+        if (isTwitterLoggedIn){
 
-            SharedPreferences.Editor editor = mPreferences.edit();
-            editor.putBoolean("TwitterLoggedIn",false);
-            editor.commit();
-//
+            TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY), getResources().getString(R.string.twitter_CONSUMER_SECRET));
+
+            TwitterConfig twitterConfig = new TwitterConfig.Builder(this)
+                    .twitterAuthConfig(authConfig)
+                    .build();
+            Twitter.initialize(twitterConfig);
+
             TwitterCore.getInstance().getSessionManager().clearActiveSession();
-//
+
+            loggedOut = true;
+
             Log.d("Logout","Logged out of Twitter");
         }
-        showNotification("Logged Out", "You have been logged out of your Social media on 2in1");
+
+        if (loggedOut == true) {
+            new Intent(getApplicationContext(), MainActivity.class);
+
+            // gets the users notification setting.
+            // If they didn't change it then it will remain as true or it will change to true/false
+            Boolean canNotifiy = mPreferences.getBoolean("notificationEnabled", true);
+
+            if (canNotifiy) {
+                showNotification("Logged Out", "You have been logged out of your Social media on 2in1");
+            }
+        }
     }
 
     @Override

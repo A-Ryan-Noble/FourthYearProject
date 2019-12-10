@@ -8,8 +8,9 @@ import android.util.Log;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreference;
 
-import com.example.a2in1.AccountsActivity;
+import com.example.a2in1.About2in1;
 import com.example.a2in1.R;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -24,11 +25,13 @@ public class SettingsScreen extends PreferenceFragmentCompat {
 
         final SharedPreferences mPreferences = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
 
-        EditTextPreference fbFeedAmount = findPreference("MaxFbPosts");
+        EditTextPreference fbFeedAmount = findPreference("MaxFbPosts"); // mac post limit
 
-        EditTextPreference maxTweetsAmount = findPreference("MaxTweets");
+        EditTextPreference maxTweetsAmount = findPreference("MaxTweets"); // max tweet limit
 
-        Preference acc = findPreference("acc"); // Account Item
+        Preference aboutApp = findPreference("aboutApp"); // Account Item
+
+        SwitchPreference notifEnabled = findPreference("notificationSwitch"); // notification switch
 
         // Limit to the posts preference from Facebook is set
         fbFeedAmount.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -63,13 +66,30 @@ public class SettingsScreen extends PreferenceFragmentCompat {
         });
 
         // User clicks to go to their view their accounts
-        acc.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        aboutApp.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getContext(), AccountsActivity.class));
+                Log.d(log,"@string/about2in1App" + " screen called");
+
+                startActivity(new Intent(getContext(), About2in1.class));
+
                 return true;
             }
         });
 
+        notifEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Log.d(log,"Notifications enabled = " + newValue);
+
+                boolean enabled = (boolean)newValue;
+
+                SharedPreferences.Editor editor = mPreferences.edit();
+                editor.putBoolean("notificationEnabled",enabled);
+                editor.commit();
+
+                return true;
+            }
+        });
     }
 }

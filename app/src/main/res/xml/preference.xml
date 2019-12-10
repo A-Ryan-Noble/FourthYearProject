@@ -3,6 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
+        android:id="@+id/About"
+        android:key="about"
+        android:title="@string/about"/>
+    <Preference
+        android:key="aboutApp"
+        android:title="@string/about2in1App"/>
+
+    <PreferenceCategory
         android:id="@+id/AccountSettings"
         android:key="FeedAmounts"
         android:title="@string/accountSection">
@@ -13,7 +21,7 @@
             android:key="MaxFbPosts"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:summary="The max number of Facebook posts in your Feed"
+            android:summary="How many posts in your Feed"
             android:title="@string/maxFbPostNumInput" />
 
         <EditTextPreference
@@ -25,10 +33,6 @@
             android:summary="How many Tweets in your feed?"
             android:title="@string/maxTweetNumInput" />
 
-        <Preference
-            android:key="acc"
-            android:title="@string/accountSection"/>
-
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -36,11 +40,11 @@
         android:title="@string/notify">
 
         <SwitchPreference
+            android:defaultValue="true"
+            android:persistent="true"
             android:key="notificationSwitch"
-            android:persistent="false"
             android:summaryOff="Notifications are Disabled"
-            android:summaryOn="Notifications are enabled"
-            app:defaultValue="true" />
+            android:summaryOn="Notifications are enabled"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

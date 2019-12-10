@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.a2in1">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -23,31 +24,27 @@
         </activity>
         <activity
             android:name=".TwitterSignIn"
-            android:label="@string/twitter">
-        </activity>
+            android:label="@string/twitter"></activity>
         <activity
             android:name=".TwitterSignOut"
-            android:label="@string/twitter">
-        </activity>
-
-        <activity android:name=".SettingsActivity"
+            android:label="@string/twitter"></activity>
+        <activity
+            android:name=".SettingsActivity"
             android:label="@string/settings"
-            android:parentActivityName=".MainActivity"/>
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+            android:parentActivityName=".MainActivity" />
 
-        <activity android:name=".AccountsActivity"
-            android:label="@string/accountSection"
-            android:parentActivityName=".SettingsActivity"/>
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
-            android:value=".MainActivity"/>
+            android:value=".MainActivity" />
+
+        <activity
+            android:name=".About2in1"
+            android:label="@string/aboutQuestion"
+            android:parentActivityName=".SettingsActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"
-            />
+            android:value="@string/facebook_app_id" />
 
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -66,4 +63,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>
