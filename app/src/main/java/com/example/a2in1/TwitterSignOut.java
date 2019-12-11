@@ -2,7 +2,6 @@ package com.example.a2in1;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +17,8 @@ import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
+
+import static com.example.a2in1.myPreferences.setBoolPref;
 
 public class TwitterSignOut extends AppCompatActivity {
 
@@ -93,11 +94,7 @@ public class TwitterSignOut extends AppCompatActivity {
                 mAuth.signOut();
 
                 // Logged in status put into SharedPreferences for later
-                SharedPreferences mPreferences = getSharedPreferences("savedDataFile", MODE_PRIVATE);
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putBoolean("TwitterLoggedIn",false);
-                editor.commit();
-
+                setBoolPref("TwitterLoggedIn",true, getBaseContext());
 
                 Log.d(tag, "Signed out of Twitter");
                 returnIntent.putExtra("result", "LoggedOut");

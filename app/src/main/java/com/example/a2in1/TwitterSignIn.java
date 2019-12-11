@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,29 +11,30 @@ import android.view.View;
 import com.example.a2in1.ui.twitter.TwitterSignInFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
+//import com.google.firebase.auth.AuthCredential;
+//import com.google.firebase.auth.AuthResult;
+//import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
-import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+
+import static com.example.a2in1.myPreferences.setBoolPref;
 
 public class TwitterSignIn extends AppCompatActivity {
 
     private TwitterLoginButton twitterLoginBtn;
     private Intent returnIntent;
 
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
+//    private FirebaseAuth mAuth;
+//    private FirebaseAuth.AuthStateListener mAuthListener;
 
-    private static String tag;
+    private static String log = "Twitter";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,26 +50,27 @@ public class TwitterSignIn extends AppCompatActivity {
 
         setContentView(R.layout.activity_twitter_sign_in);
 
-        tag = "Twitter";
-
         returnIntent = new Intent(this, TwitterSignInFragment.class);
 
         twitterLoginBtn = (TwitterLoginButton) findViewById(R.id.login_button);
 
-        // Initializes the Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {}
-        };
+//         Initializes the Firebase Auth
+//        mAuth = FirebaseAuth.getInstance();
+//
+//        mAuthListener = new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {}
+//        };
 
         twitterLoginBtn.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
-                Log.d(tag,"Successful Login");
+                Log.d(log,"Successful Login");
 
-                firebaseTwitterSessionSignIn(result.data);
+                //Logged In Added to SharedPreferences for later
+                setBoolPref("TwitterLoggedIn",true, getBaseContext());
+
+//                firebaseTwitterSessionSignIn(result.data);
 
                 returnIntent.putExtra("result", "LoggedIn");
                 setResult(RESULT_OK, returnIntent);
@@ -77,7 +78,7 @@ public class TwitterSignIn extends AppCompatActivity {
             }
             @Override
             public void failure(TwitterException exception) {
-                Log.e(tag,"login failed");
+                Log.e(log,"login failed");
             }
         });
     }
@@ -98,33 +99,30 @@ public class TwitterSignIn extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+//        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mAuth.removeAuthStateListener(mAuthListener);
+//        mAuth.removeAuthStateListener(mAuthListener);
     }
 
     // method used for signing in to twitter using firebase
-    private void firebaseTwitterSessionSignIn(TwitterSession session){
+/*    private void firebaseTwitterSessionSignIn(TwitterSession session){
         AuthCredential credential = TwitterAuthProvider.getCredential(session.getAuthToken().token, session.getAuthToken().secret);
 
         mAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (!task.isSuccessful()){
-                    Log.d(tag,"Auth firebase twitter failed");
+                    Log.d(log,"Auth firebase twitter failed");
                 }
-                Log.d(tag,"Auth firebase twitter Successful");
+                Log.d(log,"Auth firebase twitter Successful");
 
                 //Logged In Added to SharedPreferences for later
-                SharedPreferences mPreferences = getSharedPreferences("savedDataFile", MODE_PRIVATE);
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putBoolean("TwitterLoggedIn",true);
-                editor.commit();
+                myPreferences.setBoolPref("TwitterLoggedIn",true, getBaseContext());
             }
         });
-    }
+    }*/
 }

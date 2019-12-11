@@ -2,6 +2,7 @@ package com.example.a2in1.ui.facebook;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,11 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.example.a2in1.FbSignInActivity;
 import com.example.a2in1.R;
 import com.facebook.CallbackManager;
 import com.facebook.Profile;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
+
+import static com.example.a2in1.myPreferences.getBoolPref;
 
 public class FacebookPosting extends Fragment {
 
@@ -28,23 +32,31 @@ public class FacebookPosting extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_facebook_posting, container, false);
 
-        final CheckBox checkedText = root.findViewById(R.id.checkedText);
-        String oldText =getResources().getString(R.string.postWish);
-        String username = Profile.getCurrentProfile().getFirstName();
-        checkedText.setText("I, "+username+ " "+ oldText);
+        boolean isFbLoggedIn = getBoolPref("FBLoggedIn",false,getContext());
 
-        Button PostBtn = root.findViewById(R.id.fbPostSubmitBtn);
-        PostBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!checkedText.isChecked()) {
-                    Toast.makeText(getContext(), "Must select okay!", Toast.LENGTH_SHORT).show();
-                } else {
-                    confirmPost();
+        if (isFbLoggedIn){
+
+            final CheckBox checkedText = root.findViewById(R.id.checkedText);
+            String oldText =getResources().getString(R.string.postWish);
+            String username = Profile.getCurrentProfile().getFirstName();
+            checkedText.setText("I, "+username+ " "+ oldText);
+
+            Button PostBtn = root.findViewById(R.id.fbPostSubmitBtn);
+            PostBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!checkedText.isChecked()) {
+                        Toast.makeText(getContext(), "Must select okay!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        confirmPost();
+                    }
                 }
-            }
-        });
-
+            });
+        }
+        // if user isn't logged in on fb then go to the sign in fragment
+        else {
+            startActivity(new Intent(getContext(), FbSignInActivity.class));
+        }
         return root;
     }
 
@@ -70,6 +82,7 @@ public class FacebookPosting extends Fragment {
                 Toast.makeText(getContext(), getResources().getString(R.string.cancel) + "ed Post", Toast.LENGTH_SHORT).show(); // cancel message
             }
         });
+        builder.setIcon(R.mipmap.upload_icon);
         builder.show();
     }
 

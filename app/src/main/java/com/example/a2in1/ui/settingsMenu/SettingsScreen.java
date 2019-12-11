@@ -1,10 +1,10 @@
 package com.example.a2in1.ui.settingsMenu;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -12,8 +12,8 @@ import androidx.preference.SwitchPreference;
 
 import com.example.a2in1.About2in1;
 import com.example.a2in1.R;
-
-import static android.content.Context.MODE_PRIVATE;
+import static com.example.a2in1.myPreferences.setIntPref;
+import static com.example.a2in1.myPreferences.setBoolPref;
 
 public class SettingsScreen extends PreferenceFragmentCompat {
 
@@ -22,8 +22,6 @@ public class SettingsScreen extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.preference);
-
-        final SharedPreferences mPreferences = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
 
         EditTextPreference fbFeedAmount = findPreference("MaxFbPosts"); // mac post limit
 
@@ -39,13 +37,21 @@ public class SettingsScreen extends PreferenceFragmentCompat {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 int num = Integer.parseInt(newValue.toString().trim());
 
-                Log.d(log,"FB Posts limited to "+ num);
+                if (num > 0) {
+                    Log.d(log, "FB Posts limited to " + num);
 
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putInt("MaxFbNum",num);
-                editor.commit();
+                    setIntPref("MaxFbNum",num,getContext());
 
-                return true;
+                    return true;
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(getResources().getString(R.string.alert));
+                builder.setMessage(getResources().getString(R.string.feedAmountAlertMsg)+" "+ num + ".");
+                builder.setIcon(R.mipmap.error_icon);
+                builder.show();
+
+                return false;
             }
         });
 
@@ -55,13 +61,21 @@ public class SettingsScreen extends PreferenceFragmentCompat {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 int num = Integer.parseInt(newValue.toString().trim());
 
-                Log.d(log,"Tweets limited to "+ num);
+                if (num > 0) {
+                    Log.d(log,"Tweets limited to "+ num);
 
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putInt("MaxTweetsNum",num);
-                editor.commit();
+                    setIntPref("MaxTweetsNum",num,getContext());
 
-                return true;
+                    return true;
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(getResources().getString(R.string.alert));
+                builder.setMessage(getResources().getString(R.string.feedAmountAlertMsg)+" "+ num + ".");
+                builder.setIcon(R.mipmap.error_icon);
+                builder.show();
+
+                return false;
             }
         });
 
@@ -77,16 +91,14 @@ public class SettingsScreen extends PreferenceFragmentCompat {
             }
         });
 
+        // User clicks to turn on/off notifications
         notifEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Log.d(log,"Notifications enabled = " + newValue);
 
                 boolean enabled = (boolean)newValue;
-
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putBoolean("notificationEnabled",enabled);
-                editor.commit();
+                setBoolPref("notificationEnabled",enabled,getContext());
 
                 return true;
             }

@@ -13,6 +13,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.example.a2in1.myPreferences;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -31,7 +32,6 @@ import static android.content.Context.MODE_PRIVATE;
 public class FacebookSignInFragment extends Fragment {
 
     private CallbackManager callbackManager;
-
 
     private boolean isLoggedIn;
 
@@ -77,10 +77,11 @@ public class FacebookSignInFragment extends Fragment {
             public void onSuccess(LoginResult loginResult) {
 
                 // Logged in status put into SharedPreferences for later
-                SharedPreferences mPreferences = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
-                SharedPreferences.Editor editor = mPreferences.edit();
-                editor.putBoolean("FBLoggedIn",true);
-                editor.commit();
+                myPreferences.setBoolPref("FBLoggedIn",true,getContext());
+//                SharedPreferences mPreferences = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
+//                SharedPreferences.Editor editor = mPreferences.edit();
+//                editor.putBoolean("FBLoggedIn",true);
+//                editor.commit();
 
                 Log.d(log,"Facebook Logged in");
             }
@@ -101,10 +102,11 @@ public class FacebookSignInFragment extends Fragment {
                 if (currentAccessToken == null) {
 
                     // Logged in status put into SharedPreferences for later
-                    SharedPreferences mPreferences = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = mPreferences.edit();
-                    editor.putBoolean("FBLoggedIn",false);
-                    editor.commit();
+                    myPreferences.setBoolPref("FBLoggedIn",false,getContext());
+//                    SharedPreferences mPreferences = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
+//                    SharedPreferences.Editor editor = mPreferences.edit();
+//                    editor.putBoolean("FBLoggedIn",false);
+//                    editor.commit();
 
                     Log.d(log, "FB Logout");
                     signOutAlert("Facebook");

@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.a2in1.FbSignInActivity;
 import com.example.a2in1.R;
 import com.facebook.AccessToken;
 import com.facebook.Profile;
@@ -41,35 +43,54 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.a2in1.myPreferences.getBoolPref;
+import static com.example.a2in1.myPreferences.getIntPref;
 
 public class FacebookUsersPage extends Fragment {
 
     private ListView list;
-    private String tag = "FacebookUsersPage";
+    private String log = getClass().getSimpleName();
+
+    private SharedPreferences mPreferences;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_facebook_users_page, container, false);
 
-        list = root.findViewById(R.id.postsList);
-        final Button refreshBtn = root.findViewById(R.id.refreshBtn);
+//        mPreferences = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
 
-        String title = getContext().getResources().getString(R.string.fbSocialFeed);
-        String loggedInUser =  Profile.getCurrentProfile().getFirstName();
+//        boolean isFbLoggedIn = mPreferences.getBoolean("FBLoggedIn", false);
+
+        boolean isFbLoggedIn = getBoolPref("FBLoggedIn", false,getContext());
+
+        if (isFbLoggedIn) {
+
+            list = root.findViewById(R.id.postsList);
+            final Button refreshBtn = root.findViewById(R.id.refreshBtn);
+
+//            String title = getContext().getResources().getString(R.string.fbSocialFeed);
+//            String loggedInUser = Profile.getCurrentProfile().getFirstName();
 
 //        getActivity().getActionBar().setTitle("e");
 //    getActivity().setTitle("e");//         .setTitle(title + " for : "+ loggedInUser);
 
-        refreshBtn.setText("Download Feed");
-        refreshBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            //Re downloads the list
-            public void onClick(View v) {
+            refreshBtn.setText("Download Feed");
+            refreshBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                //Re downloads the list
+                public void onClick(View v) {
 
-                refreshBtn.setText("Refresh Feed");
-                new postsOfUser().execute();
-            }
-        });
+                    refreshBtn.setText("Refresh Feed");
+                    new postsOfUser().execute();
+                }
+            });
+        }
+
+        // if user isn't logged in on fb then go to the sign in fragment
+        else {
+            startActivity(new Intent(getContext(), FbSignInActivity.class));
+        }
         return root;
+
     }
 
     class postsOfUser extends AsyncTask<String, String, String> { // pass list view here
@@ -77,13 +98,12 @@ public class FacebookUsersPage extends Fragment {
         String tag = this.getClass().getSimpleName();
 
         // Gets value from the the SharedPreferences
-        int limit = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE).getInt("MaxFbNum",20);
+        //int limit = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE).getInt("MaxFbNum",20);
+        int limit = getIntPref("MaxFbNum",20,getContext());
 
         String[] userPosts;
 
         StringBuffer buffer;
-
-        private AccessToken accessToken = AccessToken.getCurrentAccessToken();
 
         @Override
         protected void onPreExecute() {
@@ -95,18 +115,19 @@ public class FacebookUsersPage extends Fragment {
             userPosts = new String[limit];
 
             String username = Profile.getCurrentProfile().getName();
-            makeNotify("Feed Updated ",username+ " you feed is being downloaded",FacebookUsersPage.class,"FB feed Download",false);
+            makeNotify("Feed Updated ",username+ " you feed was downloaded",FacebookUsersPage.class,"FB feed Download",false);
         }
 
         @Override
         protected String doInBackground(String... params) {
-            String access_token = "&access_token=" + accessToken.getToken();
+            String access_token = "&access_token=" + AccessToken.getCurrentAccessToken().getToken();
 
             HttpURLConnection conn = null;
             BufferedReader reader = null;
 
             String link = "https://graph.facebook.com/v4.0/me?fields=posts.limit(" + limit + ")" +access_token;
 
+            Log.e(tag,access_token);
             try {
 //                URL url = new URL("https://graph.facebook.com/v4.0/me?fields=posts.limit(20)" + access_token);
                 URL url = new URL(link);
@@ -167,6 +188,19 @@ public class FacebookUsersPage extends Fragment {
                     }
                 }
             });
+
+            list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    String itemValue = list.getItemAtPosition(position).toString(); // gets the text of the list item clicked
+
+                    if (itemValue != "") { // not blank item text
+                        Toast.makeText(getContext(),"You long clicked on item no." + (position+1)+ " of the list.", Toast.LENGTH_SHORT).show();
+                    }
+                    return false;
+                }
+            });
         }
 
         private void newItemsPopulate(String result) {
@@ -187,6 +221,11 @@ public class FacebookUsersPage extends Fragment {
             } catch (JSONException e) {
                 Log.e(tag, e.getMessage());
             }
+
+//            SharedPreferences.Editor editor = mPreferences.edit();
+//            editor.put
+//            editor.commit();
+
         }
 
         // makeNotify Method that creates a notification on the user's phone
@@ -195,7 +234,7 @@ public class FacebookUsersPage extends Fragment {
             NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context .NOTIFICATION_SERVICE);
 
             NotificationChannel notificationChannel = new NotificationChannel(id, id+" channel", NotificationManager.IMPORTANCE_HIGH);
-            notificationChannel.setDescription("Description of channel");
+            notificationChannel.setDescription(title);
 
             if (notificationChannel != null){
                 notificationManager.createNotificationChannel(notificationChannel);
@@ -205,11 +244,10 @@ public class FacebookUsersPage extends Fragment {
             PendingIntent openApp = PendingIntent.getActivity(getContext(),0,openIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getContext(), id)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.mipmap.download_icon)
                     .setContentTitle(title)
                     .setContentText(msg)
-                    .setLights(Color.RED, 1000, 1000)
-                    .setColor(Color.BLUE)
+                    .setLights(Color.BLUE, 1000, 1000)
                     .setAutoCancel(true)
                     .setDefaults(Notification.DEFAULT_ALL); // Vibrate,Sound & Lights are set
 

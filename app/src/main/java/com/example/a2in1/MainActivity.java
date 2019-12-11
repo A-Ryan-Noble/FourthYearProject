@@ -32,6 +32,9 @@ import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 
+import static com.example.a2in1.myPreferences.getBoolPref;
+import static com.example.a2in1.myPreferences.setBoolPref;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -95,9 +98,12 @@ public class MainActivity extends AppCompatActivity {
     public void logoutOfSites() {
         SharedPreferences mPreferences = getBaseContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
 
-        // Gets the sharedprefrences for both sites logged in status
-        boolean isFbLoggedIn = mPreferences.getBoolean("FBLoggedIn",false);
-        boolean isTwitterLoggedIn = mPreferences.getBoolean("TwitterLoggedIn",false);
+        // Gets the SharedPreferences for both sites logged in status
+        boolean isFbLoggedIn = getBoolPref("FBLoggedIn",false,getBaseContext());
+        boolean isTwitterLoggedIn = getBoolPref("TwitterLoggedIn",false,getBaseContext());
+
+//        boolean isFbLoggedIn = mPreferences.getBoolean("FBLoggedIn",false);
+//        boolean isTwitterLoggedIn = mPreferences.getBoolean("TwitterLoggedIn",false);
 
         boolean loggedOut = false;
 
@@ -105,9 +111,11 @@ public class MainActivity extends AppCompatActivity {
         if (isFbLoggedIn) {
             LoginManager.getInstance().logOut();
 
-            SharedPreferences.Editor editor = mPreferences.edit();
-            editor.putBoolean("FBLoggedIn",false);
-            editor.commit();
+            setBoolPref("FBLoggedIn",false,getBaseContext());
+
+//            SharedPreferences.Editor editor = mPreferences.edit();
+//            editor.putBoolean("FBLoggedIn",false);
+//            editor.commit();
 
             loggedOut = true;
 
@@ -126,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
             Twitter.initialize(twitterConfig);
 
             TwitterCore.getInstance().getSessionManager().clearActiveSession();
+
+            setBoolPref("TwitterLoggedIn",false,getBaseContext());
 
             loggedOut = true;
 
