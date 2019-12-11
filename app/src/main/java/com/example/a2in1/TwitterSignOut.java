@@ -7,12 +7,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.a2in1.ui.twitter.TwitterSignInFragment;
-import com.google.firebase.auth.FirebaseAuth;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
@@ -23,9 +21,7 @@ import static com.example.a2in1.myPreferences.setBoolPref;
 public class TwitterSignOut extends AppCompatActivity {
 
     private Intent returnIntent;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private static String tag;
+    private String tag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +44,6 @@ public class TwitterSignOut extends AppCompatActivity {
         Button signOutBtn = findViewById(R.id.logout_button);
         signOutBtn.setEnabled(true);
 
-        // Initializes the Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {}
-        };
-
         signOutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,13 +61,11 @@ public class TwitterSignOut extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mAuth.removeAuthStateListener(mAuthListener);
     }
 
     private void twitterSignOut() {
@@ -91,7 +77,6 @@ public class TwitterSignOut extends AppCompatActivity {
             // User clicked ok & is logged out of twitter
             public void onClick(DialogInterface dialog, int id) {
                 TwitterCore.getInstance().getSessionManager().clearActiveSession();
-                mAuth.signOut();
 
                 // Logged in status put into SharedPreferences for later
                 setBoolPref("TwitterLoggedIn",true, getBaseContext());

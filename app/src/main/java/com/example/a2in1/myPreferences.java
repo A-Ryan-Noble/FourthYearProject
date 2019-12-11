@@ -14,9 +14,9 @@ public class myPreferences {
         editor.commit();
     }
 
-    public static int getIntPref(String key, int defaultVal, Context context){
+    public static int getIntPref(String key, int defaultValue, Context context){
         SharedPreferences mPreferences = context.getSharedPreferences("savedDataFile", MODE_PRIVATE);
-        return mPreferences.getInt(key,defaultVal);
+        return mPreferences.getInt(key,defaultValue);
     }
 
     public static void setBoolPref(String key, boolean value, Context context){
@@ -26,8 +26,20 @@ public class myPreferences {
         editor.commit();
     }
 
-    public static boolean getBoolPref(String key, boolean defaultVal, Context context){
+    public static boolean getBoolPref(String key, boolean defaultValue, Context context){
         SharedPreferences mPreferences = context.getSharedPreferences("savedDataFile", MODE_PRIVATE);
-        return mPreferences.getBoolean(key,defaultVal);
+        return mPreferences.getBoolean(key,defaultValue);
+    }
+
+    public static void setStringPref(String key, String value, Context context){
+        SharedPreferences mPreferences = context.getSharedPreferences("savedDataFile",MODE_PRIVATE);
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    public static String getStringPref(String key, String defaultValue, Context context){
+        SharedPreferences mPreferences = context.getSharedPreferences("savedDataFile",MODE_PRIVATE);
+        return mPreferences.getString(key,defaultValue);
     }
 }

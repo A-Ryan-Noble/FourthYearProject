@@ -233,7 +233,7 @@ public class FacebookUsersPage extends Fragment {
 
             NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context .NOTIFICATION_SERVICE);
 
-            NotificationChannel notificationChannel = new NotificationChannel(id, id+" channel", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel notificationChannel = new NotificationChannel(id, id, NotificationManager.IMPORTANCE_HIGH);
             notificationChannel.setDescription(title);
 
             if (notificationChannel != null){
