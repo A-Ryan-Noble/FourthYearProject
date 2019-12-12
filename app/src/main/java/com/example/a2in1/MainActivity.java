@@ -6,7 +6,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.AppLaunchChecker;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -25,6 +25,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.material.navigation.NavigationView;
 import com.twitter.sdk.android.core.Twitter;
@@ -32,6 +33,7 @@ import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 
+import static com.example.a2in1.myPreferences.clearPrefs;
 import static com.example.a2in1.myPreferences.getBoolPref;
 import static com.example.a2in1.myPreferences.setBoolPref;
 
@@ -45,10 +47,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String sharedPrefFile = "savedDataFile";
-
-        SharedPreferences mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -58,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_FbButton, R.id.nav_TwitterButton,R.id.nav_FbContentButton,R.id.nav_FBPosting
+                R.id.nav_home, R.id.nav_FbButton, R.id.nav_TwitterButton,R.id.nav_TwitterFragButton,R.id.nav_FbContentButton,R.id.nav_FBPosting
         )
                 .setDrawerLayout(drawer)
                 .build();
@@ -66,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
-        //makeNotify("Welcome to 2in1","Welcome to my App!","WelcomeMsg");
     }
 
     @Override
@@ -82,40 +78,28 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
 
             case R.id.action_settings:
-//                Toast.makeText(this,"Settings Selected",Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this,SettingsActivity.class));
                 return true;
 
-            case R.id.logOutMenu: logoutOfSites();
-                Toast.makeText(this,"Logout Selected", Toast.LENGTH_SHORT).show();
-                return true;
+            case R.id.logOutMenu: logoutOfSites(); return true;
 
             default: return super.onOptionsItemSelected(item);
         }
     }
 
-    // User is logged out of Facebook and Twitter
+    // User is logged out of Facebook and Twitter if they're logged in
     public void logoutOfSites() {
-        SharedPreferences mPreferences = getBaseContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
-
         // Gets the SharedPreferences for both sites logged in status
         boolean isFbLoggedIn = getBoolPref("FBLoggedIn",false,getBaseContext());
         boolean isTwitterLoggedIn = getBoolPref("TwitterLoggedIn",false,getBaseContext());
 
-//        boolean isFbLoggedIn = mPreferences.getBoolean("FBLoggedIn",false);
-//        boolean isTwitterLoggedIn = mPreferences.getBoolean("TwitterLoggedIn",false);
-
         boolean loggedOut = false;
 
         // checks if facebook is logged in
-        if (isFbLoggedIn) {
+        if (AccessToken.getCurrentAccessToken()!=null) {
             LoginManager.getInstance().logOut();
 
-            setBoolPref("FBLoggedIn",false,getBaseContext());
-
-//            SharedPreferences.Editor editor = mPreferences.edit();
-//            editor.putBoolean("FBLoggedIn",false);
-//            editor.commit();
+            myPreferences.setBoolPref("FBLoggedIn",false,getBaseContext());
 
             loggedOut = true;
 
@@ -135,22 +119,28 @@ public class MainActivity extends AppCompatActivity {
 
             TwitterCore.getInstance().getSessionManager().clearActiveSession();
 
-            setBoolPref("TwitterLoggedIn",false,getBaseContext());
+            myPreferences.setBoolPref("TwitterLoggedIn",false,getBaseContext());
 
             loggedOut = true;
 
             Log.d("Logout","Logged out of Twitter");
         }
 
-        if (loggedOut == true) {
-            new Intent(getApplicationContext(), MainActivity.class);
+        if (loggedOut) {
+            new Intent(getBaseContext(), MainActivity.class);
 
-            // gets the users notification setting.
-            // If they didn't change it then it will remain as true or it will change to true/false
-            Boolean canNotifiy = mPreferences.getBoolean("notificationEnabled", true);
+            /* Gets the users notification setting.
+                 - If they didn't change it then it will remain as true or it will change to true/false */
+            boolean canNotifiy = getBoolPref("notificationEnabled", true,getBaseContext());
+
+            // clears the users preferences
+            clearPrefs(getBaseContext());
 
             if (canNotifiy) {
-                showNotification("Logged Out", "You have been logged out of your Social media on 2in1");
+                notify("Logged Out","You have been logged out of your social media on 2in1","Socials logout",1);
+            }
+            else {
+                Toast.makeText(this,"Logout Selected", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -162,12 +152,12 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    private void showNotification(String title, String msg) {
-        Log.d(log, "Notification method called");
+    public void notify(String title, String msg, String id, int code){
+        Log.d("Notifications", "Notification method called");
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        String id = "2in1 Notification";
+//        String id = "2in1 Notification";
         NotificationChannel notificationChannel = new NotificationChannel(id, title, NotificationManager.IMPORTANCE_HIGH);
         notificationChannel.setDescription(msg);
 
@@ -175,20 +165,19 @@ public class MainActivity extends AppCompatActivity {
 
         Intent openIntent = new Intent(getBaseContext(), MainActivity.class);
 
-        PendingIntent openApp = PendingIntent.getActivity(getBaseContext(), 0, openIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent openApp = PendingIntent.getActivity(getBaseContext(), code, openIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext(), id)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.notification_icon)
                 .setContentTitle(title)
                 .setContentText(msg)
-                .setLights(Color.BLUE, 1000, 1000)
-                .setColor(Color.MAGENTA)
+                .setLights(Color.BLUE, 2000, 1000)
+                .setColor(getResources().getColor(R.color.tealCol)) // Teal colour in hex
                 .setContentIntent(openApp) // When notification is clicked it will open Main Activity
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL); // Vibrate,Sound & Lights are all set
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getBaseContext());
-        notificationManagerCompat.notify(1000, notificationBuilder.build());
+        notificationManagerCompat.notify(code, notificationBuilder.build());
     }
-
 }

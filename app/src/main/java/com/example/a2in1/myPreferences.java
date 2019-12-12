@@ -42,4 +42,9 @@ public class myPreferences {
         SharedPreferences mPreferences = context.getSharedPreferences("savedDataFile",MODE_PRIVATE);
         return mPreferences.getString(key,defaultValue);
     }
+
+    public static void clearPrefs(Context context){
+        SharedPreferences mPreferences = context.getSharedPreferences("savedDataFile",MODE_PRIVATE);
+        mPreferences.edit().clear().commit();
+    }
 }

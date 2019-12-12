@@ -142,7 +142,6 @@ public class FacebookSignInFragment extends Fragment {
 
                     Log.d(log, "FB Logout");
                     signOutAlert("Facebook");
-
                 }
             }
         };
@@ -155,7 +154,7 @@ public class FacebookSignInFragment extends Fragment {
         builder.setMessage(getResources().getString(R.string.loggingOut) + " " + accountName);
         builder.show();
 
-        startActivity(new Intent(getContext(), FacebookSignInFragment.class));
+        startActivity(new Intent(getContext(), MainActivity.class));
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

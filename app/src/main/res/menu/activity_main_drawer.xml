@@ -6,15 +6,23 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:title="@string/homeScreen" />
+            android:title="@string/homeScreen"
+            android:icon="@drawable/ic_launcher_foreground"/>
+
         <item android:title="@string/accountSection">
             <menu>
                 <item
                     android:id="@+id/nav_FbButton"
-                    android:title="@string/fb"/>
+                    android:title="@string/fb"
+                    android:icon="@drawable/com_facebook_favicon_blue"/>
                 <item
                     android:id="@+id/nav_TwitterButton"
-                    android:title="@string/twitter" />
+                    android:title="@string/twitter"
+                    android:icon="@drawable/tw__ic_logo_default"/>
+                <item
+                    android:id="@+id/nav_TwitterFragButton"
+                    android:title="@string/twitter"
+                    android:icon="@drawable/tw__ic_logo_default"/>
             </menu>
         </item>
 
@@ -25,10 +33,12 @@
         <menu>
             <item
                 android:id="@+id/nav_FbContentButton"
-                android:title="@string/fbFeedGet"/>
+                android:title="@string/fbFeedGet"
+                android:icon="@drawable/download_icon_foreground"/>
             <item
                 android:id="@+id/nav_FBPosting"
-                android:title="@string/fbPosting"/>
+                android:title="@string/fbPosting"
+                android:icon="@drawable/upload_icon_foreground"/>
         </menu>
     </item>
 </menu>
