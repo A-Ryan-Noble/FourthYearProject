@@ -40,8 +40,6 @@ public class TwitterSignInFragment extends Fragment {
 
         tag = getClass().getName();
 
-        ViewModel root = ViewModelProviders.of(this).get(TwitterViewModel.class);
-
         //Configures twitter sdk
         TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY), getResources().getString(R.string.twitter_CONSUMER_SECRET));
 

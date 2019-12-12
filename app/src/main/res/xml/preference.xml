@@ -37,14 +37,15 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:id = "@+id/moreSettings"
-        android:title="@string/moreSetting">
+        android:id = "@+id/NotificationSettings"
+        android:title="@string/notify">
 
-        <Preference
-            android:title="@string/otherSettings"
-            android:key="moreSet"
-            app:summary="@string"
-        />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="notificationSwitch"
+            android:summaryOff="Notifications are Disabled"
+            android:summaryOn="Notifications are enabled"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

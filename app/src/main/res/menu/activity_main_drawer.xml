@@ -7,7 +7,7 @@
         <item
             android:id="@+id/nav_home"
             android:title="@string/homeScreen"
-            android:icon="@drawable/ic_launcher_foreground"/>
+            android:icon="@drawable/home_icon_foreground"/>
 
         <item android:title="@string/accountSection">
             <menu>
@@ -19,11 +19,7 @@
                     android:id="@+id/nav_TwitterButton"
                     android:title="@string/twitter"
                     android:icon="@drawable/tw__ic_logo_default"/>
-                <item
-                    android:id="@+id/nav_TwitterFragButton"
-                    android:title="@string/twitter"
-                    android:icon="@drawable/tw__ic_logo_default"/>
-            </menu>
+                </menu>
         </item>
 
     </group>
