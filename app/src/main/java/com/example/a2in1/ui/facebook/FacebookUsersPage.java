@@ -6,7 +6,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -42,7 +40,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.example.a2in1.myPreferences.getBoolPref;
 import static com.example.a2in1.myPreferences.getIntPref;
 
@@ -51,27 +48,33 @@ public class FacebookUsersPage extends Fragment {
     private ListView list;
     private String log = getClass().getSimpleName();
 
-    private SharedPreferences mPreferences;
+    String[] imageUrl;
+    String[] msgTags;
+    String[] userPosts;
+
+    int limit;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_facebook_users_page, container, false);
-
-//        mPreferences = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE);
-
-//        boolean isFbLoggedIn = mPreferences.getBoolean("FBLoggedIn", false);
 
         boolean isFbLoggedIn = getBoolPref("FBLoggedIn", false,getContext());
 
         if (isFbLoggedIn) {
 
+            // Gets value from the the SharedPreferences
+            limit = getIntPref("MaxFbNum",5,getContext());
+
+            userPosts = new String[limit];
+
+            imageUrl = new String[limit]; // Used to store the url of an image in a message
+
+            // Used to store a given Message tags.
+            // If message doesn't have a tag then empty value at the index
+            msgTags = new String[limit];
+
             list = root.findViewById(R.id.postsList);
+
             final Button refreshBtn = root.findViewById(R.id.refreshBtn);
-
-//            String title = getContext().getResources().getString(R.string.fbSocialFeed);
-//            String loggedInUser = Profile.getCurrentProfile().getFirstName();
-
-//        getActivity().getActionBar().setTitle("e");
-//    getActivity().setTitle("e");//         .setTitle(title + " for : "+ loggedInUser);
 
             refreshBtn.setText("Download Feed");
             refreshBtn.setOnClickListener(new View.OnClickListener() {
@@ -90,18 +93,17 @@ public class FacebookUsersPage extends Fragment {
             startActivity(new Intent(getContext(), FbSignInActivity.class));
         }
         return root;
-
     }
 
     class postsOfUser extends AsyncTask<String, String, String> { // pass list view here
 
         String tag = this.getClass().getSimpleName();
 
-        // Gets value from the the SharedPreferences
-        //int limit = getContext().getSharedPreferences("savedDataFile", MODE_PRIVATE).getInt("MaxFbNum",20);
-        int limit = getIntPref("MaxFbNum",20,getContext());
+        int limit = FacebookUsersPage.this.limit;
 
-        String[] userPosts;
+        String[] imageUrl = FacebookUsersPage.this.imageUrl;
+        String[] msgTags = FacebookUsersPage.this.msgTags;
+        String[] userPosts = FacebookUsersPage.this.userPosts;
 
         StringBuffer buffer;
 
@@ -112,8 +114,6 @@ public class FacebookUsersPage extends Fragment {
             {
                 limit = 20;
             }
-            userPosts = new String[limit];
-
             String username = Profile.getCurrentProfile().getName();
             makeNotify("Feed Updated ",username+ " you feed was downloaded",FacebookUsersPage.class,"FB feed Download",false);
         }
@@ -125,11 +125,18 @@ public class FacebookUsersPage extends Fragment {
             HttpURLConnection conn = null;
             BufferedReader reader = null;
 
-            String link = "https://graph.facebook.com/v4.0/me?fields=posts.limit(" + limit + ")" +access_token;
 
-            Log.e(tag,access_token);
+//me/feed?fields=picture,message,message_tags&limit=
+//            String link = "https://graph.facebook.com/v4.0/me/feed?fields=picture,message,message_tags" +access_token;
+
+//            String link = "https://graph.facebook.com/v4.0/me?fields=posts.limit(" + limit + ")" +access_token;
+            String link = "https://graph.facebook.com/v5.0/me/feed?fields=picture%2Cmessage%2Cmessage_tags&limit(" + limit + ")" +access_token;
+
+//            curl -i -X GET \
+// "https://graph.facebook.com/v5.0/me/feed?fields=picture%2Cmessage%2Cmessage_tags&limit(5)&access_token="
+
             try {
-//                URL url = new URL("https://graph.facebook.com/v4.0/me?fields=posts.limit(20)" + access_token);
+//                URL imageUrl = new URL("https://graph.facebook.com/v4.0/me?fields=posts.limit(20)" + access_token);
                 URL url = new URL(link);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.connect();
@@ -171,6 +178,7 @@ public class FacebookUsersPage extends Fragment {
             super.onPostExecute(s);
 
             newItemsPopulate(s);
+
             ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, userPosts);
 
             arrayAdapter.notifyDataSetChanged();
@@ -197,6 +205,20 @@ public class FacebookUsersPage extends Fragment {
 
                     if (itemValue != "") { // not blank item text
                         Toast.makeText(getContext(),"You long clicked on item no." + (position+1)+ " of the list.", Toast.LENGTH_SHORT).show();
+
+                        if (imageUrl[position]== null) {
+                            Toast.makeText(getContext(), "Image url is null", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+
+                            Intent itemView = new Intent(getContext(),FeedItemView.class);
+
+                            itemView.putExtra("msg",userPosts[position]);
+                            itemView.putExtra("hashtags",msgTags[position]);
+                            itemView.putExtra("Url",imageUrl[position]);
+
+                            startActivity(itemView);
+                        }
                     }
                     return false;
                 }
@@ -204,7 +226,7 @@ public class FacebookUsersPage extends Fragment {
         }
 
         private void newItemsPopulate(String result) {
-            for (int i = 0; i < userPosts.length; i++) {
+            for (int i = 0; i < limit; i++) {
                 userPosts[i] = "";
             }
             listUpdate(result);
@@ -214,18 +236,55 @@ public class FacebookUsersPage extends Fragment {
             try {
                 JSONObject feedUser = new JSONObject(feed);
 
-                JSONArray obj = feedUser.getJSONObject("posts").getJSONArray("data"); // this gets the posts data
-                for (int i = 0; i < obj.length(); i++) {
-                    userPosts[i] = obj.getJSONObject(i).getString("message"); // This gets only the message part of the array
+                JSONArray obj = feedUser.getJSONArray("data"); // this gets the posts data
+
+                for (int i = 0; i < obj.length() && i < limit; i++) {
+
+                    String msg = "Post doesn't have a message";
+
+                    try {
+                        msg = obj.getJSONObject(i).getString("message"); // This gets only the message part of the array
+                    }
+                    catch (JSONException e){
+                        Log.e(tag + " Message not found at index " + i,e.getMessage());
+                    }
+
+                    String imgUrl;
+
+                    try {
+                        imgUrl = obj.getJSONObject(i).getString("picture");
+                    }
+                    catch (JSONException e){
+                        Log.e(tag + " Url for image not found at index " + i,e.getMessage());
+                        imgUrl = null;
+                    }
+
+                    String[] tags;
+
+                    try {
+                        JSONArray tagArr = obj.getJSONObject(i).getJSONArray("message_tags"); // Gets the array of tags
+
+                        tags = new String[tagArr.length()];
+
+                        for (int j = 0; j < tagArr.length(); j++){
+                            tags[j] = tagArr.getJSONObject(j).getString("name");
+                        }
+                    }
+                    catch (JSONException e){
+                        Log.e(tag + " No tags found at index " + i,e.getMessage());
+
+                        tags = new String[1];
+                        tags[0] = null;
+                    }
+
+                    userPosts[i] = msg;
+                    imageUrl[i] = imgUrl;
+                    tags[i] = tag;
+//                    userPosts[i] = ""+obj.getJSONObject(i).getString("message"); // This gets only the message part of the array
                 }
             } catch (JSONException e) {
                 Log.e(tag, e.getMessage());
             }
-
-//            SharedPreferences.Editor editor = mPreferences.edit();
-//            editor.put
-//            editor.commit();
-
         }
 
         // makeNotify Method that creates a notification on the user's phone

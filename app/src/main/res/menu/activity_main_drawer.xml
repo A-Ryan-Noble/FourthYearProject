@@ -6,7 +6,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:title="@string/homeScreen"
+            android:title="@string/home"
             android:icon="@drawable/home_icon_foreground"/>
 
         <item android:title="@string/accountSection">

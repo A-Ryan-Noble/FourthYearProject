@@ -4,7 +4,7 @@
     <string name="signInMsg">Please click to sign in to the account: </string>
     <string name="fbSignedIn"> Your already signed in,\n\nYou can click below to logout</string>
     <string name="signedIn"> Your already signed in.\nClick below to logout or go back</string>
-    <string name="mainMenu">Home</string>
+    <string name="home">Home</string>
     <string name="logout">Sign out</string>
     <string name="fb">Facebook</string>
     <string name="fb_profileDes">Facebook Profile picture</string>
@@ -20,10 +20,9 @@
     <string name="postWish">Wish to post</string>
     <string name="refresh">Refresh</string>
     <string name="downloadFeed">Download Feed</string>
-    <string name="aboutQuestion">What is 2 in 1?</string>
-    <string name="aboutMsg">2 in 1 is Android application made by Ryan Noble ,B00097070, for his fourth year thesis project.</string>
-    <string name="aboutMsg2">Submitted and created as part of Bachelor of Science (Honours).</string>
-    <string name="aboutMsg3">2 in 1 is an app that implements both Facebook SDK and Twitter SDK into the android application.</string>
+    <string name="FeedPicDesp">Picture from Feed</string>
+    <string name="noHashtags">No Hastags found</string>
+    <string name="noMsg">No Messages</string>
 
 
     <!--  Important Facebook & Twitter values -->
@@ -35,7 +34,6 @@
 
     <!--  Navigation list menu  -->
     <string name="action_settings">Settings</string>
-    <string name="homeScreen">Home</string>
     <string name="accountSection">Account Details</string>
     <string name="fbSocialFeed">Facebook Feed</string>
     <string name="fbFeedGet">View Your Posts</string>
@@ -49,5 +47,11 @@
     <string name="notify">Notifications</string>
     <string name="about2in1App">About this App</string>
     <string name="feedAmountAlertMsg">Number cannot be</string>
+
+    <!--    About Preference Screen -->
+    <string name="aboutQuestion">What is 2 in 1?</string>
+    <string name="aboutMsg">2 in 1 is Android application made by Ryan Noble ,B00097070, for his fourth year thesis project.</string>
+    <string name="aboutMsg2">Submitted and created as part of Bachelor of Science (Honours).</string>
+    <string name="aboutMsg3">2 in 1 is an app that implements both Facebook SDK and Twitter SDK into the android application.</string>
 
 </resources>
