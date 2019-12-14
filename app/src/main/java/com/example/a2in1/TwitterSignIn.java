@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import com.example.a2in1.ui.twitter.TwitterSignInFragment;
 import com.twitter.sdk.android.core.Callback;
@@ -22,9 +21,8 @@ import static com.example.a2in1.myPreferences.setBoolPref;
 public class TwitterSignIn extends AppCompatActivity {
 
     private TwitterLoginButton twitterLoginBtn;
-    private Intent returnIntent;
 
-    private static String log = "Twitter";
+    private String log = getClass().getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +38,9 @@ public class TwitterSignIn extends AppCompatActivity {
 
         setContentView(R.layout.activity_twitter_sign_in);
 
-        returnIntent = new Intent(this, TwitterSignInFragment.class);
+        setTitle(getTitle().toString() + " Sign in");
+
+        final Intent returnIntent = new Intent(this, TwitterSignInFragment.class);
 
         twitterLoginBtn = (TwitterLoginButton) findViewById(R.id.login_button);
 
@@ -69,21 +69,5 @@ public class TwitterSignIn extends AppCompatActivity {
 
         // Passes the activity result to the login button.
         twitterLoginBtn.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public void goBack(View view){
-        returnIntent.putExtra("result", "Cancelled");
-        setResult(RESULT_CANCELED, returnIntent);
-        finish();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 }

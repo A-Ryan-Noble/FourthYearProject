@@ -10,7 +10,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
 
-import com.example.a2in1.About2in1;
+import com.example.a2in1.fragmentRedirects.About2in1;
 import com.example.a2in1.R;
 import static com.example.a2in1.myPreferences.setIntPref;
 import static com.example.a2in1.myPreferences.setBoolPref;

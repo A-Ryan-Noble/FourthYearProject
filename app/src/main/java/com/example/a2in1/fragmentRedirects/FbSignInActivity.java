@@ -1,4 +1,4 @@
-package com.example.a2in1;
+package com.example.a2in1.fragmentRedirects;
 
 import android.os.Bundle;
 

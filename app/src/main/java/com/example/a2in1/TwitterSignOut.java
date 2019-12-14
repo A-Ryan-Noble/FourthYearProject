@@ -21,7 +21,7 @@ import static com.example.a2in1.myPreferences.setBoolPref;
 public class TwitterSignOut extends AppCompatActivity {
 
     private Intent returnIntent;
-    private String tag;
+    private String log = getClass().getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class TwitterSignOut extends AppCompatActivity {
 
         setContentView(R.layout.activity_twitter_sign_out);
 
-        tag = "Twitter";
+        setTitle(getTitle().toString() + " Sign out" );
 
         returnIntent = new Intent(this, TwitterSignInFragment.class);
 
@@ -52,22 +52,6 @@ public class TwitterSignOut extends AppCompatActivity {
         });
     }
 
-    public void goBack(View view) {
-        returnIntent.putExtra("result", "Cancelled");
-        setResult(RESULT_CANCELED, returnIntent);
-        finish();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     private void twitterSignOut() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -77,11 +61,10 @@ public class TwitterSignOut extends AppCompatActivity {
             // User clicked ok & is logged out of twitter
             public void onClick(DialogInterface dialog, int id) {
                 TwitterCore.getInstance().getSessionManager().clearActiveSession();
-
                 // Logged in status put into SharedPreferences for later
-                setBoolPref("TwitterLoggedIn",true, getBaseContext());
+                setBoolPref("TwitterLoggedIn",false, getBaseContext());
 
-                Log.d(tag, "Signed out of Twitter");
+                Log.d(log, "Signed out of Twitter");
                 returnIntent.putExtra("result", "LoggedOut");
                 setResult(RESULT_OK, returnIntent);
                 finish();

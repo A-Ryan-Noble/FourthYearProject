@@ -24,8 +24,9 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.a2in1.FbSignInActivity;
 import com.example.a2in1.R;
+import com.example.a2in1.fragmentRedirects.FbSignInActivity;
+import com.example.a2in1.fragmentRedirects.FeedItemView;
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 
@@ -36,6 +37,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -125,18 +127,10 @@ public class FacebookUsersPage extends Fragment {
             HttpURLConnection conn = null;
             BufferedReader reader = null;
 
-
-//me/feed?fields=picture,message,message_tags&limit=
-//            String link = "https://graph.facebook.com/v4.0/me/feed?fields=picture,message,message_tags" +access_token;
-
 //            String link = "https://graph.facebook.com/v4.0/me?fields=posts.limit(" + limit + ")" +access_token;
             String link = "https://graph.facebook.com/v5.0/me/feed?fields=picture%2Cmessage%2Cmessage_tags&limit(" + limit + ")" +access_token;
 
-//            curl -i -X GET \
-// "https://graph.facebook.com/v5.0/me/feed?fields=picture%2Cmessage%2Cmessage_tags&limit(5)&access_token="
-
             try {
-//                URL imageUrl = new URL("https://graph.facebook.com/v4.0/me?fields=posts.limit(20)" + access_token);
                 URL url = new URL(link);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.connect();
@@ -211,7 +205,7 @@ public class FacebookUsersPage extends Fragment {
                         }
                         else {
 
-                            Intent itemView = new Intent(getContext(),FeedItemView.class);
+                            Intent itemView = new Intent(getContext(), FeedItemView.class);
 
                             itemView.putExtra("msg",userPosts[position]);
                             itemView.putExtra("hashtags",msgTags[position]);
@@ -259,27 +253,29 @@ public class FacebookUsersPage extends Fragment {
                         imgUrl = null;
                     }
 
-                    String[] tags;
+                    String tagText ="";
 
                     try {
                         JSONArray tagArr = obj.getJSONObject(i).getJSONArray("message_tags"); // Gets the array of tags
 
-                        tags = new String[tagArr.length()];
+                        int amount= tagArr.length();
 
-                        for (int j = 0; j < tagArr.length(); j++){
-                            tags[j] = tagArr.getJSONObject(j).getString("name");
+                        for (int j = 0; j< amount; j++){
+                            tagText += tagArr.getJSONObject(j).getString("name") + " ";
                         }
                     }
                     catch (JSONException e){
                         Log.e(tag + " No tags found at index " + i,e.getMessage());
 
-                        tags = new String[1];
-                        tags[0] = null;
+                        tagText = null;
                     }
 
                     userPosts[i] = msg;
                     imageUrl[i] = imgUrl;
-                    tags[i] = tag;
+                    msgTags[i] = tagText;
+
+                    Log.e("zzz",tagText+"");
+
 //                    userPosts[i] = ""+obj.getJSONObject(i).getString("message"); // This gets only the message part of the array
                 }
             } catch (JSONException e) {

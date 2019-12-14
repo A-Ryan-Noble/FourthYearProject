@@ -16,7 +16,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.AppLaunchChecker;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -25,6 +24,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.a2in1.fragmentRedirects.SettingsActivity;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.material.navigation.NavigationView;
@@ -35,7 +35,6 @@ import com.twitter.sdk.android.core.TwitterCore;
 
 import static com.example.a2in1.myPreferences.clearPrefs;
 import static com.example.a2in1.myPreferences.getBoolPref;
-import static com.example.a2in1.myPreferences.setBoolPref;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
 
             case R.id.action_settings:
-                startActivity(new Intent(this,SettingsActivity.class));
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
 
             case R.id.logOutMenu: logoutOfSites(); return true;

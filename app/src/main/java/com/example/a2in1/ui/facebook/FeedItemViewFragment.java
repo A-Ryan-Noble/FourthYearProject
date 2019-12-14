@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.example.a2in1.LoadImage;
 import com.example.a2in1.R;
 
-public class FeedItemView extends Fragment {
+public class FeedItemViewFragment extends Fragment {
 
 
 
@@ -24,10 +24,10 @@ public class FeedItemView extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_feed_item_view, container, false);
 
-        String name = getActivity().getIntent().getExtras().getString("msg");
-
-        String hasht = getActivity().getIntent().getExtras().getString("hashtags");
-        String urlTxt = getActivity().getIntent().getExtras().getString("Url");
+//        String name = getActivity().getIntent().getExtras().getString("msg");
+//
+//        String hasht = getActivity().getIntent().getExtras().getString("hashtags");
+//        String urlTxt = getActivity().getIntent().getExtras().getString("Url");
 
         // TODO: 13/12/2019 load in image 
         
@@ -37,8 +37,8 @@ public class FeedItemView extends Fragment {
         ImageView pic = (ImageView)root.findViewById(R.id.feedPic);
 
 
-        LoadImage loadImage = new LoadImage(pic);
-        loadImage.execute(urlTxt);
+//        LoadImage loadImage = new LoadImage(pic);
+//        loadImage.execute(urlTxt);
 
         return root;
     }

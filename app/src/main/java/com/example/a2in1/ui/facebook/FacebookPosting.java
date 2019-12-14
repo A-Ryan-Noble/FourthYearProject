@@ -2,7 +2,6 @@ package com.example.a2in1.ui.facebook;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import com.example.a2in1.FbSignInActivity;
+import com.example.a2in1.fragmentRedirects.FbSignInActivity;
 import com.example.a2in1.R;
 import com.facebook.CallbackManager;
 import com.facebook.Profile;
