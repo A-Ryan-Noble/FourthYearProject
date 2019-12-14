@@ -6,9 +6,13 @@ import android.os.AsyncTask;
 import android.widget.ImageView;
 
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class LoadImage extends AsyncTask<String, Void, Bitmap> {
     ImageView imgView;
+
+    String log = getClass().getSimpleName();
 
     public LoadImage(ImageView view) {
         this.imgView = view;
@@ -20,9 +24,22 @@ public class LoadImage extends AsyncTask<String, Void, Bitmap> {
         Bitmap bitmap = null;
 
         try {
-            InputStream input = new java.net.URL(urlLink).openStream();
-            bitmap = BitmapFactory.decodeStream(input);
+            URL url = new URL(urlLink);
+
+            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+
+//            InputStream stream = connection.getInputStream();
+//            URL url = new URL(link);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.connect();
+
+            InputStream stream = conn.getInputStream();
+
+            bitmap = BitmapFactory.decodeStream(stream, null,null);
+
+            return bitmap;
         }
+
         catch (Exception e) {
             e.printStackTrace();
         }

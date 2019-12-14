@@ -42,15 +42,13 @@ public class FacebookSignInFragment extends Fragment {
 
     private boolean isLoggedIn;
 
-    private String log = "FacebookSignInFragment";
-
-    private TextView loginTxt;
+    private String log = getClass().getSimpleName();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_facebook_sign_in_out, container, false);
 
-        loginTxt  = root.findViewById(R.id.loginTxtView);
+        TextView loginTxt  = root.findViewById(R.id.loginTxtView);
 
         LoginButton fbLoginBtn = root.findViewById(R.id.fbLoginButton);
         fbLoginBtn.setReadPermissions(Arrays.asList("email", "public_profile","user_status"));

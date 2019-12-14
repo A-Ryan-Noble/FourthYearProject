@@ -37,7 +37,6 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,13 +47,12 @@ import static com.example.a2in1.myPreferences.getIntPref;
 public class FacebookUsersPage extends Fragment {
 
     private ListView list;
-    private String log = getClass().getSimpleName();
 
-    String[] imageUrl;
-    String[] msgTags;
-    String[] userPosts;
+    private String[] imageUrl;
+    private String[] msgTags;
+    private String[] userPosts;
 
-    int limit;
+    private int limit;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_facebook_users_page, container, false);
@@ -66,7 +64,7 @@ public class FacebookUsersPage extends Fragment {
             // Gets value from the the SharedPreferences
             limit = getIntPref("MaxFbNum",5,getContext());
 
-            userPosts = new String[limit];
+            userPosts = new String[limit];// Used to store the message
 
             imageUrl = new String[limit]; // Used to store the url of an image in a message
 
@@ -89,7 +87,6 @@ public class FacebookUsersPage extends Fragment {
                 }
             });
         }
-
         // if user isn't logged in on fb then go to the sign in fragment
         else {
             startActivity(new Intent(getContext(), FbSignInActivity.class));
@@ -200,19 +197,17 @@ public class FacebookUsersPage extends Fragment {
                     if (itemValue != "") { // not blank item text
                         Toast.makeText(getContext(),"You long clicked on item no." + (position+1)+ " of the list.", Toast.LENGTH_SHORT).show();
 
-                        if (imageUrl[position]== null) {
-                            Toast.makeText(getContext(), "Image url is null", Toast.LENGTH_SHORT).show();
-                        }
-                        else {
+//                        if (imageUrl[position]== null) {
+//                            Toast.makeText(getContext(), "Image url is null", Toast.LENGTH_SHORT).show();
+//                        }
+//                        else {
 
                             Intent itemView = new Intent(getContext(), FeedItemView.class);
-
                             itemView.putExtra("msg",userPosts[position]);
                             itemView.putExtra("hashtags",msgTags[position]);
                             itemView.putExtra("Url",imageUrl[position]);
-
                             startActivity(itemView);
-                        }
+//                        }
                     }
                     return false;
                 }
@@ -274,9 +269,7 @@ public class FacebookUsersPage extends Fragment {
                     imageUrl[i] = imgUrl;
                     msgTags[i] = tagText;
 
-                    Log.e("zzz",tagText+"");
-
-//                    userPosts[i] = ""+obj.getJSONObject(i).getString("message"); // This gets only the message part of the array
+                    //                    userPosts[i] = ""+obj.getJSONObject(i).getString("message"); // This gets only the message part of the array
                 }
             } catch (JSONException e) {
                 Log.e(tag, e.getMessage());

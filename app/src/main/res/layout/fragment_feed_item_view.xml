@@ -16,7 +16,8 @@
         <TextView
             android:id="@+id/feedMsg"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="90dp"
+            android:padding="10dp"
             android:text="@string/noMsg"
             android:textAlignment="center"
             android:textAllCaps="false"
@@ -26,7 +27,7 @@
         <TextView
             android:id="@+id/feedHastags"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="60dp"
             android:height="80dp"
             android:text="@string/noHashtags"
             android:textAlignment="center"
@@ -38,9 +39,10 @@
         android:id="@+id/feedPic"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignWithParentIfMissing="false"
+        android:layout_alignWithParentIfMissing="true"
         android:layout_below="@+id/msgsFeedItem"
+        android:layout_marginTop="25dp"
         android:contentDescription="@string/FeedPicDesp"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
 
 </RelativeLayout>

@@ -22,6 +22,7 @@
     <string name="downloadFeed">Download Feed</string>
     <string name="FeedPicDesp">Picture from Feed</string>
     <string name="noHashtags">No Hastags found</string>
+    <string name="hashtags">Hashtags: </string>
     <string name="noMsg">No Messages</string>
 
 
@@ -53,5 +54,8 @@
     <string name="aboutMsg">2 in 1 is Android application made by Ryan Noble ,B00097070, for his fourth year thesis project.</string>
     <string name="aboutMsg2">Submitted and created as part of Bachelor of Science (Honours).</string>
     <string name="aboutMsg3">2 in 1 is an app that implements both Facebook SDK and Twitter SDK into the android application.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
