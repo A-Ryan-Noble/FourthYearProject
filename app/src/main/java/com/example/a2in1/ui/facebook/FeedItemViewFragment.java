@@ -1,7 +1,5 @@
 package com.example.a2in1.ui.facebook;
 
-
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.a2in1.LoadImage;
 import com.example.a2in1.R;
 import com.squareup.picasso.Picasso;
 
@@ -33,31 +30,32 @@ public class FeedItemViewFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_feed_item_view, container, false);
 
-        // TODO: 14/12/2019 load in image
-
-        int maxHeight = root.getMeasuredHeight();
-        int maxWidth = root.getMeasuredWidth();
         TextView msg = (TextView) root.findViewById(R.id.feedMsg);
-        TextView hashtag = (TextView) root.findViewById(R.id.feedHastags);
-        final ImageView pic = (ImageView)root.findViewById(R.id.feedPic);
+        TextView tags = (TextView) root.findViewById(R.id.feedHastags);
+        ImageView pic = (ImageView)root.findViewById(R.id.feedPic);
+
+        String hashTag = getResources().getString(R.string.hashtags);
 
         msg.setText(message);
-        if (hashtag != null) {
-            hashtag.setText(getResources().getString(R.string.hashtags) + hashtags);
+        if (tags != null) {
+            tags.setText(hashTag + hashtags);
+        }
+        else {
+            tags.setText(hashTag + "NONE");
         }
 
         if (imageUrl != null) {
+            Log.d(log,"Image from Post is displayed");
+
             pic.setVisibility(View.VISIBLE);
             Picasso.with(getContext()).load(imageUrl).fit().centerInside().into(pic);
             Toast.makeText(getContext(), "NOTE: Image may appear blurry", Toast.LENGTH_LONG).show();
         }
         else {
-            pic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.com_facebook_favicon_blue));
+            Log.d(log, "Value of image variable was null");
         }
 
         pic.setClickable(true);

@@ -47,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.toolbarTextCol));
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -75,40 +77,45 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
 
             case R.id.action_settings:
+                Log.d(log, "Settings Option selected");
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
 
-            case R.id.logOutMenu: logoutOfSites(); return true;
+            case R.id.logOutMenu:
+                Log.d(log, "Logout Option selected");
+                logoutOfSites();
+                return true;
 
-            default: return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
     // User is logged out of Facebook and Twitter if they're logged in
     public void logoutOfSites() {
         // Gets the SharedPreferences for both sites logged in status
-        boolean isFbLoggedIn = getBoolPref("FBLoggedIn",false,getBaseContext());
-        boolean isTwitterLoggedIn = getBoolPref("TwitterLoggedIn",false,getBaseContext());
+        boolean isFbLoggedIn = getBoolPref("FBLoggedIn", false, getBaseContext());
+        boolean isTwitterLoggedIn = getBoolPref("TwitterLoggedIn", false, getBaseContext());
 
         boolean loggedOut = false;
 
         // checks if facebook is logged in
-        if (AccessToken.getCurrentAccessToken()!=null) {
+        if (AccessToken.getCurrentAccessToken() != null) {
             LoginManager.getInstance().logOut();
 
-            myPreferences.setBoolPref("FBLoggedIn",false,getBaseContext());
+            myPreferences.setBoolPref("FBLoggedIn", false, getBaseContext());
 
             loggedOut = true;
 
-            Log.d("Logout","Logged out of Facebook");
+            Log.d("Logout", "Logged out of Facebook");
         }
 
         // checks if Twitter is logged in
 //        if (TwitterCore.getInstance().getSessionManager().getActiveSession() != null) {
-        if (isTwitterLoggedIn){
+        if (isTwitterLoggedIn) {
 
             TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY), getResources().getString(R.string.twitter_CONSUMER_SECRET));
 
@@ -119,11 +126,11 @@ public class MainActivity extends AppCompatActivity {
 
             TwitterCore.getInstance().getSessionManager().clearActiveSession();
 
-            myPreferences.setBoolPref("TwitterLoggedIn",false,getBaseContext());
+            myPreferences.setBoolPref("TwitterLoggedIn", false, getBaseContext());
 
             loggedOut = true;
 
-            Log.d("Logout","Logged out of Twitter");
+            Log.d("Logout", "Logged out of Twitter");
         }
 
         if (loggedOut) {
@@ -131,16 +138,15 @@ public class MainActivity extends AppCompatActivity {
 
             /* Gets the users notification setting.
                  - If they didn't change it then it will remain as true or it will change to true/false */
-            boolean canNotifiy = getBoolPref("notificationEnabled", true,getBaseContext());
+            boolean canNotifiy = getBoolPref("notificationEnabled", true, getBaseContext());
 
             // clears the users preferences
             clearPrefs(getBaseContext());
 
             if (canNotifiy) {
-                notify("Logged Out","You have been logged out of your social media on 2in1","Socials logout",1);
-            }
-            else {
-                Toast.makeText(this,"Logout Selected", Toast.LENGTH_SHORT).show();
+                notify("Logged Out", "You have been logged out of your social media on 2in1", "Socials logout", 1);
+            } else {
+                Toast.makeText(this, "Logout Selected", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -152,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    public void notify(String title, String msg, String id, int code){
+    public void notify(String title, String msg, String id, int code) {
         Log.d("Notifications", "Notification method called");
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -174,8 +180,29 @@ public class MainActivity extends AppCompatActivity {
                 .setLights(Color.BLUE, 2000, 1000)
                 .setColor(getResources().getColor(R.color.tealCol)) // Teal colour in hex
                 .setContentIntent(openApp) // When notification is clicked it will open Main Activity
-                .setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_ALL); // Vibrate,Sound & Lights are all set
+                .setAutoCancel(true);
+
+        boolean isSoundEnabled = getBoolPref("soundEnabled", true, getBaseContext());
+        boolean isVibrateEnabled = getBoolPref("vibrateEnabled", true, getBaseContext());
+        boolean isLightEnabled = getBoolPref("lightEnabled", true, getBaseContext());
+
+        // Checks to see if all the device methods of alerting the user are enabled in app settings
+        // if all are enabled then all are set as notification default
+        if (isSoundEnabled && isVibrateEnabled && isLightEnabled) {
+            notificationBuilder.setDefaults(Notification.DEFAULT_ALL);
+        }
+        // checks the individual methods if they're enabled
+        else {
+            if (isSoundEnabled) {
+                notificationBuilder.setDefaults(Notification.DEFAULT_SOUND); // Sound is set to notification builder
+            }
+            if (isVibrateEnabled) {
+                notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE); // Vibrate is set to notification builder
+            }
+            if (isLightEnabled) {
+                notificationBuilder.setDefaults(Notification.DEFAULT_LIGHTS); // Light is set to notification builder
+            }
+        }
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getBaseContext());
         notificationManagerCompat.notify(code, notificationBuilder.build());

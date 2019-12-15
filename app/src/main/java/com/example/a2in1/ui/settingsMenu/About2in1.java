@@ -11,7 +11,6 @@ public class About2in1 extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-
         addPreferencesFromResource(R.xml.about_app);
     }
 }

@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -20,6 +21,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
@@ -197,17 +199,22 @@ public class FacebookUsersPage extends Fragment {
                     if (itemValue != "") { // not blank item text
                         Toast.makeText(getContext(),"You long clicked on item no." + (position+1)+ " of the list.", Toast.LENGTH_SHORT).show();
 
-//                        if (imageUrl[position]== null) {
-//                            Toast.makeText(getContext(), "Image url is null", Toast.LENGTH_SHORT).show();
-//                        }
-//                        else {
-
+                        // Alerts the user that their isnt a reason to view it in more detail
+                        if (imageUrl[position] == null && msgTags[position] == null) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            builder.setMessage("There is only this text content for this item");
+                            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {}
+                            });
+                            builder.show();
+                        }
+                        else {
                             Intent itemView = new Intent(getContext(), FeedItemView.class);
                             itemView.putExtra("msg",userPosts[position]);
-                            itemView.putExtra("hashtags",msgTags[position]);
+                            itemView.putExtra("tags",msgTags[position]);
                             itemView.putExtra("Url",imageUrl[position]);
                             startActivity(itemView);
-//                        }
+                        }
                     }
                     return false;
                 }
@@ -268,8 +275,6 @@ public class FacebookUsersPage extends Fragment {
                     userPosts[i] = msg;
                     imageUrl[i] = imgUrl;
                     msgTags[i] = tagText;
-
-                    //                    userPosts[i] = ""+obj.getJSONObject(i).getString("message"); // This gets only the message part of the array
                 }
             } catch (JSONException e) {
                 Log.e(tag, e.getMessage());

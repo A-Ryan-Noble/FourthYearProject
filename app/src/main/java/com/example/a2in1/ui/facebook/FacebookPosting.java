@@ -67,6 +67,8 @@ public class FacebookPosting extends Fragment {
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
+                // TODO Implement other share dialogs
+                // https://developers.facebook.com/docs/sharing/android?sdk=fbsdk
                 callbackManager = CallbackManager.Factory.create();
                 ShareDialog shareDialog = new ShareDialog(getParentFragment());
 
@@ -78,7 +80,7 @@ public class FacebookPosting extends Fragment {
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(getContext(), getResources().getString(R.string.cancel) + "ed Post", Toast.LENGTH_SHORT).show(); // cancel message
+                Toast.makeText(getContext(), getResources().getString(R.string.cancel) + "ed Post", Toast.LENGTH_SHORT).show(); // Canceled message
             }
         });
         builder.setIcon(R.mipmap.upload_icon);

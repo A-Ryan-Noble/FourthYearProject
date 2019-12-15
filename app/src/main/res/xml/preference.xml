@@ -1,51 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-        android:id="@+id/About"
-        android:key="about"
         android:title="@string/about">
-
         <Preference
             android:key="aboutApp"
-            android:title="@string/about2in1App"/>
+            android:title="@string/about2in1App"
+            android:icon="@mipmap/question_mark_icon_round"/> <!-- Icon downloaded from https://icons8.com -->
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:id="@+id/AccountSettings"
-        android:key="FeedAmounts"
-        android:title="@string/accountSection">
-
-        <EditTextPreference
-            android:dialogLayout="@layout/preference_edit_text"
-            android:inputType="number"
-            android:key="MaxFbPosts"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:summary="How many posts in your Feed"
-            android:title="@string/maxFbPostNumInput" />
-
-        <EditTextPreference
-            android:dialogLayout="@layout/preference_edit_text"
-            android:inputType="number"
-            android:key="MaxTweets"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:summary="How many Tweets in your feed?"
-            android:title="@string/maxTweetNumInput" />
+        android:title="@string/conSocials">
+        <Preference
+            android:key="accounts"
+            android:title="@string/accountSection"
+            android:icon="@drawable/account_icon_foreground"/>
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:id = "@+id/NotificationSettings"
-        android:title="@string/notify">
-
-        <SwitchPreference
-            android:defaultValue="true"
-            android:persistent="true"
-            android:key="notificationSwitch"
-            android:summaryOff="Notifications are Disabled"
-            android:summaryOn="Notifications are enabled"/>
+        android:title="@string/notifySets">
+        <Preference
+            android:key="notify"
+            android:title="@string/notify"
+            android:icon="@drawable/notification_icon_foreground"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:id = "@+id/NotificationSettings"
+        android:title="@string/notify">
+
+        <SwitchPreference
+            android:title="@string/notify"
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="notificationSwitch"
+            android:summaryOff="Notifications are Disabled"
+            android:summaryOn="Notifications are enabled"
+            android:icon="@mipmap/active_notifications_icon"/>
+    </PreferenceCategory>
+
+    <SwitchPreference
+        app:dependency="notificationSwitch"
+        android:title="Sound"
+        android:defaultValue="true"
+        android:persistent="true"
+        android:key="soundSwitch"
+        android:summaryOff="Sound won't be used in Notifications"
+        android:summaryOn="Sound will be used in Notifications"
+        android:icon="@mipmap/sound_on_icon_foreground"> <!-- Icons downloaded from https://icons8.com -->
+    </SwitchPreference>
+
+    <SwitchPreference
+        app:dependency="notificationSwitch"
+        android:title="Vibrate"
+        android:defaultValue="true"
+        android:persistent="true"
+        android:key="vibrateSwitch"
+        android:summaryOff="Device won't vibrate with the Notifications"
+        android:summaryOn="Device will vibrate with the Notifications"
+        android:icon="@mipmap/vibrate_on_icon_round">
+    </SwitchPreference>
+
+    <SwitchPreference
+        app:dependency="notificationSwitch"
+        android:title="light"
+        android:defaultValue="true"
+        android:persistent="true"
+        android:key="lightSwitch"
+        android:summaryOff="Light won't be used in Notifications"
+        android:summaryOn="Light will be used in Notifications"
+        android:icon="@mipmap/light_on_icon_foreground"> <!-- Icons downloaded from https://icons8.com -->
+    </SwitchPreference>
+
+</PreferenceScreen>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="29dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:text="@string/aboutMsg"
+        android:textAlignment="center"
+        android:textColor="#004D40"
+        android:textSize="20sp"
+        android:textStyle="normal|bold" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_marginTop="29dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:text="@string/aboutMsg2"
+        android:textAlignment="center"
+        android:textColor="#A52020"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="29dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:text="@string/aboutMsg3"
+        android:textAlignment="center"
+        android:textColor="#0B2C63"
+        android:textSize="20sp"
+        android:textStyle="normal"
+        android:visibility="visible" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_marginTop="29dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:text="@string/aboutMsg4"
+        android:textAlignment="center"
+        android:textColor="#3C69BB"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        android:visibility="visible" />
+</RelativeLayout>

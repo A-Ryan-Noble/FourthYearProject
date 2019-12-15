@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:id="@+id/AccountSettings"
+        android:key="FeedAmounts"
+        android:title="@string/accountSection">
+
+        <EditTextPreference
+            android:dialogLayout="@layout/preference_edit_text"
+            android:inputType="number"
+            android:key="MaxFbPosts"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="How many posts in your Feed"
+            android:title="@string/maxFbPostNumInput" />
+
+        <EditTextPreference
+            android:dialogLayout="@layout/preference_edit_text"
+            android:inputType="number"
+            android:key="MaxTweets"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="How many Tweets in your feed?"
+            android:title="@string/maxTweetNumInput" />
+    </PreferenceCategory>
+    
+</PreferenceScreen>
