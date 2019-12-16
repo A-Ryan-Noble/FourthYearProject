@@ -116,7 +116,15 @@ public class FacebookUsersPage extends Fragment {
                 limit = 20;
             }
             String username = Profile.getCurrentProfile().getName();
-            makeNotify("Feed Updated ",username+ " you feed was downloaded",FacebookUsersPage.class,"FB feed Download",false);
+
+            boolean canNotify = getBoolPref("notificationEnabled",true,getContext());
+
+            if (canNotify){
+                makeNotify("Feed Updated ",username+ " you feed was downloaded",FacebookUsersPage.class,"FB feed Download",false);
+            }
+            else {
+                Toast.makeText(getContext(),"Feed Updated "+ username+ " you feed was downloaded", Toast.LENGTH_SHORT).show();
+            }
         }
 
         @Override
@@ -282,7 +290,7 @@ public class FacebookUsersPage extends Fragment {
         }
 
         // makeNotify Method that creates a notification on the user's phone
-        public void makeNotify(String title, String msg, Class name, String id, boolean openable){
+        private void makeNotify(String title, String msg, Class name, String id, boolean openable){
 
             NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context .NOTIFICATION_SERVICE);
 
@@ -301,9 +309,29 @@ public class FacebookUsersPage extends Fragment {
                     .setContentTitle(title)
                     .setContentText(msg)
                     .setLights(Color.BLUE, 1000, 1000)
-                    .setAutoCancel(true)
-                    .setDefaults(Notification.DEFAULT_ALL); // Vibrate,Sound & Lights are set
+                    .setAutoCancel(true);
 
+            boolean isSoundEnabled = getBoolPref("soundEnabled", true, getContext());
+            boolean isVibrateEnabled = getBoolPref("vibrateEnabled", true, getContext());
+            boolean isLightEnabled = getBoolPref("lightEnabled", true, getContext());
+
+            // Checks to see if all the device methods of alerting the user are enabled in app settings
+            // if all are enabled then all are set as notification default
+            if (isSoundEnabled && isVibrateEnabled && isLightEnabled) {
+                notificationBuilder.setDefaults(Notification.DEFAULT_ALL);
+            }
+            // checks the individual methods if they're enabled
+            else {
+                if (isSoundEnabled) {
+                    notificationBuilder.setDefaults(Notification.DEFAULT_SOUND); // Sound is set to notification builder
+                }
+                if (isVibrateEnabled) {
+                    notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE); // Vibrate is set to notification builder
+                }
+                if (isLightEnabled) {
+                    notificationBuilder.setDefaults(Notification.DEFAULT_LIGHTS); // Light is set to notification builder
+                }
+            }
             if (openable){
                 notificationBuilder.setContentIntent(openApp);// When notification is clicked it will open
             }
