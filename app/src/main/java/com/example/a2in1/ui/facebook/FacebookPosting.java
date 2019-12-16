@@ -108,15 +108,16 @@ public class FacebookPosting extends Fragment {
                 // How to share a picture info learned from: https://developers.facebook.com/docs/sharing/android?sdk=fbsdk
                 ShareDialog shareDialog = new ShareDialog(getParentFragment());
 
-                if (img != null){
+                if (img != null) {
                     SharePhoto photo = new SharePhoto.Builder().setBitmap(img).build();
 
                     ShareContent shareContent = new ShareMediaContent.Builder().addMedium(photo).build();
 
                     shareDialog.show(shareContent, ShareDialog.Mode.AUTOMATIC);
+                } else {
+                    //Facebook Share link content builder for just text
+                    shareDialog.show(new ShareLinkContent.Builder().build());
                 }
-                //Facebook Share link content builder for just text
-                shareDialog.show(new ShareLinkContent.Builder().build());
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
