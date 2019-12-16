@@ -23,13 +23,17 @@
     <string name="fbFeedGet">View Your Posts</string>
     <string name="fbPosting">Posting to Facebook</string>
 
+    <string name="postPic">Add a picture to your post</string>
+    <string name="postVideo">Add a video to your post</string>
+
+
     <!-- Settings Preference Screen -->
     <string name="settings">Settings</string>
     <string name="about">About</string>
     <string name="about2in1App">About this App</string>
     <string name="conSocials">Connected Socials</string>
     <string name="notifySets">Notification Settings</string>
-    <string name="notify">Notifications</string>
+    <string name="notifications">Notifications</string>
 
     <!--    About Preference Screen -->
     <string name="aboutQuestion">What is 2 in 1?</string>
@@ -44,8 +48,17 @@
     <string name="maxTweetNumInput">Limit Tweets amount</string>
 
     <!--    Notifications Preference Screen -->
-
-
+    <string name="notificationsOffTxt">Notifications are Disabled</string>
+    <string name="notificationsOnTxt">Notifications are enabled</string>
+    <string name="sound">Sound</string>
+    <string name="soundOffTxt">Sound will not be used in Notifications</string>
+    <string name="soundOnTxt">Sound will be used in Notifications</string>
+    <string name="vibrate">Vibrate</string>
+    <string name="vibrateOffTxt">Device will not vibrate with the Notifications</string>
+    <string name="vibrateOnTxt">Device will vibrate with the Notifications</string>
+    <string name="light">Light</string>
+    <string name="lightOffTxt">Light will not be used in Notifications</string>
+    <string name="lightOnTxt">Light will be used in Notifications</string>
 
     <!--  Social Sites Text -->
     <string name="createPost">Create Post</string>
@@ -55,10 +68,13 @@
     <string name="refresh">Refresh</string>
     <string name="downloadFeed">Download Feed</string>
     <string name="FeedPicDesp">Picture from Feed</string>
-    <string name="noHashtags">No Hastags found</string>
+    <string name="noHashtags">No Hashtags found</string>
     <string name="hashtags">Hashtags: </string>
     <string name="noMsg">No Messages</string>
     <string name="feedTitle">Item from Feed</string>
+    <string name="sharingTo">Sharing to</string>
+    <string name="picAdded">Picture added!</string>
+    <string name="vidAdded">Video added!</string>
 
     <!--  Important Facebook & Twitter values -->
     <string name="facebook_app_id">763430430754593</string>

@@ -22,7 +22,7 @@
         android:title="@string/notifySets">
         <Preference
             android:key="notify"
-            android:title="@string/notify"
+            android:title="@string/notifications"
             android:icon="@drawable/notification_icon_foreground"/>
     </PreferenceCategory>
 

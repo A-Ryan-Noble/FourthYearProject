@@ -4,48 +4,48 @@
 
     <PreferenceCategory
         android:id = "@+id/NotificationSettings"
-        android:title="@string/notify">
+        android:title="@string/notifications">
 
         <SwitchPreference
-            android:title="@string/notify"
+            android:title="@string/notifications"
             android:defaultValue="true"
             android:persistent="true"
             android:key="notificationSwitch"
-            android:summaryOff="Notifications are Disabled"
-            android:summaryOn="Notifications are enabled"
+            android:summaryOff="@string/notificationsOffTxt"
+            android:summaryOn="@string/notificationsOnTxt"
             android:icon="@mipmap/active_notifications_icon"/>
     </PreferenceCategory>
 
     <SwitchPreference
         app:dependency="notificationSwitch"
-        android:title="Sound"
+        android:title="@string/sound"
         android:defaultValue="true"
         android:persistent="true"
         android:key="soundSwitch"
-        android:summaryOff="Sound won't be used in Notifications"
-        android:summaryOn="Sound will be used in Notifications"
+        android:summaryOff="@string/soundOffTxt"
+        android:summaryOn="@string/soundOnTxt"
         android:icon="@mipmap/sound_on_icon_foreground"> <!-- Icons downloaded from https://icons8.com -->
     </SwitchPreference>
 
     <SwitchPreference
         app:dependency="notificationSwitch"
-        android:title="Vibrate"
+        android:title="@string/vibrate"
         android:defaultValue="true"
         android:persistent="true"
         android:key="vibrateSwitch"
-        android:summaryOff="Device won't vibrate with the Notifications"
-        android:summaryOn="Device will vibrate with the Notifications"
+        android:summaryOff="@string/vibrateOnTxt"
+        android:summaryOn="@string/vibrateOffTxt"
         android:icon="@mipmap/vibrate_on_icon_round">
     </SwitchPreference>
 
     <SwitchPreference
         app:dependency="notificationSwitch"
-        android:title="light"
+        android:title="@string/light"
         android:defaultValue="true"
         android:persistent="true"
         android:key="lightSwitch"
-        android:summaryOff="Light won't be used in Notifications"
-        android:summaryOn="Light will be used in Notifications"
+        android:summaryOff="@string/lightOnTxt"
+        android:summaryOn="@string/lightOffTxt"
         android:icon="@mipmap/light_on_icon_foreground"> <!-- Icons downloaded from https://icons8.com -->
     </SwitchPreference>
 
