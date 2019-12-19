@@ -3,8 +3,5 @@
     <color name="appPrimaryColor">#008577</color>
     <color name="colorAccent">#D81B60</color>
     <color name="tealCol">#008080</color>
-    <color name="toolbarTextColLight">#07DCF1</color>
-<!--    <color name="toolbarTextCol">#000000</color>-->
-<!--    <color name="darkYellow">#F0F00F</color>-->
-    <color name="toolbarTextCol">#F0F00F</color>
+    <color name="darkYellow">#F0F00F</color>
 </resources>

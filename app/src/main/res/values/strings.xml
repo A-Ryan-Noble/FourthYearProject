@@ -68,7 +68,7 @@
     <string name="refresh">Refresh</string>
     <string name="downloadFeed">Download Feed</string>
     <string name="FeedPicDesp">Picture from Feed</string>
-    <string name="noHashtags">No Hashtags found</string>
+    <string name="noHashtags">No Hashtags</string>
     <string name="hashtags">Hashtags: </string>
     <string name="noMsg">No Messages</string>
     <string name="feedTitle">Item from Feed</string>

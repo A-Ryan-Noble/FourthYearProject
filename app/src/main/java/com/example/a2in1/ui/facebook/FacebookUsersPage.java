@@ -71,7 +71,7 @@ public class FacebookUsersPage extends Fragment {
             imageUrl = new String[limit]; // Used to store the url of an image in a message
 
             // Used to store a given Message tags.
-            // If message doesn't have a tag then empty value at the index
+            // If message doesn't have a log then empty value at the index
             msgTags = new String[limit];
 
             list = root.findViewById(R.id.postsList);
@@ -98,7 +98,7 @@ public class FacebookUsersPage extends Fragment {
 
     class postsOfUser extends AsyncTask<String, String, String> { // pass list view here
 
-        String tag = this.getClass().getSimpleName();
+        String log = this.getClass().getSimpleName();
 
         int limit = FacebookUsersPage.this.limit;
 
@@ -149,14 +149,14 @@ public class FacebookUsersPage extends Fragment {
 
                 while ((line = reader.readLine()) != null) {
                     buffer.append((line + "\n"));
-                    Log.d(tag, " " + line);
                 }
 
+                Log.d(log, "Downloaded");
                 return buffer.toString();
             } catch (MalformedURLException e) {
-                Log.e(tag, "Malformed URL: " + e.getMessage());
+                Log.e(log, "Malformed URL: " + e.getMessage());
             } catch (IOException e) {
-                Log.e(tag, "IO Exception: " + e.getMessage());
+                Log.e(log, "IO Exception: " + e.getMessage());
             }
             // closes everything that was opened
             finally {
@@ -168,7 +168,7 @@ public class FacebookUsersPage extends Fragment {
                         reader.close();
                     }
                 } catch (IOException e) {
-                    Log.e(tag, e.getMessage());
+                    Log.e(log, e.getMessage());
                 }
             }
             return null;
@@ -190,22 +190,11 @@ public class FacebookUsersPage extends Fragment {
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String itemValue = list.getItemAtPosition(position).toString(); // gets the text of the list item clicked
-
-                    if (itemValue != "") { // not blank item text
-                        Toast.makeText(getContext(), itemValue, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-
-            list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
                     String itemValue = list.getItemAtPosition(position).toString(); // gets the text of the list item clicked
 
                     if (itemValue != "") { // not blank item text
-                        Toast.makeText(getContext(),"You long clicked on item no." + (position+1)+ " of the list.", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getContext(),"You long clicked on item no." + (position+1)+ " of the list.", Toast.LENGTH_SHORT).show();
 
                         // Alerts the user that their isnt a reason to view it in more detail
                         if (imageUrl[position] == null && msgTags[position] == null) {
@@ -224,6 +213,19 @@ public class FacebookUsersPage extends Fragment {
                             startActivity(itemView);
                         }
                     }
+                }
+            });
+
+            list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    String itemValue = list.getItemAtPosition(position).toString(); // gets the text of the list item clicked
+
+                    if (itemValue != "") { // not blank item text
+                        Toast.makeText(getContext(), itemValue, Toast.LENGTH_SHORT).show();
+                    }
+
                     return false;
                 }
             });
@@ -250,7 +252,7 @@ public class FacebookUsersPage extends Fragment {
                         msg = obj.getJSONObject(i).getString("message"); // This gets only the message part of the array
                     }
                     catch (JSONException e){
-                        Log.e(tag + " Message not found at index " + i,e.getMessage());
+                        Log.e(log + " Message not found at index " + i,e.getMessage());
                     }
 
                     String imgUrl;
@@ -259,7 +261,7 @@ public class FacebookUsersPage extends Fragment {
                         imgUrl = obj.getJSONObject(i).getString("picture");
                     }
                     catch (JSONException e){
-                        Log.e(tag + " Url for image not found at index " + i,e.getMessage());
+                        Log.e(log + " Url for image not found at index " + i,e.getMessage());
                         imgUrl = null;
                     }
 
@@ -275,7 +277,7 @@ public class FacebookUsersPage extends Fragment {
                         }
                     }
                     catch (JSONException e){
-                        Log.e(tag + " No tags found at index " + i,e.getMessage());
+                        Log.e(log + " No tags found at index " + i,e.getMessage());
 
                         tagText = null;
                     }
@@ -285,7 +287,7 @@ public class FacebookUsersPage extends Fragment {
                     msgTags[i] = tagText;
                 }
             } catch (JSONException e) {
-                Log.e(tag, e.getMessage());
+                Log.e(log, e.getMessage());
             }
         }
 

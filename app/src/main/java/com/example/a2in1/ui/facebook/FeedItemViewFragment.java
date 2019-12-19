@@ -40,11 +40,12 @@ public class FeedItemViewFragment extends Fragment {
         String hashTag = getResources().getString(R.string.hashtags);
 
         msg.setText(message);
-        if (tags != null) {
+
+        if (hashtags != null) {
             tags.setText(hashTag + hashtags);
         }
         else {
-            tags.setText(hashTag + "NONE");
+            tags.setText(getResources().getString(R.string.noHashtags));
         }
 
         if (imageUrl != null) {
@@ -52,7 +53,7 @@ public class FeedItemViewFragment extends Fragment {
 
             pic.setVisibility(View.VISIBLE);
             Picasso.with(getContext()).load(imageUrl).fit().centerInside().into(pic);
-            Toast.makeText(getContext(), "NOTE: Image may appear blurry", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "NOTE: Image may appear blurry", Toast.LENGTH_SHORT).show();
         }
         else {
             Log.d(log, "Value of image variable was null");

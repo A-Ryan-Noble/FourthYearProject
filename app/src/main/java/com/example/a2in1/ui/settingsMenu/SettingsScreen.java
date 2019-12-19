@@ -21,11 +21,11 @@ public class SettingsScreen extends PreferenceFragmentCompat {
 
         addPreferencesFromResource(R.xml.preference);
 
-        Preference aboutApp = findPreference("aboutApp"); // Account Item
+        Preference aboutApp = findPreference("aboutApp"); // About screen
 
-        Preference accounts = findPreference("accounts"); // Account Item
+        Preference accounts = findPreference("accounts"); // User social media account settings
 
-        Preference notify = findPreference("notify"); // Account Item
+        Preference notify = findPreference("notify"); // App Notification Settings
 
         // User clicks to go to their view what the app is about
         aboutApp.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
