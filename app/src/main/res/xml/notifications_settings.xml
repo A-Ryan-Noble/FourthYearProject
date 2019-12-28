@@ -33,8 +33,8 @@
         android:defaultValue="true"
         android:persistent="true"
         android:key="vibrateSwitch"
-        android:summaryOff="@string/vibrateOnTxt"
-        android:summaryOn="@string/vibrateOffTxt"
+        android:summaryOff="@string/vibrateOffTxt"
+        android:summaryOn="@string/vibrateOnTxt"
         android:icon="@mipmap/vibrate_on_icon_round">
     </SwitchPreference>
 
@@ -44,8 +44,8 @@
         android:defaultValue="true"
         android:persistent="true"
         android:key="lightSwitch"
-        android:summaryOff="@string/lightOnTxt"
-        android:summaryOn="@string/lightOffTxt"
+        android:summaryOff="@string/lightOffTxt"
+        android:summaryOn="@string/lightOnTxt"
         android:icon="@mipmap/light_on_icon_foreground"> <!-- Icons downloaded from https://icons8.com -->
     </SwitchPreference>
 

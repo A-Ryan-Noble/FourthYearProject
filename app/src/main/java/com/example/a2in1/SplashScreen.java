@@ -14,7 +14,7 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splach_screen);
 
-        int timeout = 2000; // How long the screen is on for
+        int timeout = 1750; // How long the screen is on for
 
         new Handler().postDelayed(
                 new Runnable() {
