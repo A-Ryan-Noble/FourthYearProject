@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.a2in1.MainActivity;
@@ -30,6 +32,14 @@ public class TwitterSignInFragment extends Fragment {
 
     private static final int TWITTER_CODE = 2;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.activity_twitter_sign_in, container, false);
     }
@@ -46,7 +56,7 @@ public class TwitterSignInFragment extends Fragment {
 
         super.onActivityCreated(savedInstanceState);
 
-        // if user isnt logged in, it calls activity to be able to login
+        // if user isn't logged in, it calls activity to be able to login
         if (TwitterCore.getInstance().getSessionManager().getActiveSession() == null) {
             Intent login = new Intent(getContext(), TwitterSignIn.class);
             startActivityForResult(login, TWITTER_CODE);
@@ -68,7 +78,7 @@ public class TwitterSignInFragment extends Fragment {
                 Log.d(log, "Twitter login Activity: Cancelled");
             } else if ((intent.getStringExtra("result") == "LoggedIn")) {
                 Log.d(log, "Twitter Activity: Logged In");
-            } else {
+            } else if ((intent.getStringExtra("result") == "LoggedOut")) {
                 Log.d(log, "Twitter Activity: Logged out");
             }
             // Acts as a fragment refresher

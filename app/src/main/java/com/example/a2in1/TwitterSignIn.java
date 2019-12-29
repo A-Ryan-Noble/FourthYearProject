@@ -1,5 +1,6 @@
 package com.example.a2in1;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -27,6 +28,16 @@ public class TwitterSignIn extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // customised callback of phone back button
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Log.d(log,"Phone back button clicked. Redirecting to Home Screen");
+                startActivity(new Intent(getBaseContext(),MainActivity.class));
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this,callback);
 
         //Configures twitter sdk
         TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY), getResources().getString(R.string.twitter_CONSUMER_SECRET));

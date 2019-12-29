@@ -7,7 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.util.Log;
 
@@ -43,6 +46,20 @@ public class FacebookSignInFragment extends Fragment {
     private boolean isLoggedIn;
 
     private String log = getClass().getSimpleName();
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // customised callback of phone back button
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Log.d(log,"Phone back button clicked. Redirecting to Home Screen");
+                startActivity(new Intent(getContext(),MainActivity.class));
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this,callback);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 

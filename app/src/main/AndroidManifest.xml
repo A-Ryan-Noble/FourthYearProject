@@ -48,7 +48,9 @@
         <activity
             android:name=".fragmentRedirects.FeedItemView"
             android:label="@string/feedTitle"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+        </activity>/>
 
         <activity
             android:name=".fragmentRedirects.SettingsActivity"
