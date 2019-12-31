@@ -25,11 +25,4 @@
             android:summary="How many Tweets in your feed?"
             android:title="@string/maxTweetNumInput" />
     </PreferenceCategory>
-
-    <PreferenceCategory>
-        <Preference
-            android:key="logout"
-            android:title="@string/logout"/>
-    </PreferenceCategory>
-
 </PreferenceScreen>
