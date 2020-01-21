@@ -75,7 +75,7 @@
     <string name="feedTitle">Item from Feed</string>
     <string name="sharingTo">Sharing to</string>
     <string name="picAdded">Picture added!</string>
-    <string name="vidAdded">Video added!</string>
+    <string name="feedIcon">Social media icon</string>
 
     <!--  Important Facebook & Twitter values -->
     <string name="facebook_app_id">763430430754593</string>

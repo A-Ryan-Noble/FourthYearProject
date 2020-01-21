@@ -1,13 +1,8 @@
 package com.example.a2in1.ui.facebook;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,15 +12,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.a2in1.ListAdapt;
+import com.example.a2in1.Notifications;
 import com.example.a2in1.R;
 import com.example.a2in1.fragmentRedirects.FbSignInActivity;
 import com.example.a2in1.fragmentRedirects.FeedItemView;
@@ -54,14 +50,18 @@ public class FacebookUsersPage extends Fragment {
     private String[] msgTags;
     private String[] userPosts;
 
+    ImageView img;
+
     private int limit;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_facebook_users_page, container, false);
+//        View root = inflater.inflate(R.layout.custom, container, false);
 
         boolean isFbLoggedIn = getBoolPref("FBLoggedIn", false,getContext());
 
         if (isFbLoggedIn) {
+            img = root.findViewById(R.id.feedImage);
 
             // Gets value from the the SharedPreferences
             limit = getIntPref("MaxFbNum",5,getContext());
@@ -70,8 +70,7 @@ public class FacebookUsersPage extends Fragment {
 
             imageUrl = new String[limit]; // Used to store the url of an image in a message
 
-            // Used to store a given Message tags.
-            // If message doesn't have a log then empty value at the index
+            // Used to store a given Message tags. If message doesn't have a log then empty value at the index
             msgTags = new String[limit];
 
             list = root.findViewById(R.id.postsList);
@@ -120,7 +119,7 @@ public class FacebookUsersPage extends Fragment {
             boolean canNotify = getBoolPref("notificationEnabled",true,getContext());
 
             if (canNotify){
-                makeNotify("Feed Updated ",username+ " you feed was downloaded",FacebookUsersPage.class,"FB feed Download",false);
+                Notifications.notify("Feed Updated ", username+ " you feed was downloaded", "FB feed Download", 1000, this.getClass(), false, getContext());
             }
             else {
                 Toast.makeText(getContext(),"Feed Updated "+ username+ " you feed was downloaded", Toast.LENGTH_SHORT).show();
@@ -134,7 +133,6 @@ public class FacebookUsersPage extends Fragment {
             HttpURLConnection conn = null;
             BufferedReader reader = null;
 
-//            String link = "https://graph.facebook.com/v4.0/me?fields=posts.limit(" + limit + ")" +access_token;
             String link = "https://graph.facebook.com/v5.0/me/feed?fields=picture%2Cmessage%2Cmessage_tags&limit(" + limit + ")" +access_token;
 
             try {
@@ -180,12 +178,18 @@ public class FacebookUsersPage extends Fragment {
 
             newItemsPopulate(s);
 
-            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, userPosts);
+            //  ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,fbIcon);
 
-            arrayAdapter.notifyDataSetChanged();
+            ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,"fb");
+            adapt.notifyDataSetChanged();
+
+//            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, userPosts);
+
+//            arrayAdapter.notifyDataSetChanged();
 
             list.invalidateViews();
-            list.setAdapter(arrayAdapter);
+//            list.setAdapter(arrayAdapter);
+            list.setAdapter(adapt);
 
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -285,61 +289,12 @@ public class FacebookUsersPage extends Fragment {
                     userPosts[i] = msg;
                     imageUrl[i] = imgUrl;
                     msgTags[i] = tagText;
+
+
                 }
             } catch (JSONException e) {
                 Log.e(log, e.getMessage());
             }
-        }
-
-        // makeNotify Method that creates a notification on the user's phone
-        private void makeNotify(String title, String msg, Class name, String id, boolean openable){
-
-            NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context .NOTIFICATION_SERVICE);
-
-            NotificationChannel notificationChannel = new NotificationChannel(id, id, NotificationManager.IMPORTANCE_HIGH);
-            notificationChannel.setDescription(title);
-
-            if (notificationChannel != null){
-                notificationManager.createNotificationChannel(notificationChannel);
-            }
-
-            Intent openIntent = new Intent(getContext(), name);
-            PendingIntent openApp = PendingIntent.getActivity(getContext(),0,openIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getContext(), id)
-                    .setSmallIcon(R.mipmap.download_icon)
-                    .setContentTitle(title)
-                    .setContentText(msg)
-                    .setLights(Color.BLUE, 1000, 1000)
-                    .setAutoCancel(true);
-
-            boolean isSoundEnabled = getBoolPref("soundEnabled", true, getContext());
-            boolean isVibrateEnabled = getBoolPref("vibrateEnabled", true, getContext());
-            boolean isLightEnabled = getBoolPref("lightEnabled", true, getContext());
-
-            // Checks to see if all the device methods of alerting the user are enabled in app settings
-            // if all are enabled then all are set as notification default
-            if (isSoundEnabled && isVibrateEnabled && isLightEnabled) {
-                notificationBuilder.setDefaults(Notification.DEFAULT_ALL);
-            }
-            // checks the individual methods if they're enabled
-            else {
-                if (isSoundEnabled) {
-                    notificationBuilder.setDefaults(Notification.DEFAULT_SOUND); // Sound is set to notification builder
-                }
-                if (isVibrateEnabled) {
-                    notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE); // Vibrate is set to notification builder
-                }
-                if (isLightEnabled) {
-                    notificationBuilder.setDefaults(Notification.DEFAULT_LIGHTS); // Light is set to notification builder
-                }
-            }
-            if (openable){
-                notificationBuilder.setContentIntent(openApp);// When notification is clicked it will open
-            }
-
-            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getContext());
-            notificationManagerCompat.notify(1000, notificationBuilder.build());
         }
     }
 }

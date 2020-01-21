@@ -1,12 +1,6 @@
 package com.example.a2in1;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,8 +11,6 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -37,6 +29,7 @@ import com.twitter.sdk.android.core.TwitterCore;
 import static com.example.a2in1.myPreferences.clearPrefs;
 import static com.example.a2in1.myPreferences.getBoolPref;
 
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -48,13 +41,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         /* Customised callback of phone back button.
-        *   - Stops from going back to previous view that redirected back to home*/
+           - Stops from going back to previous view that redirected back to home
+        */
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 Log.d(log,"Phone back button clicked");
             }
         };
+
         getOnBackPressedDispatcher().addCallback(this,callback);
 
         setContentView(R.layout.nav_draw);
@@ -124,9 +119,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // checks if Twitter is logged in
-//        if (TwitterCore.getInstance().getSessionManager().getActiveSession() != null) {
         if (isTwitterLoggedIn) {
-
             TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY), getResources().getString(R.string.twitter_CONSUMER_SECRET));
 
             TwitterConfig twitterConfig = new TwitterConfig.Builder(this)
@@ -136,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
             TwitterCore.getInstance().getSessionManager().clearActiveSession();
 
-            myPreferences.setBoolPref("TwitterLoggedIn", false, getBaseContext());
+            myPreferences.setBoolPref("TwitterLoggedIn", false, this);
 
             loggedOut = true;
 
@@ -147,14 +140,16 @@ public class MainActivity extends AppCompatActivity {
             new Intent(getBaseContext(), MainActivity.class);
 
             /* Gets the users notification setting.
-                 - If they didn't change it then it will remain as true or it will change to true/false */
+               - If they didn't change it then it will remain as true or it will change to true/false
+            */
             boolean canNotifiy = getBoolPref("notificationEnabled", true, getBaseContext());
 
             // clears the users preferences
             clearPrefs(getBaseContext());
 
             if (canNotifiy) {
-                notify("Logged Out", "You have been logged out of your social media on 2in1", "Socials logout", 1);
+                Notifications.notify("Logged Out", "You have been logged out of your social media on 2in1","Socials logout",
+                        1, this.getClass(), true, getBaseContext());
             } else {
                 Toast.makeText(this, "Logout Selected", Toast.LENGTH_SHORT).show();
             }
@@ -166,55 +161,5 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
-    }
-
-    public void notify(String title, String msg, String id, int code) {
-        Log.d("Notifications", "Notification method called");
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-//        String id = "2in1 Notification";
-        NotificationChannel notificationChannel = new NotificationChannel(id, title, NotificationManager.IMPORTANCE_HIGH);
-        notificationChannel.setDescription(msg);
-
-        notificationManager.createNotificationChannel(notificationChannel);
-
-        Intent openIntent = new Intent(getBaseContext(), MainActivity.class);
-
-        PendingIntent openApp = PendingIntent.getActivity(getBaseContext(), code, openIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getBaseContext(), id)
-                .setSmallIcon(R.mipmap.notification_icon)
-                .setContentTitle(title)
-                .setContentText(msg)
-                .setLights(Color.BLUE, 2000, 1000)
-                .setColor(getResources().getColor(R.color.tealCol)) // Teal colour in hex
-                .setContentIntent(openApp) // When notification is clicked it will open Main Activity
-                .setAutoCancel(true);
-
-        boolean isSoundEnabled = getBoolPref("soundEnabled", true, getBaseContext());
-        boolean isVibrateEnabled = getBoolPref("vibrateEnabled", true, getBaseContext());
-        boolean isLightEnabled = getBoolPref("lightEnabled", true, getBaseContext());
-
-        // Checks to see if all the device methods of alerting the user are enabled in app settings
-        // if all are enabled then all are set as notification default
-        if (isSoundEnabled && isVibrateEnabled && isLightEnabled) {
-            notificationBuilder.setDefaults(Notification.DEFAULT_ALL);
-        }
-        // checks the individual methods if they're enabled
-        else {
-            if (isSoundEnabled) {
-                notificationBuilder.setDefaults(Notification.DEFAULT_SOUND); // Sound is set to notification builder
-            }
-            if (isVibrateEnabled) {
-                notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE); // Vibrate is set to notification builder
-            }
-            if (isLightEnabled) {
-                notificationBuilder.setDefaults(Notification.DEFAULT_LIGHTS); // Light is set to notification builder
-            }
-        }
-
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getBaseContext());
-        notificationManagerCompat.notify(code, notificationBuilder.build());
     }
 }
