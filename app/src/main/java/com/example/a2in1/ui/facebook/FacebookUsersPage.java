@@ -1,8 +1,8 @@
 package com.example.a2in1.ui.facebook;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -25,6 +24,8 @@ import com.example.a2in1.Notifications;
 import com.example.a2in1.R;
 import com.example.a2in1.fragmentRedirects.FbSignInActivity;
 import com.example.a2in1.fragmentRedirects.FeedItemView;
+import com.example.a2in1.api.feeds.APIService;
+import com.example.a2in1.models.FacebookPost;
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 
@@ -39,10 +40,18 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 import static com.example.a2in1.myPreferences.getBoolPref;
 import static com.example.a2in1.myPreferences.getIntPref;
 
 public class FacebookUsersPage extends Fragment {
+
+    private String log = this.getClass().getSimpleName();
 
     private ListView list;
 
@@ -50,28 +59,37 @@ public class FacebookUsersPage extends Fragment {
     private String[] msgTags;
     private String[] userPosts;
 
-    ImageView img;
+    private FacebookPost[] facebookPosts;
+
+    private Context context;
+
+//    ImageView img;
 
     private int limit;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_facebook_users_page, container, false);
-//        View root = inflater.inflate(R.layout.custom, container, false);
 
         boolean isFbLoggedIn = getBoolPref("FBLoggedIn", false,getContext());
 
         if (isFbLoggedIn) {
-            img = root.findViewById(R.id.feedImage);
+//            img = root.findViewById(R.id.feedImage);
+
+            context = getContext();
 
             // Gets value from the the SharedPreferences
-            limit = getIntPref("MaxFbNum",5,getContext());
+            limit = getIntPref("MaxFbNum",5,context);
 
-            userPosts = new String[limit];// Used to store the message
+            // If the array of posts is empty
+            if (facebookPosts == null) {
+                userPosts = new String[limit]; // Used to store the message
 
-            imageUrl = new String[limit]; // Used to store the url of an image in a message
+                imageUrl = new String[limit]; // Used to store the url of an image in a message
 
-            // Used to store a given Message tags. If message doesn't have a log then empty value at the index
-            msgTags = new String[limit];
+                msgTags = new String[limit]; // Used to store a given Message tags. If message doesn't have a log then empty value at the index
+
+                facebookPosts = new FacebookPost[limit];
+            }
 
             list = root.findViewById(R.id.postsList);
 
@@ -79,12 +97,85 @@ public class FacebookUsersPage extends Fragment {
 
             refreshBtn.setText("Download Feed");
             refreshBtn.setOnClickListener(new View.OnClickListener() {
+                // Re-downloads the list
                 @Override
-                //Re downloads the list
                 public void onClick(View v) {
 
                     refreshBtn.setText("Refresh Feed");
-                    new postsOfUser().execute();
+
+                    Retrofit retrofit = new Retrofit.Builder().baseUrl("https://graph.facebook.com/v5.0/me/").build();
+
+                    APIService service = retrofit.create(APIService.class);
+
+                    Call<ResponseBody> call = service.socialFeedItems(
+                            "feed?fields=picture%2Cmessage%2Cmessage_tags&access_token=" + AccessToken.getCurrentAccessToken().getToken(),
+                            limit);
+
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.isSuccessful()) {
+                                Log.d(log, "server contacted and has file");
+                                try {
+                                    String feed = response.body().string();
+
+                                    downloadNotify();
+
+                                    ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,"fb");
+                                    adapt.notifyDataSetChanged();
+
+                                    list.invalidateViews();
+                                    list.setAdapter(adapt);
+
+                                    UpdateUI(feed);
+                                    //Log.d("zzz",response.body().string());
+                                }
+                                catch (IOException e){
+                                    Log.e(log,e.getMessage());
+                                }
+                            }
+                            else {
+                                Log.e(log, "Failed to get URL");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                            Log.e(log, "Call Failed\n" + throwable.getMessage());
+                        }
+                    });
+
+                    list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                        @Override
+                        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                            String itemValue = list.getItemAtPosition(position).toString(); // gets the text of the list item clicked
+
+                            if (itemValue != "") { // not blank item text
+
+                                // Alerts the user that their isnt a reason to view it in more detail
+                                if (imageUrl[position] == null && msgTags[position] == null) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                                    builder.setMessage("There is only this text content for this item");
+                                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {}
+                                    });
+                                    builder.show();
+                                }
+                                else {
+                                    Intent itemView = new Intent(context, FeedItemView.class);
+                                    itemView.putExtra("msg",userPosts[position]);
+                                    itemView.putExtra("tags",msgTags[position]);
+                                    itemView.putExtra("Url",imageUrl[position]);
+                                    startActivity(itemView);
+                                }
+                            }
+                            return false;
+                        }
+                    });
+
+//                    new postsOfUser().execute()
                 }
             });
         }
@@ -95,6 +186,76 @@ public class FacebookUsersPage extends Fragment {
         return root;
     }
 
+    private void downloadNotify(){
+        if(limit>20)
+        {
+            limit = 20;
+        }
+
+        if (getBoolPref("notificationEnabled",true,context)){
+            Notifications.notify("Feed Updated ", Profile.getCurrentProfile().getName() + " you feed was downloaded",
+                    "FB feed Download", 1000, this.getClass(), false, context);
+        }
+        else {
+            Toast.makeText(context,"Feed Updated "+ Profile.getCurrentProfile().getName() + " you feed was downloaded", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void UpdateUI(String feed){
+        try {
+            JSONObject feedUser = new JSONObject(feed);
+
+            JSONArray  obj = feedUser.getJSONArray("data");
+
+            for (int i = 0; i < obj.length(); i++) {
+
+                String msg = "Post doesn't have a message";
+
+                try {
+                    msg = obj.getJSONObject(i).getString("message"); // This gets only the message part of the array
+                } catch (JSONException e) {
+                    Log.e(log + " Message not found at index " + i, e.getMessage());
+                }
+
+                String imgUrl;
+
+                try {
+                    imgUrl = obj.getJSONObject(i).getString("picture");
+                } catch (JSONException e) {
+                    Log.e(log + " Url for image not found at index " + i, e.getMessage());
+                    imgUrl = null;
+                }
+
+                String tagText = "";
+
+                try {
+                    JSONArray tagArr = obj.getJSONObject(i).getJSONArray("message_tags"); // Gets the array of tags
+
+                    int amount = tagArr.length();
+
+                    for (int j = 0; j < amount; j++) {
+                        tagText += tagArr.getJSONObject(j).getString("name") + " ";
+                    }
+                } catch (JSONException e) {
+                    Log.e(log + " No tags found at index " + i, e.getMessage());
+
+                    tagText = "None";
+                }
+
+                userPosts[i] = msg;
+                imageUrl[i] = imgUrl;
+                msgTags[i] = tagText;
+
+                facebookPosts[i] = new FacebookPost(msg, imgUrl, tagText);
+
+                Log.d("zzz", facebookPosts[i].toString());
+            }
+        }
+        catch (JSONException e) {
+            Log.e(log, e.getMessage());
+        }
+    }
+/*
     class postsOfUser extends AsyncTask<String, String, String> { // pass list view here
 
         String log = this.getClass().getSimpleName();
@@ -178,17 +339,10 @@ public class FacebookUsersPage extends Fragment {
 
             newItemsPopulate(s);
 
-            //  ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,fbIcon);
-
             ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,"fb");
             adapt.notifyDataSetChanged();
 
-//            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, userPosts);
-
-//            arrayAdapter.notifyDataSetChanged();
-
             list.invalidateViews();
-//            list.setAdapter(arrayAdapter);
             list.setAdapter(adapt);
 
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -198,11 +352,11 @@ public class FacebookUsersPage extends Fragment {
                     String itemValue = list.getItemAtPosition(position).toString(); // gets the text of the list item clicked
 
                     if (itemValue != "") { // not blank item text
-                        // Toast.makeText(getContext(),"You long clicked on item no." + (position+1)+ " of the list.", Toast.LENGTH_SHORT).show();
 
                         // Alerts the user that their isnt a reason to view it in more detail
                         if (imageUrl[position] == null && msgTags[position] == null) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
                             builder.setMessage("There is only this text content for this item");
                             builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {}
@@ -296,5 +450,5 @@ public class FacebookUsersPage extends Fragment {
                 Log.e(log, e.getMessage());
             }
         }
-    }
+    }*/
 }

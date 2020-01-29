@@ -29,7 +29,6 @@ import com.twitter.sdk.android.core.TwitterCore;
 import static com.example.a2in1.myPreferences.clearPrefs;
 import static com.example.a2in1.myPreferences.getBoolPref;
 
-
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflates the menu; this adds items to the action bar if it is present.
+        // Inflates the menu; this adds items to the action bar
         getMenuInflater().inflate(R.menu.settings_menu, menu);
         return true;
     }
@@ -159,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)|| super.onSupportNavigateUp();
     }
 }
