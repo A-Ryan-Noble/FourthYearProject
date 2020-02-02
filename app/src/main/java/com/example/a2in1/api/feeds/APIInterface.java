@@ -6,8 +6,8 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
 
-public interface APIService {
+public interface APIInterface {
     // This service uses dynamic url. This is annotated with just @Url as the endpoint url.
     @GET
-    public Call<ResponseBody> socialFeedItems(@Url String url,   @Query("limit") Integer limit);
+    Call<ResponseBody> socialFeedItems(@Url String url,@Query("limit") Integer limit);
 }

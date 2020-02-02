@@ -1,6 +1,13 @@
 package com.example.a2in1.models;
 
-public class FacebookPost {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+import java.util.Arrays;
+
+public class FacebookPost implements Parcelable {
 
     private String message;
 
@@ -35,7 +42,42 @@ public class FacebookPost {
     public FacebookPost(String message, String picture, String messageTags) {
         this.message = message;
         this.picture = picture;
-
         this.messageTags = messageTags.split(" ");
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.message);
+        dest.writeString(this.picture);
+        dest.writeStringArray(this.messageTags);
+    }
+
+    protected FacebookPost(Parcel in) {
+        this.message = in.readString();
+        this.picture = in.readString();
+        this.messageTags = in.createStringArray();
+    }
+
+    public static final Creator<FacebookPost> CREATOR = new Creator<FacebookPost>() {
+        @Override
+        public FacebookPost createFromParcel(Parcel source) {
+            return new FacebookPost(source);
+        }
+
+        @Override
+        public FacebookPost[] newArray(int size) {
+            return new FacebookPost[size];
+        }
+    };
+
+    @NonNull
+    @Override
+    public String toString() {
+        return String.format("Message:" + getMessage()+ "\nPicture URL: " + getPicture() + "\nHashTags: " + Arrays.toString(messageTags));
     }
 }

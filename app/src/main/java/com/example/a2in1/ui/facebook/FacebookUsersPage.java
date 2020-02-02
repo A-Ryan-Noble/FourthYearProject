@@ -3,7 +3,7 @@ package com.example.a2in1.ui.facebook;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -22,9 +21,11 @@ import androidx.fragment.app.Fragment;
 import com.example.a2in1.ListAdapt;
 import com.example.a2in1.Notifications;
 import com.example.a2in1.R;
+import com.example.a2in1.api.feeds.APIClient;
+import com.example.a2in1.api.feeds.APIInterface;
+import com.example.a2in1.api.feeds.DBHelper;
 import com.example.a2in1.fragmentRedirects.FbSignInActivity;
-import com.example.a2in1.fragmentRedirects.FeedItemView;
-import com.example.a2in1.api.feeds.APIService;
+import com.example.a2in1.fragmentRedirects.FeedItemView;;
 import com.example.a2in1.models.FacebookPost;
 import com.facebook.AccessToken;
 import com.facebook.Profile;
@@ -33,25 +34,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.example.a2in1.myPreferences.getBoolPref;
 import static com.example.a2in1.myPreferences.getIntPref;
 
 public class FacebookUsersPage extends Fragment {
 
     private String log = this.getClass().getSimpleName();
+
+    private DBHelper dbHelper;
+    private SQLiteDatabase DB;
 
     private ListView list;
 
@@ -63,118 +62,122 @@ public class FacebookUsersPage extends Fragment {
 
     private Context context;
 
-//    ImageView img;
-
     private int limit;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_facebook_users_page, container, false);
 
-        boolean isFbLoggedIn = getBoolPref("FBLoggedIn", false,getContext());
+        context = getContext();
+
+        boolean isFbLoggedIn = getBoolPref("FBLoggedIn", false,context);
 
         if (isFbLoggedIn) {
-//            img = root.findViewById(R.id.feedImage);
-
-            context = getContext();
-
-            // Gets value from the the SharedPreferences
-            limit = getIntPref("MaxFbNum",5,context);
-
-            // If the array of posts is empty
-            if (facebookPosts == null) {
-                userPosts = new String[limit]; // Used to store the message
-
-                imageUrl = new String[limit]; // Used to store the url of an image in a message
-
-                msgTags = new String[limit]; // Used to store a given Message tags. If message doesn't have a log then empty value at the index
-
-                facebookPosts = new FacebookPost[limit];
-            }
 
             list = root.findViewById(R.id.postsList);
 
             final Button refreshBtn = root.findViewById(R.id.refreshBtn);
 
-            refreshBtn.setText("Download Feed");
+            // Gets value from the the SharedPreferences
+            limit = getIntPref("MaxFbNum",5,context);
+
+            DB = context.openOrCreateDatabase("feeds", MODE_PRIVATE, null);
+
+            if (!DB.isOpen()) {
+                DB = context.openOrCreateDatabase("feeds", MODE_PRIVATE, null);
+            }
+
+            dbHelper = new DBHelper(context);
+
+            if (dbHelper.getAllOfSite("Facebook").getCount() == 0) {
+                // Used to store the message. If no message then " " is at index
+                userPosts = new String[limit];
+
+                // Used to store the url of an image in a message, if no URL then null is at index
+                imageUrl = new String[limit];
+
+                // Used to store a given Message tags. If message doesn't have a log then "None" is at the index
+                msgTags = new String[limit];
+
+                facebookPosts = new FacebookPost[limit];
+
+                refreshBtn.setText(R.string.downloadFeed);
+
+                getFeed();
+
+            }
+            else{
+                userPosts = new String[dbHelper.getAllOfSite("Facebook").getCount()];
+
+                imageUrl = new String[dbHelper.getAllOfSite("Facebook").getCount()];
+
+                msgTags = new String[dbHelper.getAllOfSite("Facebook").getCount()];
+
+                refreshBtn.setText(R.string.refresh);
+
+                //UI is updated from the contents in the database
+                FacebookPost[] posts = dbHelper.getAllFacebook();
+
+                UpdateUI(posts);
+//                UpdateUI(dbHelper.getAllFacebook());
+
+                Toast.makeText(context,"There is " +  dbHelper.getAll().getCount() + " in the database",Toast.LENGTH_SHORT).show();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Wish to remove all?");
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dbHelper.emptyDB();
+                        refreshBtn.setText(R.string.downloadFeed);
+
+                        Toast.makeText(context,"There is " +  dbHelper.getAll().getCount() + " in the database",Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.show();
+            }
+
+            ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,"fb");
+            adapt.notifyDataSetChanged();
+
+            list.invalidateViews();
+            list.setAdapter(adapt);
+
+
+            list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    if (list.getItemAtPosition(position).toString() != "") { // Gets the text of the list item clicked
+
+                        // Alerts the user that their isnt a reason to view it in more detail
+                        if (imageUrl[position] == null && msgTags[position] == null) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                            builder.setMessage("There is only this text content for this item");
+                            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {}
+                            });
+                            builder.show();
+                        }
+                        else {
+                            Intent itemView = new Intent(context, FeedItemView.class);
+                            itemView.putExtra("msg",userPosts[position]);
+                            itemView.putExtra("tags",msgTags[position]);
+                            itemView.putExtra("Url",imageUrl[position]);
+                            startActivity(itemView);
+                        }
+                    }
+                    return false;
+                }
+            });
+
             refreshBtn.setOnClickListener(new View.OnClickListener() {
+
                 // Re-downloads the list
                 @Override
                 public void onClick(View v) {
 
-                    refreshBtn.setText("Refresh Feed");
-
-                    Retrofit retrofit = new Retrofit.Builder().baseUrl("https://graph.facebook.com/v5.0/me/").build();
-
-                    APIService service = retrofit.create(APIService.class);
-
-                    Call<ResponseBody> call = service.socialFeedItems(
-                            "feed?fields=picture%2Cmessage%2Cmessage_tags&access_token=" + AccessToken.getCurrentAccessToken().getToken(),
-                            limit);
-
-                    call.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            if (response.isSuccessful()) {
-                                Log.d(log, "server contacted and has file");
-                                try {
-                                    String feed = response.body().string();
-
-                                    downloadNotify();
-
-                                    ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,"fb");
-                                    adapt.notifyDataSetChanged();
-
-                                    list.invalidateViews();
-                                    list.setAdapter(adapt);
-
-                                    UpdateUI(feed);
-                                    //Log.d("zzz",response.body().string());
-                                }
-                                catch (IOException e){
-                                    Log.e(log,e.getMessage());
-                                }
-                            }
-                            else {
-                                Log.e(log, "Failed to get URL");
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                            Log.e(log, "Call Failed\n" + throwable.getMessage());
-                        }
-                    });
-
-                    list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                        @Override
-                        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-                            String itemValue = list.getItemAtPosition(position).toString(); // gets the text of the list item clicked
-
-                            if (itemValue != "") { // not blank item text
-
-                                // Alerts the user that their isnt a reason to view it in more detail
-                                if (imageUrl[position] == null && msgTags[position] == null) {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-                                    builder.setMessage("There is only this text content for this item");
-                                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {}
-                                    });
-                                    builder.show();
-                                }
-                                else {
-                                    Intent itemView = new Intent(context, FeedItemView.class);
-                                    itemView.putExtra("msg",userPosts[position]);
-                                    itemView.putExtra("tags",msgTags[position]);
-                                    itemView.putExtra("Url",imageUrl[position]);
-                                    startActivity(itemView);
-                                }
-                            }
-                            return false;
-                        }
-                    });
-
+                        Toast.makeText(context,"Refresh clicked",Toast.LENGTH_SHORT).show();
 //                    new postsOfUser().execute()
                 }
             });
@@ -186,22 +189,24 @@ public class FacebookUsersPage extends Fragment {
         return root;
     }
 
-    private void downloadNotify(){
-        if(limit>20)
-        {
+    private void notifyDownload(String feed) {
+        if (limit > 20) {
             limit = 20;
         }
 
-        if (getBoolPref("notificationEnabled",true,context)){
-            Notifications.notify("Feed Updated ", Profile.getCurrentProfile().getName() + " you feed was downloaded",
+        String userMsg = Profile.getCurrentProfile().getName() + " you feed was ";
+
+        if (getBoolPref("notificationEnabled", true, context)) {
+            Notifications.notify("Feed Updated ", userMsg + " downloaded",
                     "FB feed Download", 1000, this.getClass(), false, context);
+        } else {
+            Toast.makeText(context, "Feed Updated " + userMsg + " downloaded", Toast.LENGTH_SHORT).show();
         }
-        else {
-            Toast.makeText(context,"Feed Updated "+ Profile.getCurrentProfile().getName() + " you feed was downloaded", Toast.LENGTH_SHORT).show();
-        }
+
+        downloadFeed(feed);
     }
 
-    private void UpdateUI(String feed){
+    private void downloadFeed(String feed){
         try {
             JSONObject feedUser = new JSONObject(feed);
 
@@ -241,19 +246,92 @@ public class FacebookUsersPage extends Fragment {
 
                     tagText = "None";
                 }
+//
+//                userPosts[i] = msg;
+//                imageUrl[i] = imgUrl;
+//                msgTags[i] = tagText;
 
-                userPosts[i] = msg;
-                imageUrl[i] = imgUrl;
-                msgTags[i] = tagText;
+                facebookPosts[i] = new FacebookPost(msg,imgUrl,tagText);
 
-                facebookPosts[i] = new FacebookPost(msg, imgUrl, tagText);
-
-                Log.d("zzz", facebookPosts[i].toString());
+                dbHelper.insertIntoDB("Facebook",msg,imgUrl,tagText);
             }
         }
         catch (JSONException e) {
             Log.e(log, e.getMessage());
         }
+    }
+
+    private void UpdateUI(FacebookPost[] posts){
+        for (int i = 0; i< posts.length; i++) {
+
+            try {
+                userPosts[i] = posts[i].getMessage();
+            }catch (NullPointerException e){
+                Log.d(log,e.getMessage());
+                userPosts[i] = "No message";
+            }
+
+            try {
+                imageUrl[i] = posts[i].getPicture();
+            } catch (NullPointerException e) {
+                Log.d(log, e.getMessage());
+                imageUrl[i] = null;
+            }
+
+            String hashtags = null;
+
+            try {
+                String[] tags = posts[i].getMessageTags();
+                for (String x : posts[i].getMessageTags()) {
+                    hashtags = x + " ";
+                }
+                msgTags[i] = hashtags;
+            }
+            catch (NullPointerException e){
+                Log.e(log,e.getMessage());
+            }
+
+            ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,"fb");
+            adapt.notifyDataSetChanged();
+
+            list.invalidateViews();
+            list.setAdapter(adapt);
+
+//         dbHelper.insertIntoDB("Facebook", userPosts[i], imageUrl[i], msgTags[i]);
+        }
+    }
+
+    private void getFeed(){
+        // Retrofit API interface called.
+        APIInterface service = APIClient.getClient("https://graph.facebook.com/v5.0/me/").create(APIInterface.class);
+
+        Call<ResponseBody> call = service.socialFeedItems("feed?fields=picture%2Cmessage%2Cmessage_tags&access_token=" + AccessToken.getCurrentAccessToken().getToken(), limit);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Log.d(log, "Connection Successful");
+
+                    try {
+                        notifyDownload(response.body().string());
+
+                        UpdateUI(facebookPosts);
+                    }
+                    catch (IOException e){
+                        Log.e(log,e.getMessage());
+                    }
+                }
+                else {
+                    Log.e(log, "Failed to get Posts");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                Log.e(log, "Call Failed\n" + throwable.getMessage());
+            }
+        });
     }
 /*
     class postsOfUser extends AsyncTask<String, String, String> { // pass list view here

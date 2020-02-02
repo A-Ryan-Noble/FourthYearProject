@@ -41,16 +41,27 @@ public class ListAdapt extends ArrayAdapter<String> {
         TextView hashtagTxt = (TextView) rowView.findViewById(R.id.hashtagTxt);
 
         String postItemTxt = post[position];
-        String hashtagItemTxt = hashtags[position];
+
+        String hashtagItemTxt;
+        try {
+            hashtagItemTxt = hashtags[position];
+        }
+        catch (NullPointerException e){
+            hashtagItemTxt = "";
+        }
 
         // If/else ensures that the post doesn't contain hastags
-        if (hashtagItemTxt == null) {
+        if (hashtagItemTxt == "") {
             postTxt.setText(postItemTxt);
         }
         else {
-            String noTagsInPost[] = postItemTxt.split("#");
-            postTxt.setText(noTagsInPost[0]);
-            post[position] = post[position].replace(postItemTxt,noTagsInPost[0]);
+            try {
+                String noTagsInPost[] = postItemTxt.split("#");
+                postTxt.setText(noTagsInPost[0]);
+                post[position] = post[position].replace(postItemTxt, noTagsInPost[0]);
+            }catch (NullPointerException e){
+                //
+            }
         }
 
         if (site == "fb"){
