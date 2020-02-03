@@ -50,7 +50,6 @@ public class FacebookUsersPage extends Fragment {
     private String log = this.getClass().getSimpleName();
 
     private DBHelper dbHelper;
-    private SQLiteDatabase DB;
 
     private ListView list;
 
@@ -80,7 +79,7 @@ public class FacebookUsersPage extends Fragment {
             // Gets value from the the SharedPreferences
             limit = getIntPref("MaxFbNum",5,context);
 
-            DB = context.openOrCreateDatabase("feeds", MODE_PRIVATE, null);
+            SQLiteDatabase DB = context.openOrCreateDatabase("feeds", MODE_PRIVATE, null);
 
             if (!DB.isOpen()) {
                 DB = context.openOrCreateDatabase("feeds", MODE_PRIVATE, null);
@@ -115,9 +114,14 @@ public class FacebookUsersPage extends Fragment {
                 refreshBtn.setText(R.string.refresh);
 
                 //UI is updated from the contents in the database
-                FacebookPost[] posts = dbHelper.getAllFacebook();
+                facebookPosts = dbHelper.getAllFacebook();
 
-                UpdateUI(posts);
+                for(int i = 0; i< facebookPosts.length; i++){
+                    Log.d("ZZZ", userPosts[i] + " "+imageUrl[i] + " "+ msgTags[i]);
+                }
+                Log.d("ZZZ","End\n");
+
+                UpdateUI(facebookPosts);
 //                UpdateUI(dbHelper.getAllFacebook());
 
                 Toast.makeText(context,"There is " +  dbHelper.getAll().getCount() + " in the database",Toast.LENGTH_SHORT).show();
@@ -142,11 +146,9 @@ public class FacebookUsersPage extends Fragment {
             list.invalidateViews();
             list.setAdapter(adapt);
 
-
             list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
                     if (list.getItemAtPosition(position).toString() != "") { // Gets the text of the list item clicked
 
                         // Alerts the user that their isnt a reason to view it in more detail
@@ -178,6 +180,7 @@ public class FacebookUsersPage extends Fragment {
                 public void onClick(View v) {
 
                         Toast.makeText(context,"Refresh clicked",Toast.LENGTH_SHORT).show();
+
 //                    new postsOfUser().execute()
                 }
             });
@@ -239,21 +242,19 @@ public class FacebookUsersPage extends Fragment {
                     int amount = tagArr.length();
 
                     for (int j = 0; j < amount; j++) {
-                        tagText += tagArr.getJSONObject(j).getString("name") + " ";
+                        tagText += tagArr.getJSONObject(j).getString("name") + ",";
                     }
                 } catch (JSONException e) {
                     Log.e(log + " No tags found at index " + i, e.getMessage());
 
                     tagText = "None";
                 }
-//
-//                userPosts[i] = msg;
-//                imageUrl[i] = imgUrl;
-//                msgTags[i] = tagText;
 
                 facebookPosts[i] = new FacebookPost(msg,imgUrl,tagText);
 
                 dbHelper.insertIntoDB("Facebook",msg,imgUrl,tagText);
+
+//                Log.d("zzz",facebookPosts[i].toString());
             }
         }
         catch (JSONException e) {
@@ -291,13 +292,14 @@ public class FacebookUsersPage extends Fragment {
                 Log.e(log,e.getMessage());
             }
 
+//            Log.d("ZZZ",facebookPosts.toString());
             ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,"fb");
             adapt.notifyDataSetChanged();
 
             list.invalidateViews();
             list.setAdapter(adapt);
 
-//         dbHelper.insertIntoDB("Facebook", userPosts[i], imageUrl[i], msgTags[i]);
+//            Log.d("ZZZ", userPosts[i] + " "+imageUrl[i] + " "+ msgTags[i]);
         }
     }
 

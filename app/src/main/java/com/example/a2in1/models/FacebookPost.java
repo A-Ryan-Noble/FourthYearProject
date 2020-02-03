@@ -42,7 +42,10 @@ public class FacebookPost implements Parcelable {
     public FacebookPost(String message, String picture, String messageTags) {
         this.message = message;
         this.picture = picture;
-        this.messageTags = messageTags.split(" ");
+        String[] strings = new String[messageTags.split(",").length];
+        strings[0] = messageTags.replace(","," ");
+
+        this.messageTags = strings;
     }
 
     @Override

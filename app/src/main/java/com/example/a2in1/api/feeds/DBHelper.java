@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.example.a2in1.models.FacebookPost;
 
+import java.util.Arrays;
+
 public class DBHelper extends SQLiteOpenHelper {
 
     private SQLiteDatabase database = this.getWritableDatabase();
@@ -52,36 +54,26 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public FacebookPost[] getAllFacebook(){
-        Cursor cursor = getAllOfSite("Facebook");
+        int amount = getAllOfSite("Facebook").getCount();
 
-        cursor.moveToFirst();
+        FacebookPost[] posts = new FacebookPost[amount];
 
-        FacebookPost[] posts = new FacebookPost[cursor.getCount()];
+        String[] msg = getColumnItem("Facebook","message");
+        String[] img = getColumnItem("Facebook","image");
+        String[] hashtags = getColumnItem("Facebook","hashtags");
 
-        if(cursor.moveToNext())
-        {
-            String[] msg = getColumnItem("Facebook","message");
-            String[] img = getColumnItem("Facebook","image");
-            String[] hashtags = getColumnItem("Facebook","hashtags");
+        for(int i = 0; i < amount; i++){
 
             String tags = "None";
 
-            for (String x : hashtags) {
-                tags = x + " ";
-
+            if (!hashtags[i].equals("None")){
+                tags="";
+                String[] nonNoneTags = hashtags[i].split("[\\s,]");
+                for (String x:nonNoneTags) {
+                    tags+= x + " ";
+                }
             }
-
-            FacebookPost post = new FacebookPost(msg[0],img[0],tags);
-
-            posts[cursor.getPosition()] = post;
-
-            //            for (int i = 0; i < hashtags.length; i++){
-//                tags = tags + " "
-//            }
-
-            //            FacebookPost post = new FacebookPost();
-
-//            cursor.moveToNext();
+            posts[i] = new FacebookPost(msg[i],img[i],tags);
         }
 
         return posts;
@@ -90,18 +82,13 @@ public class DBHelper extends SQLiteOpenHelper {
     private String[] getColumnItem(String site,String nameColumn){
         Cursor cursor = database.rawQuery("select " + nameColumn + " from "+ TABLE_NAME + " where " +  COLUMN_SITE + " = ?",new String[]{site});
 
-        cursor.moveToFirst();
-
         String[] item = new String[cursor.getCount()];
 
+        cursor.moveToFirst();
 
-        while (cursor.moveToNext()){
+        while (!cursor.isAfterLast()){
             item[cursor.getPosition()] = cursor.getString(cursor.getColumnIndex(nameColumn));
-
             cursor.moveToNext();
-//            for(int i =0; i< cursor.getCount(); i++){
-//                item[i] = cursor.getString(cursor.getColumnIndex(nameColumn));
-//            }
         }
         return item;
     }
