@@ -1,4 +1,4 @@
-package com.example.a2in1.ui.facebook;
+package com.example.a2in1.api.feeds;
 
 import android.os.Bundle;
 

@@ -3,6 +3,7 @@ package com.example.a2in1;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -45,18 +46,18 @@ public class MainActivity extends AppCompatActivity {
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                Log.d(log,"Phone back button clicked");
+                Log.d(log, "Phone back button clicked");
             }
         };
 
-        getOnBackPressedDispatcher().addCallback(this,callback);
+        getOnBackPressedDispatcher().addCallback(this, callback);
 
         setContentView(R.layout.nav_draw);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
@@ -70,6 +71,28 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        /* Uses Class SwipeListener to detect if the user swipes right or left:
+            - If right then opens navigation draw otherwise they swiped left and thus close the navigation draw
+         */
+        drawer.setOnTouchListener(new SwipeListener(this){
+            @Override
+            public void onSwipeRight() {
+
+                // If draw is not open on the left of the screen
+                if (!drawer.isDrawerOpen(Gravity.LEFT)) {
+                    drawer.openDrawer(Gravity.LEFT);
+                }
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                // If draw is open on the left of the screen
+                if (drawer.isDrawerOpen(Gravity.LEFT)) {
+                    drawer.closeDrawer(Gravity.LEFT);
+                }
+            }
+        });
     }
 
     @Override
@@ -106,8 +129,9 @@ public class MainActivity extends AppCompatActivity {
 
         boolean loggedOut = false;
 
+//        if (AccessToken.getCurrentAccessToken() != null) {
         // checks if facebook is logged in
-        if (AccessToken.getCurrentAccessToken() != null) {
+        if (isFbLoggedIn){
             LoginManager.getInstance().logOut();
 
             myPreferences.setBoolPref("FBLoggedIn", false, getBaseContext());

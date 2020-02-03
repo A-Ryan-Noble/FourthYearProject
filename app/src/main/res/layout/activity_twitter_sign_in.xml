@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".TwitterSignIn">
+    tools:context=".ui.twitter.TwitterSignIn">
 
     <com.twitter.sdk.android.core.identity.TwitterLoginButton
         android:id="@+id/login_button"

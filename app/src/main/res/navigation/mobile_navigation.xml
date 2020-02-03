@@ -13,12 +13,12 @@
 
     <fragment
         android:id="@+id/nav_FbButton"
-        android:name="com.example.a2in1.ui.facebook.FacebookSignInFragment"
+        android:name="com.example.a2in1.ui.facebook.FacebookSignInOutFragment"
         android:label="@string/fb"/>
 
     <fragment
         android:id="@+id/nav_TwitterButton"
-        android:name="com.example.a2in1.ui.twitter.TwitterSignInFragment"
+        android:name="com.example.a2in1.ui.twitter.TwitterSignInOutFragment"
         android:label="@string/twitter"/>
 
     <fragment

@@ -1,4 +1,4 @@
-package com.example.a2in1;
+package com.example.a2in1.ui.twitter;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +11,9 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.a2in1.ui.twitter.TwitterSignInFragment;
+import com.example.a2in1.MainActivity;
+import com.example.a2in1.Notifications;
+import com.example.a2in1.R;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
@@ -33,7 +35,7 @@ public class TwitterSignOut extends AppCompatActivity {
             @Override
             public void handleOnBackPressed() {
                 Log.d(log,"Phone back button clicked. Redirecting to Home Screen");
-                startActivity(new Intent(getBaseContext(),MainActivity.class));
+                startActivity(new Intent(getBaseContext(), MainActivity.class));
             }
         };
         getOnBackPressedDispatcher().addCallback(this,callback);
@@ -50,7 +52,7 @@ public class TwitterSignOut extends AppCompatActivity {
 
         setTitle(getTitle().toString() + " Sign out" );
 
-        returnIntent = new Intent(this, TwitterSignInFragment.class);
+        returnIntent = new Intent(this, TwitterSignInOutFragment.class);
 
         Button signOutBtn = findViewById(R.id.logout_button);
         signOutBtn.setEnabled(true);

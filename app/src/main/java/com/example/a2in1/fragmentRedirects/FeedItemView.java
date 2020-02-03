@@ -5,7 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.a2in1.ui.facebook.FeedItemViewFragment;
+import com.example.a2in1.api.feeds.FeedItemViewFragment;
 
 public class FeedItemView extends AppCompatActivity {
     @Override

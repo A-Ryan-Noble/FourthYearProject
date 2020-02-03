@@ -5,7 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.a2in1.ui.facebook.FacebookSignInFragment;
+import com.example.a2in1.ui.facebook.FacebookSignInOutFragment;
 
 public class FbSignInActivity extends AppCompatActivity {
     @Override
@@ -13,6 +13,6 @@ public class FbSignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Replaces with the View Facebook sign in fragment
-        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new FacebookSignInFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new FacebookSignInOutFragment()).commit();
     }
 }

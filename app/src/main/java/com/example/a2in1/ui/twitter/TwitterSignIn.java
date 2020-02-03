@@ -1,4 +1,4 @@
-package com.example.a2in1;
+package com.example.a2in1.ui.twitter;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,7 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.example.a2in1.ui.twitter.TwitterSignInFragment;
+import com.example.a2in1.MainActivity;
+import com.example.a2in1.R;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.Twitter;
@@ -34,7 +35,7 @@ public class TwitterSignIn extends AppCompatActivity {
             @Override
             public void handleOnBackPressed() {
                 Log.d(log,"Phone back button clicked. Redirecting to Home Screen");
-                startActivity(new Intent(getBaseContext(),MainActivity.class));
+                startActivity(new Intent(getBaseContext(), MainActivity.class));
             }
         };
         getOnBackPressedDispatcher().addCallback(this,callback);
@@ -51,7 +52,7 @@ public class TwitterSignIn extends AppCompatActivity {
 
         setTitle(getTitle().toString() + " Sign in");
 
-        final Intent returnIntent = new Intent(this, TwitterSignInFragment.class);
+        final Intent returnIntent = new Intent(this, TwitterSignInOutFragment.class);
 
         twitterLoginBtn = (TwitterLoginButton) findViewById(R.id.login_button);
 

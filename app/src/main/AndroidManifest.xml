@@ -32,12 +32,12 @@
         </activity>
 
         <activity
-            android:name=".TwitterSignIn"
+            android:name=".ui.twitter.TwitterSignIn"
             android:label="@string/twitter"
             android:parentActivityName=".MainActivity"/>
 
         <activity
-            android:name=".TwitterSignOut"
+            android:name=".ui.twitter.TwitterSignOut"
             android:label="@string/twitter"
             android:parentActivityName=".MainActivity"/>
 

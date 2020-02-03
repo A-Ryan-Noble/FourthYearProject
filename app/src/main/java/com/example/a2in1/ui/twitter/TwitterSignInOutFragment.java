@@ -13,20 +13,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.example.a2in1.MainActivity;
 import com.example.a2in1.R;
-import com.example.a2in1.TwitterSignIn;
-import com.example.a2in1.TwitterSignOut;
-import com.example.a2in1.myPreferences;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-
-public class TwitterSignInFragment extends Fragment {
+public class TwitterSignInOutFragment extends Fragment {
 
     private String log = getClass().getSimpleName();
 
@@ -73,7 +66,7 @@ public class TwitterSignInFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == TWITTER_CODE) {
             if (intent.getStringExtra("result") == "Failed") {
-                Log.d(log, "Twitter login Activity: Failed");
+                Log.e(log, "Twitter login Activity: Failed");
             } else if (intent.getStringExtra("result") == "Cancelled") {
                 Log.d(log, "Twitter login Activity: Cancelled");
             } else if ((intent.getStringExtra("result") == "LoggedIn")) {

@@ -1,5 +1,6 @@
 package com.example.a2in1.ui.facebook;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.a2in1.MainActivity;
+import com.example.a2in1.Notifications;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -35,12 +37,14 @@ import java.util.Arrays;
 import com.example.a2in1.R;
 import com.squareup.picasso.Picasso;
 
+import static com.example.a2in1.myPreferences.getBoolPref;
 import static com.example.a2in1.myPreferences.getStringPref;
 import static com.example.a2in1.myPreferences.setBoolPref;
 import static com.example.a2in1.myPreferences.setStringPref;
 
-public class FacebookSignInFragment extends Fragment {
+public class FacebookSignInOutFragment extends Fragment {
 
+    private Context context;
     private CallbackManager callbackManager;
 
     private boolean isLoggedIn;
@@ -50,7 +54,8 @@ public class FacebookSignInFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // customised callback of phone back button
+
+        // Customised callback of phone back button
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -64,6 +69,8 @@ public class FacebookSignInFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_facebook_sign_in_out, container, false);
+
+        context = getContext();
 
         TextView loginTxt  = root.findViewById(R.id.loginTxtView);
 
@@ -120,7 +127,7 @@ public class FacebookSignInFragment extends Fragment {
 
         isLoggedIn = accessToken != null && !accessToken.isExpired();
 
-        // This allows for: Then you can later perform the actual login, such as in a custom button's OnClickListener:
+        // This allows to later perform the actual login, such as in a custom button's OnClickListener:
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
             @Override
@@ -153,23 +160,13 @@ public class FacebookSignInFragment extends Fragment {
                 if (currentAccessToken == null) {
 
                     // Logged in status put into SharedPreferences for later
-                    setBoolPref("FBLoggedIn",false,getContext());
+                    setBoolPref("FBLoggedIn",false,context);
 
-                    Log.d(log, "FB Logout");
-                    signOutAlert("Facebook");
+                    startActivity(new Intent(getContext(), MainActivity.class));
+
                 }
             }
         };
-    }
-
-    private void signOutAlert(final String accountName){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-
-        builder.setTitle(getResources().getString(R.string.confirmTitle));
-        builder.setMessage(getResources().getString(R.string.loggingOut) + " " + accountName);
-        builder.show();
-
-        startActivity(new Intent(getContext(), MainActivity.class));
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
