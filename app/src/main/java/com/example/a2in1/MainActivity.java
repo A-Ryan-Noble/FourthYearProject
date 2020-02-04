@@ -18,8 +18,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.a2in1.api.feeds.DBHelper;
 import com.example.a2in1.fragmentRedirects.SettingsActivity;
-import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.material.navigation.NavigationView;
 import com.twitter.sdk.android.core.Twitter;
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
-    private String log = this.getClass().getSimpleName();
+    private String log = getClass().getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +116,15 @@ public class MainActivity extends AppCompatActivity {
                 logoutOfSites();
                 return true;
 
+            case R.id.db_DEV:
+                Log.d(log, "Empty Database Option selected");
+
+                DBHelper dbHelper = new DBHelper(this);
+                dbHelper.emptyDB();
+
+                Toast.makeText(this,item.getTitle() + " was clicked",Toast.LENGTH_SHORT);
+
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -129,7 +138,10 @@ public class MainActivity extends AppCompatActivity {
 
         boolean loggedOut = false;
 
-//        if (AccessToken.getCurrentAccessToken() != null) {
+
+        DBHelper dbHelper = new DBHelper(this);
+
+        //        if (AccessToken.getCurrentAccessToken() != null) {
         // checks if facebook is logged in
         if (isFbLoggedIn){
             LoginManager.getInstance().logOut();
@@ -139,6 +151,9 @@ public class MainActivity extends AppCompatActivity {
             loggedOut = true;
 
             Log.d("Logout", "Logged out of Facebook");
+
+            dbHelper.emptyDB();
+            Log.d("Logout", "Empty Database Option selected");
         }
 
         // checks if Twitter is logged in
@@ -157,6 +172,9 @@ public class MainActivity extends AppCompatActivity {
             loggedOut = true;
 
             Log.d("Logout", "Logged out of Twitter");
+
+            dbHelper.emptyDB();
+            Log.d("Logout", "Empty Database Option selected");
         }
 
         if (loggedOut) {

@@ -72,6 +72,7 @@
     <string name="noHashtags">No Hashtags</string>
     <string name="hashtags">Hashtags: </string>
     <string name="noMsg">No Messages</string>
+    <string name="link">View Link</string>
     <string name="feedTitle">Item from Feed</string>
     <string name="sharingTo">Sharing to</string>
     <string name="picAdded">Picture added!</string>

@@ -15,7 +15,8 @@ public class FeedItemView extends AppCompatActivity {
         String msg = getIntent().getStringExtra("msg");
         String hashtag = getIntent().getStringExtra("tags");
         String Url = getIntent().getStringExtra("Url");
+        String link = getIntent().getStringExtra("link");
 
-        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new FeedItemViewFragment(msg,hashtag,Url)).commit();
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new FeedItemViewFragment(msg,hashtag,Url,link)).commit();
     }
 }

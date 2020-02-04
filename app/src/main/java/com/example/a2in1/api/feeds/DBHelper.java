@@ -22,6 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_MESSAGE = "message";
     private static final String COLUMN_IMAGE = "image";
     private static final String COLUMN_HASHTAGS = "hashtags";
+    private static final String COLUMN_LINK = "link";
 
     private static final String DATABASE_NAME = "feeds.db";
     private static final int DATABASE_VERSION = 1;
@@ -32,7 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table if not exists " + TABLE_NAME +" (id INTEGER PRIMARY KEY AUTOINCREMENT, site TEXT, message TEXT, image TEXT, hashtags TEXT)");
+        db.execSQL("create table if not exists " + TABLE_NAME +" (id INTEGER PRIMARY KEY AUTOINCREMENT, site TEXT, message TEXT, image TEXT, hashtags TEXT, link TEXT)");
     }
 
     // Drops and recreates the database
@@ -61,6 +62,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] msg = getColumnItem("Facebook","message");
         String[] img = getColumnItem("Facebook","image");
         String[] hashtags = getColumnItem("Facebook","hashtags");
+        String[] link = getColumnItem("Facebook","link");
 
         for(int i = 0; i < amount; i++){
 
@@ -73,7 +75,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     tags+= x + " ";
                 }
             }
-            posts[i] = new FacebookPost(msg[i],img[i],tags);
+            posts[i] = new FacebookPost(msg[i],img[i],tags,link[i]);
         }
 
         return posts;
@@ -94,12 +96,13 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     // Update the given column id's data
-    public boolean updateData(String id, String site, String message, String image, String hashtags){
+    public boolean updateData(String id, String site, String message, String image, String hashtags, String link){
         ContentValues values = new ContentValues();
         values.put(COLUMN_SITE, site);
         values.put(COLUMN_MESSAGE, message);
         values.put(COLUMN_IMAGE, image);
         values.put(COLUMN_HASHTAGS, hashtags);
+        values.put(COLUMN_LINK, link);
 
         database.update(TABLE_NAME,values,"COLUMN_ID = ?",new String[]{id});
 
@@ -112,29 +115,31 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     // Insert into the database
-    public boolean insertIntoDB(String site, String message, String image, String hashtags){
+    public boolean insertIntoDB(String site, String message, String image, String hashtags, String link){
         ContentValues values = new ContentValues();
         values.put(COLUMN_SITE, site);
         values.put(COLUMN_MESSAGE, message);
         values.put(COLUMN_IMAGE, image);
         values.put(COLUMN_HASHTAGS, hashtags);
+        values.put(COLUMN_LINK, link);
 
         long result = database.insert(TABLE_NAME,null,values);
 
         if (result == -1){
-            Log.d("DB","Insert FAILED: " + message + " " + image + " " + hashtags);
+            Log.d("DB","Insert FAILED: " + message + " " + image + " " + hashtags + " "+ link);
 
             return false;
         }
         else {
-            Log.d("DB","Inserted: " + message + " " + image + " " + hashtags);
+            Log.d("DB","Inserted Successful: " + message + " " + image + " " + hashtags + " "+ link);
             return true;
 
         }
     }
 
     public void emptyDB(){
-        database.delete(TABLE_NAME,null,null);
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(database);
         Log.d("DB",TABLE_NAME + " Table deleted");
     }
 }
