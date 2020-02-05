@@ -9,7 +9,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.a2in1.R;
-import com.example.a2in1.api.feeds.DBHelper;
+import com.example.a2in1.feeds.DBHelper;
 
 import static com.example.a2in1.myPreferences.setIntPref;
 

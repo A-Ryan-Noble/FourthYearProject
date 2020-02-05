@@ -18,7 +18,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.a2in1.api.feeds.DBHelper;
+import com.example.a2in1.feeds.DBHelper;
 import com.example.a2in1.fragmentRedirects.SettingsActivity;
 import com.facebook.login.LoginManager;
 import com.google.android.material.navigation.NavigationView;

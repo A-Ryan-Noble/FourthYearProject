@@ -1,14 +1,12 @@
 package com.example.a2in1.fragmentRedirects;
 
-import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.a2in1.api.feeds.FeedItemViewFragment;
-import com.example.a2in1.api.feeds.ImageFromItemViewer;
+import com.example.a2in1.feeds.FeedItemViewFragment;
+import com.example.a2in1.feeds.ImageFromItemViewer;
 
 public class FeedItemView extends AppCompatActivity {
     @Override

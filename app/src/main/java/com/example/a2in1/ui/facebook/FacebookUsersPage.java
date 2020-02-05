@@ -24,7 +24,7 @@ import com.example.a2in1.Notifications;
 import com.example.a2in1.R;
 import com.example.a2in1.api.APIClient;
 import com.example.a2in1.api.APIInterface;
-import com.example.a2in1.api.feeds.DBHelper;
+import com.example.a2in1.feeds.DBHelper;
 import com.example.a2in1.fragmentRedirects.FbSignInActivity;
 import com.example.a2in1.fragmentRedirects.FeedItemView;;
 import com.example.a2in1.models.FacebookPost;

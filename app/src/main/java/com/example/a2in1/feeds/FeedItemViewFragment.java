@@ -1,35 +1,23 @@
-package com.example.a2in1.api.feeds;
+package com.example.a2in1.feeds;
 
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.a2in1.MainActivity;
 import com.example.a2in1.R;
 import com.example.a2in1.fragmentRedirects.FeedItemView;
 import com.squareup.picasso.Picasso;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import retrofit2.http.GET;
 
 public class FeedItemViewFragment extends Fragment {
 
