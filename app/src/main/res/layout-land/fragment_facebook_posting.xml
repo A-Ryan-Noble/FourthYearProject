@@ -9,7 +9,7 @@
     tools:context=".ui.facebook.FacebookPosting">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/postTitleMsg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/postTxt"
@@ -18,28 +18,11 @@
         android:textStyle="bold" />
 
     <LinearLayout
-        android:id="@+id/postImageVideo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textView"
-        android:layout_marginTop="100dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/getPicBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/postPic" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/confirmInputs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/postImageVideo"
-        android:layout_marginTop="50dp"
+        android:layout_below="@id/postTitleMsg"
+        android:layout_marginTop="30dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -62,11 +45,28 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/postImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/confirmInputs"
+        android:layout_marginTop="60dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/getPicBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/postPic" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/options"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignTop="@id/confirmInputs"
-        android:layout_marginTop="100dp"
+        android:layout_alignTop="@id/postImage"
+        android:layout_marginTop="70dp"
         android:orientation="vertical">
 
         <Button

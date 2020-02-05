@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="90dp"
             android:padding="10dp"
-            android:text="@string/noMsg"
+            android:text="@string/messagesTxt"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textSize="20sp"
@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:height="80dp"
-            android:text="@string/noHashtags"
+            android:text="@string/hashtags"
             android:textAlignment="center"
             android:textSize="16sp" />
 
@@ -37,7 +37,8 @@
             android:id="@+id/feedLinkBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/link" />
+            android:text="@string/link"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

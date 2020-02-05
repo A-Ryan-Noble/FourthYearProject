@@ -22,8 +22,8 @@ import com.example.a2in1.ListAdapt;
 import com.example.a2in1.MainActivity;
 import com.example.a2in1.Notifications;
 import com.example.a2in1.R;
-import com.example.a2in1.api.feeds.APIClient;
-import com.example.a2in1.api.feeds.APIInterface;
+import com.example.a2in1.api.APIClient;
+import com.example.a2in1.api.APIInterface;
 import com.example.a2in1.api.feeds.DBHelper;
 import com.example.a2in1.fragmentRedirects.FbSignInActivity;
 import com.example.a2in1.fragmentRedirects.FeedItemView;;
@@ -48,7 +48,7 @@ import static com.example.a2in1.myPreferences.getIntPref;
 
 public class FacebookUsersPage extends Fragment {
 
-    private String log = this.getClass().getSimpleName();
+    private String log = getClass().getSimpleName();
 
     private DBHelper dbHelper;
 
@@ -165,6 +165,7 @@ public class FacebookUsersPage extends Fragment {
                             itemView.putExtra("tags",msgTags[position]);
                             itemView.putExtra("Url",imageUrl[position]);
                             itemView.putExtra("link",linkUrl[position]);
+
                             startActivity(itemView);
                         }
                     }
@@ -193,14 +194,11 @@ public class FacebookUsersPage extends Fragment {
                             }
                         });
                         builder.show();
-
-
-                        Toast.makeText(context, "There is " + dbHelper.getAllOfSite("Facebook").getCount() + " Fb posts.", Toast.LENGTH_SHORT).show();
-//                    new postsOfUser().execute()
                     }
                 }
             });
         }
+
         // if user isn't logged in on fb then go to the sign in fragment
         else {
             startActivity(new Intent(getContext(), FbSignInActivity.class));
@@ -265,12 +263,11 @@ public class FacebookUsersPage extends Fragment {
                 String linkUrl;
 
                 try {
-                    linkUrl = obj.getJSONObject(i).getString("picture");
+                    linkUrl = obj.getJSONObject(i).getString("link");
                 } catch (JSONException e) {
-                    Log.e(log, " Url for image not found at index " + i);
+                    Log.e(log, " Url for links not found at index " + i);
                     linkUrl = null;
                 }
-
 
                 facebookPosts[i] = new FacebookPost(msg,imgUrl,tagText,linkUrl);
 
@@ -304,6 +301,8 @@ public class FacebookUsersPage extends Fragment {
 
             try {
                 String[] tags = posts[i].getMessageTags();
+
+                // Foreach loop to get each tag and add it to the hashtag string.
                 for (String x : tags) {
                     hashtags = x + " ";
                 }
@@ -332,6 +331,9 @@ public class FacebookUsersPage extends Fragment {
         // Retrofit API interface called.
         APIInterface service = APIClient.getClient("https://graph.facebook.com/v5.0/me/").create(APIInterface.class);
 
+        /* Call to get from the users profile page:
+            - Pictures, Messages, MessageTags (Hashtags), Links
+         */
         Call<ResponseBody> call = service.socialFeedItems("feed?fields=picture%2Cmessage%2Cmessage_tags%2Clink&access_token=" + AccessToken.getCurrentAccessToken().getToken(), limit);
 
         call.enqueue(new Callback<ResponseBody>() {
@@ -340,6 +342,7 @@ public class FacebookUsersPage extends Fragment {
                 if (response.isSuccessful()) {
                     Log.d(log, "Connection Successful");
 
+                    // Notifies user, parses the data and sets it to arrays which can use to update the User Interface
                     try {
                         notifyDownload(response.body().string());
 

@@ -1,4 +1,4 @@
-package com.example.a2in1.api.feeds;
+package com.example.a2in1.api;
 
 import retrofit2.Retrofit;
 

@@ -9,6 +9,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.a2in1.R;
+import com.example.a2in1.api.feeds.DBHelper;
 
 import static com.example.a2in1.myPreferences.setIntPref;
 
@@ -35,6 +36,10 @@ public class AccountsSetting extends PreferenceFragmentCompat {
 
                     setIntPref("MaxFbNum",num,getContext());
 
+                    // Remove instances in DB (removes crash error when viewing feed after change)
+                    DBHelper db = new DBHelper(getContext());
+                    db.deleteSiteData("Facebook");
+
                     return true;
                 }
 
@@ -58,6 +63,10 @@ public class AccountsSetting extends PreferenceFragmentCompat {
                     Log.d(log,"Tweets limited to "+ num);
 
                     setIntPref("MaxTweetsNum",num,getContext());
+
+                    // Remove instances in DB (removes crash error when viewing feed after change)
+                    DBHelper db = new DBHelper(getContext());
+                    db.deleteSiteData("Facebook");
 
                     return true;
                 }

@@ -9,8 +9,6 @@ import android.util.Log;
 
 import com.example.a2in1.models.FacebookPost;
 
-import java.util.Arrays;
-
 public class DBHelper extends SQLiteOpenHelper {
 
     private SQLiteDatabase database = this.getWritableDatabase();
@@ -114,6 +112,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return database.delete(TABLE_NAME,"id = ?", new String[]{id});
     }
 
+    // Deletes the data of either site from the database
+    public Integer deleteSiteData(String site){
+        return database.delete(TABLE_NAME,"site = ?", new String[]{site});
+    }
+
     // Insert into the database
     public boolean insertIntoDB(String site, String message, String image, String hashtags, String link){
         ContentValues values = new ContentValues();
@@ -133,7 +136,6 @@ public class DBHelper extends SQLiteOpenHelper {
         else {
             Log.d("DB","Inserted Successful: " + message + " " + image + " " + hashtags + " "+ link);
             return true;
-
         }
     }
 

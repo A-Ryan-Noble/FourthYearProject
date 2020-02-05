@@ -1,4 +1,4 @@
-package com.example.a2in1.api.feeds;
+package com.example.a2in1.api;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;

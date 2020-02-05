@@ -29,7 +29,7 @@
         <menu>
             <item
                 android:id="@+id/nav_FbContentButton"
-                android:title="@string/fbFeedGet"
+                android:title="@string/viewFeed"
                 android:icon="@drawable/download_icon_foreground"/>
             <item
                 android:id="@+id/nav_FBPosting"

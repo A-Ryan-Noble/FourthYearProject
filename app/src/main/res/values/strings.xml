@@ -6,6 +6,7 @@
     <string name="fbSignedIn"> Your already signed in,\n\nYou can click below to logout</string>
     <string name="signedIn"> Your already signed in.\nClick below to logout or go back</string>
     <string name="home">Home</string>
+    <string name="goBack">Go Back</string>
     <string name="logout">Sign out</string>
     <string name="fb">Facebook</string>
     <string name="fb_profileDes">Facebook Profile picture</string>
@@ -21,12 +22,8 @@
     <string name="action_settings">Settings</string>
     <string name="accountSection">Account Details</string>
     <string name="fbSocialFeed">Facebook Feed</string>
-    <string name="fbFeedGet">View Your Posts</string>
+    <string name="viewFeed">View Your Posts</string>
     <string name="fbPosting">Posting to Facebook</string>
-
-    <string name="postPic">Add a picture to your post</string>
-    <string name="postVideo">Add a video to your post</string>
-
 
     <!-- Settings Preference Screen -->
     <string name="settings">Settings</string>
@@ -64,12 +61,12 @@
     <!--  Social Sites Text -->
     <string name="createPost">Create Post</string>
     <string name="post">Post</string>
-    <string name="postTxt">Post a status update</string>
+    <string name="postTxt">Post a status update.\nAdding a message is done after clicking \'Post\' below</string>
     <string name="postWish">Wish to post</string>
     <string name="refresh">Refresh</string>
     <string name="downloadFeed">Download Feed</string>
     <string name="FeedPicDesp">Picture from Feed</string>
-    <string name="noHashtags">No Hashtags</string>
+    <string name="messagesTxt">Message:</string>
     <string name="hashtags">Hashtags: </string>
     <string name="noMsg">No Messages</string>
     <string name="link">View Link</string>
@@ -77,6 +74,8 @@
     <string name="sharingTo">Sharing to</string>
     <string name="picAdded">Picture added!</string>
     <string name="feedIcon">Social media icon</string>
+    <string name="postPic">Add a picture to your post</string>
+    <string name="postVideo">Add a video to your post</string>
 
     <!--  Important Facebook & Twitter values -->
     <string name="facebook_app_id">763430430754593</string>
