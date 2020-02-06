@@ -54,9 +54,9 @@ public class FacebookUsersPage extends Fragment {
 
     private ListView list;
 
+    private String[] userPosts;
     private String[] imageUrl;
     private String[] msgTags;
-    private String[] userPosts;
     private String[] linkUrl;
 
     private FacebookPost[] facebookPosts;
@@ -77,7 +77,7 @@ public class FacebookUsersPage extends Fragment {
             list = root.findViewById(R.id.postsList);
 
             final Button refreshBtn = root.findViewById(R.id.refreshBtn);
-            refreshBtn.setText(R.string.downloadFeed);
+            refreshBtn.setText(R.string.refresh);
 
             // Gets value from the the SharedPreferences
             limit = getIntPref("MaxFbNum",5,context);
@@ -96,42 +96,27 @@ public class FacebookUsersPage extends Fragment {
 
             final int fbAmount = dbHelper.getAllOfSite("Facebook").getCount();
 
-            if(fbAmount == 0) {
-                // Used to store the message. If no message then " " is at index
-                userPosts = new String[limit];
+            // Used to store the message. If no message then " " is at index
+            userPosts = new String[limit];
 
-                // Used to store the url of an image in a message, if no URL then null is at index
-                imageUrl = new String[limit];
+            // Used to store the url of an image in a message, if no URL then null is at index
+            imageUrl = new String[limit];
 
-                // Used to store a given Message tags. If message doesn't have a log then "None" is at the index
-                msgTags = new String[limit];
+            // Used to store a given Message tags. If message doesn't have a log then "None" is at the index
+            msgTags = new String[limit];
 
-                /* Used to store the linkUrl attached to the facebook post.
-                    Due to the way Facebook Development kit works it is to note:
+            /* Used to store the linkUrl attached to the facebook post, due to the way Facebook Development kit works it is to note:
                         - If there is an image attached and no linkUrl, this acts as a linkUrl to the image.
                         - if there is both a linkUrl and an image the linkUrl wont be linked to the url of the image.
-                        - if there neither a image or a linkUrl is provided then this becomes null.
-                 */
-                linkUrl = new String[limit];
+                        - if there neither a image or a linkUrl is provided then this becomes null. */
+            linkUrl = new String[limit];
 
+            if(fbAmount == 0) {
                 facebookPosts = new FacebookPost[limit];
 
-                refreshBtn.setText(R.string.refresh);
-
                 getFeed();
-
             }
             else{
-                userPosts = new String[limit];
-
-                imageUrl = new String[limit];
-
-                msgTags = new String[limit];
-
-                linkUrl = new String[limit];
-
-                refreshBtn.setText(R.string.refresh);
-
                 //UI is updated from the contents in the database
                 facebookPosts = dbHelper.getAllFacebook();
 
@@ -144,10 +129,12 @@ public class FacebookUsersPage extends Fragment {
             list.invalidateViews();
             list.setAdapter(adapt);
 
-            list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
                 @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (list.getItemAtPosition(position).toString() != "") { // Gets the text of the list item clicked
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // if the text of the list item clicked is not empty
+                    if (list.getItemAtPosition(position).toString() != "") {
 
                         // Alerts the user that their isnt a reason to view it in more detail
                         if (imageUrl[position] == null && msgTags[position] == null) {
@@ -169,7 +156,6 @@ public class FacebookUsersPage extends Fragment {
                             startActivity(itemView);
                         }
                     }
-                    return false;
                 }
             });
 
@@ -187,11 +173,15 @@ public class FacebookUsersPage extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                dbHelper.emptyDB();
+                                dbHelper.deleteSiteData("Facebook"); // Empties the database of Facebook posts
 
                                 startActivity(new Intent(context, MainActivity.class));
                                 getFeed();
                             }
+                        });
+                        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {}
                         });
                         builder.show();
                     }

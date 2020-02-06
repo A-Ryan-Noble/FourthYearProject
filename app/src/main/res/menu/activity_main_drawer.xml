@@ -37,4 +37,18 @@
                 android:icon="@drawable/upload_icon_foreground"/>
         </menu>
     </item>
+
+    <!--    "Twitter Social's Feed" submenu-->
+    <item android:title="@string/twitterSocialFeed" >
+        <menu>
+            <item
+                android:id="@+id/nav_TwitterContentButton"
+                android:title="@string/viewFeed"
+                android:icon="@drawable/download_icon_foreground"/>
+            <item
+                android:id="@+id/nav_TwitterPosting"
+                android:title="@string/twitterPosting"
+                android:icon="@drawable/upload_icon_foreground"/>
+        </menu>
+    </item>
 </menu>

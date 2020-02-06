@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.a2in1.models.FacebookPost;
+import com.example.a2in1.models.TwitterPost;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -74,6 +75,33 @@ public class DBHelper extends SQLiteOpenHelper {
                 }
             }
             posts[i] = new FacebookPost(msg[i],img[i],tags,link[i]);
+        }
+
+        return posts;
+    }
+
+    public TwitterPost[] getAllTwitter(){
+        int amount = getAllOfSite("Twitter").getCount();
+
+        TwitterPost[] posts = new TwitterPost[amount];
+
+        String[] msg = getColumnItem("Twitter","message");
+        String[] img = getColumnItem("Twitter","image");
+        String[] hashtags = getColumnItem("Twitter","hashtags");
+        String[] link = getColumnItem("Twitter","link");
+
+        for(int i = 0; i < amount; i++){
+
+            String tags = "None";
+
+            if (!hashtags[i].equals("None")){
+                tags="";
+                String[] nonNoneTags = hashtags[i].split("[\\s,]");
+                for (String x:nonNoneTags) {
+                    tags+= x + " ";
+                }
+            }
+            posts[i] = new TwitterPost(msg[i],img[i],tags,link[i]);
         }
 
         return posts;

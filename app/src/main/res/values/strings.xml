@@ -21,9 +21,11 @@
     <!--  Navigation list menu  -->
     <string name="action_settings">Settings</string>
     <string name="accountSection">Account Details</string>
-    <string name="fbSocialFeed">Facebook Feed</string>
     <string name="viewFeed">View Your Posts</string>
+    <string name="fbSocialFeed">Facebook Feed</string>
     <string name="fbPosting">Posting to Facebook</string>
+    <string name="twitterSocialFeed">Twitter Feed</string>
+    <string name="twitterPosting">Posting to Twitter</string>
 
     <!-- Settings Preference Screen -->
     <string name="settings">Settings</string>
@@ -83,5 +85,8 @@
     <string name="twitter_app_id">16870803</string>
     <string name="twitter_CONSUMER_KEY" translatable="false">q2n0UtzerHQAlAf5DEYxJ0doF</string>
     <string name="twitter_CONSUMER_SECRET" translatable="false">qPb06Os5fjkDTE25Q4niWD3c5Dv6amOeKvwcUd9RYBbc2pLAxh</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
