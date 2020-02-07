@@ -196,18 +196,18 @@ public class FacebookUsersPage extends Fragment {
         return root;
     }
 
-    private void notifyDownload(String feed) {
-        String userMsg = Profile.getCurrentProfile().getName() + " you feed was ";
-
-        if (getBoolPref("notificationEnabled", true, context)) {
-            Notifications.notify("Feed Updated ", userMsg + " downloaded",
-                    "FB feed Download", 1000, MainActivity.class, true, context);
-        } else {
-            Toast.makeText(context, "Feed Updated " + userMsg + " downloaded", Toast.LENGTH_SHORT).show();
-        }
-
-        downloadFeed(feed);
-    }
+//    private void notifyDownload(String feed) {
+//        String userMsg = Profile.getCurrentProfile().getName() + " you feed was ";
+//
+//        if (getBoolPref("notificationEnabled", true, context)) {
+//            Notifications.notify("Feed Updated ", userMsg + " downloaded",
+//                    "FB feed Download", 1000, MainActivity.class, true, context);
+//        } else {
+//            Toast.makeText(context, "Feed Updated " + userMsg + " downloaded", Toast.LENGTH_SHORT).show();
+//        }
+//
+//        downloadFeed(feed);
+//    }
 
     private void downloadFeed(String feed){
         try {
@@ -318,7 +318,7 @@ public class FacebookUsersPage extends Fragment {
     }
 
     private void getFeed(){
-        // Retrofit API interface called.
+        // Retrofit and API interface called.
         APIInterface service = APIClient.getClient("https://graph.facebook.com/v5.0/me/").create(APIInterface.class);
 
         /* Call to get from the users profile page:
@@ -334,7 +334,10 @@ public class FacebookUsersPage extends Fragment {
 
                     // Notifies user, parses the data and sets it to arrays which can use to update the User Interface
                     try {
-                        notifyDownload(response.body().string());
+//                        notifyDownload(response.body().string());
+                        Notifications.notifyDownload(Profile.getCurrentProfile().getName() + " you feed was ",context);
+
+                        downloadFeed(response.body().string());
 
                         UpdateUI(facebookPosts);
                     }

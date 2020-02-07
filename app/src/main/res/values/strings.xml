@@ -86,7 +86,6 @@
     <string name="twitter_CONSUMER_KEY" translatable="false">q2n0UtzerHQAlAf5DEYxJ0doF</string>
     <string name="twitter_CONSUMER_SECRET" translatable="false">qPb06Os5fjkDTE25Q4niWD3c5Dv6amOeKvwcUd9RYBbc2pLAxh</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="bearer" translatable="false">AAAAAAAAAAAAAAAAAAAAAJNtAQEAAAAA9h1PFi5aeCSPZtmHvtQLN6Qffa8%3DzDCWKajo8ut24kQFQFKr5Q1OYPVIWSUgoqSrzGUVttp1UlbN1k</string>
 
 </resources>

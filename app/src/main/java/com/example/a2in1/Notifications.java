@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -71,5 +72,16 @@ public class Notifications {
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
         notificationManagerCompat.notify(id_int, notificationBuilder.build());
+    }
+
+    public static void notifyDownload(String userMsg, Context context) {
+
+        if (getBoolPref("notificationEnabled", true, context)) {
+            Notifications.notify("Feed Updated ", userMsg + " downloaded",
+                    "FB feed Download", 1000, MainActivity.class, true, context);
+        } else {
+            Toast.makeText(context, "Feed Updated " + userMsg + " downloaded", Toast.LENGTH_SHORT).show();
+        }
+
     }
 }
