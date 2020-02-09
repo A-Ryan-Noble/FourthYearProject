@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -96,10 +95,10 @@ public class FacebookUsersPage extends Fragment {
 
             final int fbAmount = dbHelper.getAllOfSite("Facebook").getCount();
 
-            // Used to store the message. If no message then " " is at index
+            // Used to store the message. If there's no message then "None" is at index
             userPosts = new String[limit];
 
-            // Used to store the url of an image in a message, if no URL then null is at index
+            // Used to store the url of an image in a message, if there's no URL then "None" is at index
             imageUrl = new String[limit];
 
             // Used to store a given Message tags. If message doesn't have a log then "None" is at the index
@@ -108,36 +107,27 @@ public class FacebookUsersPage extends Fragment {
             /* Used to store the linkUrl attached to the facebook post, due to the way Facebook Development kit works it is to note:
                         - If there is an image attached and no linkUrl, this acts as a linkUrl to the image.
                         - if there is both a linkUrl and an image the linkUrl wont be linked to the url of the image.
-                        - if there neither a image or a linkUrl is provided then this becomes null. */
+                        - if there neither a image or a linkUrl is provided then this becomes "None. */
             linkUrl = new String[limit];
 
-            if(fbAmount == 0) {
+            if(fbAmount == 0){
                 facebookPosts = new FacebookPost[limit];
-
-                getFeed();
+                getFeed(); // Downloads then calls update of UI
             }
-            else{
-                //UI is updated from the contents in the database
-                facebookPosts = dbHelper.getAllFacebook();
-
+            else {
+                facebookPosts = dbHelper.getAllFacebook(); // UI is updated from the contents in the database
                 UpdateUI(facebookPosts);
             }
-
-            ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,"fb");
-            adapt.notifyDataSetChanged();
-
-            list.invalidateViews();
-            list.setAdapter(adapt);
 
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // if the text of the list item clicked is not empty
-                    if (list.getItemAtPosition(position).toString() != "") {
+                    if (!list.getItemAtPosition(position).toString().equals("")){
 
-                        // Alerts the user that their isnt a reason to view it in more detail
-                        if (imageUrl[position] == null && msgTags[position] == null) {
+                        // Alerts the user that their isn't a reason to view it in more detail
+                        if (imageUrl[position].equals("None") && msgTags[position].equals("None")){
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
                             builder.setMessage("There is only this text content for this item");
@@ -164,27 +154,23 @@ public class FacebookUsersPage extends Fragment {
                 // Re-downloads the list
                 @Override
                 public void onClick(View v) {
-                    String refresh = getString(R.string.refresh);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Wish to refresh all of the " + fbAmount + " posts?");
+                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                    if (refreshBtn.getText() == refresh) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage("Wish to refresh all of the " + fbAmount + " posts?");
-                        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                            dbHelper.deleteSiteData("Facebook"); // Empties the database of Facebook posts
 
-                                dbHelper.deleteSiteData("Facebook"); // Empties the database of Facebook posts
-
-                                startActivity(new Intent(context, MainActivity.class));
-                                getFeed();
-                            }
-                        });
-                        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {}
-                        });
-                        builder.show();
-                    }
+                            startActivity(new Intent(context, MainActivity.class));
+                            getFeed();
+                        }
+                    });
+                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {}
+                    });
+                    builder.show();
                 }
             });
         }
@@ -196,31 +182,16 @@ public class FacebookUsersPage extends Fragment {
         return root;
     }
 
-//    private void notifyDownload(String feed) {
-//        String userMsg = Profile.getCurrentProfile().getName() + " you feed was ";
-//
-//        if (getBoolPref("notificationEnabled", true, context)) {
-//            Notifications.notify("Feed Updated ", userMsg + " downloaded",
-//                    "FB feed Download", 1000, MainActivity.class, true, context);
-//        } else {
-//            Toast.makeText(context, "Feed Updated " + userMsg + " downloaded", Toast.LENGTH_SHORT).show();
-//        }
-//
-//        downloadFeed(feed);
-//    }
-
     private void downloadFeed(String feed){
         try {
-            JSONObject feedUser = new JSONObject(feed);
+            JSONArray  postsArr =  new JSONObject(feed).getJSONArray("data");
 
-            JSONArray  obj = feedUser.getJSONArray("data");
+            for (int i = 0; i < postsArr.length(); i++) {
 
-            for (int i = 0; i < obj.length(); i++) {
-
-                String msg = "Post doesn't have a message";
+                String msg = "None";
 
                 try {
-                    msg = obj.getJSONObject(i).getString("message"); // This gets only the message part of the array
+                    msg = postsArr.getJSONObject(i).getString("message"); // This gets only the message part of the array
                 } catch (JSONException e) {
                     Log.e(log, "Message not found at index " + i);
                 }
@@ -228,16 +199,16 @@ public class FacebookUsersPage extends Fragment {
                 String imgUrl;
 
                 try {
-                    imgUrl = obj.getJSONObject(i).getString("picture");
+                    imgUrl = postsArr.getJSONObject(i).getString("picture");
                 } catch (JSONException e) {
                     Log.e(log , " Url for image not found at index " + i);
-                    imgUrl = null;
+                    imgUrl = "None";
                 }
 
                 String tagText = "";
 
                 try {
-                    JSONArray tagArr = obj.getJSONObject(i).getJSONArray("message_tags"); // Gets the array of tags
+                    JSONArray tagArr = postsArr.getJSONObject(i).getJSONArray("message_tags"); // Gets the array of tags
 
                     int amount = tagArr.length();
 
@@ -253,16 +224,15 @@ public class FacebookUsersPage extends Fragment {
                 String linkUrl;
 
                 try {
-                    linkUrl = obj.getJSONObject(i).getString("link");
+                    linkUrl = postsArr.getJSONObject(i).getString("link");
                 } catch (JSONException e) {
                     Log.e(log, " Url for links not found at index " + i);
-                    linkUrl = null;
+                    linkUrl = "None";
                 }
 
                 facebookPosts[i] = new FacebookPost(msg,imgUrl,tagText,linkUrl);
 
                 dbHelper.insertIntoDB("Facebook",msg,imgUrl,tagText,linkUrl);
-
             }
         }
         catch (JSONException e) {
@@ -271,23 +241,24 @@ public class FacebookUsersPage extends Fragment {
     }
 
     private void UpdateUI(FacebookPost[] posts){
+
         for (int i = 0; i< posts.length; i++) {
 
             try {
                 userPosts[i] = posts[i].getMessage();
             }catch (NullPointerException e){
                 Log.d(log,e.getMessage());
-                userPosts[i] = "No message";
+                userPosts[i] = "None";
             }
 
             try {
                 imageUrl[i] = posts[i].getPicture();
             } catch (NullPointerException e) {
                 Log.d(log, e.getMessage());
-                imageUrl[i] = null;
+                imageUrl[i] = "None";
             }
 
-            String hashtags = null;
+            String hashtags = "";
 
             try {
                 String[] tags = posts[i].getMessageTags();
@@ -300,13 +271,14 @@ public class FacebookUsersPage extends Fragment {
             }
             catch (NullPointerException e){
                 Log.e(log,e.getMessage());
+                msgTags[i] = "None";
             }
 
             try {
                 linkUrl[i] = posts[i].getLinks();
             } catch (NullPointerException e) {
                 Log.d(log, e.getMessage());
-                linkUrl[i] = null;
+                linkUrl[i] = "None";
             }
 
             ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,"fb");
@@ -334,7 +306,6 @@ public class FacebookUsersPage extends Fragment {
 
                     // Notifies user, parses the data and sets it to arrays which can use to update the User Interface
                     try {
-//                        notifyDownload(response.body().string());
                         Notifications.notifyDownload(Profile.getCurrentProfile().getName() + " you feed was ",context);
 
                         downloadFeed(response.body().string());

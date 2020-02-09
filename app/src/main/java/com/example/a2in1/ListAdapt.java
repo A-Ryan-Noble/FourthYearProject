@@ -1,6 +1,7 @@
 package com.example.a2in1;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 public class ListAdapt extends ArrayAdapter<String> {
 
+    private final String log = getClass().getSimpleName();
     private final Activity context;
     private final String[] post;
     private final String[] hashtags;
@@ -29,7 +31,6 @@ public class ListAdapt extends ArrayAdapter<String> {
 
         imgid[0] = R.drawable.com_facebook_favicon_blue;
         imgid[1] = R.drawable.twitter_logo;
-
     }
 
     public View getView(int position,View view,ViewGroup parent) {
@@ -47,11 +48,12 @@ public class ListAdapt extends ArrayAdapter<String> {
             hashtagItemTxt = hashtags[position];
         }
         catch (NullPointerException e){
-            hashtagItemTxt = "";
+            hashtagItemTxt = "None";
+            Log.e(log,e.getMessage());
         }
 
         // If/else ensures that the post doesn't contain hastags
-        if (hashtagItemTxt == "") {
+        if (hashtagItemTxt.equals("None")) {
             postTxt.setText(postItemTxt);
         }
         else {
@@ -60,7 +62,7 @@ public class ListAdapt extends ArrayAdapter<String> {
                 postTxt.setText(noTagsInPost[0]);
                 post[position] = post[position].replace(postItemTxt, noTagsInPost[0]);
             }catch (NullPointerException e){
-                //
+                Log.e(log,e.getMessage());
             }
         }
 
@@ -75,9 +77,8 @@ public class ListAdapt extends ArrayAdapter<String> {
             hashtagTxt.setText(context.getResources().getString(R.string.hashtags) + hashtagItemTxt);
         }
         else {
-            hashtagTxt.setText("");
+            hashtagTxt.setText("None");
         }
         return rowView;
-
-    };
+    }
 }

@@ -49,6 +49,7 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_below="@+id/msgsFeedItem"
         android:layout_marginTop="25dp"
+        android:clickable="false"
         android:contentDescription="@string/FeedPicDesp"
         android:visibility="invisible" />
 

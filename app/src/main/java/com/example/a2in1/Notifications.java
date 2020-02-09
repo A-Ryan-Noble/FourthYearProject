@@ -77,7 +77,7 @@ public class Notifications {
     public static void notifyDownload(String userMsg, Context context) {
 
         if (getBoolPref("notificationEnabled", true, context)) {
-            Notifications.notify("Feed Updated ", userMsg + " downloaded",
+            Notifications.notify("Feed Updated ", userMsg + "downloaded",
                     "FB feed Download", 1000, MainActivity.class, true, context);
         } else {
             Toast.makeText(context, "Feed Updated " + userMsg + " downloaded", Toast.LENGTH_SHORT).show();

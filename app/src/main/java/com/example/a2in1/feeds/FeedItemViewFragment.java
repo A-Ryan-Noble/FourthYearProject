@@ -43,35 +43,35 @@ public class FeedItemViewFragment extends Fragment {
 
         final TextView tags = (TextView) root.findViewById(R.id.feedHastags);
 
-        Button linkBtn= (Button) root.findViewById(R.id.feedLinkBtn);
+        Button linkBtn = (Button) root.findViewById(R.id.feedLinkBtn);
 
-        ImageView pic = (ImageView)root.findViewById(R.id.feedPic);
+        ImageView pic = (ImageView) root.findViewById(R.id.feedPic);
 
         msg.setText(message);
 
         tags.setText(getResources().getString(R.string.hashtags) + " " + hashtags);
 
-        if (imageUrl != null) {
-            Log.d(log,"Image from Post is displayed");
+        if (!imageUrl.equals("None")) {
+            Log.d(log, "Image from Post is displayed");
 
             pic.setVisibility(View.VISIBLE);
             Picasso.with(getContext()).load(imageUrl).fit().centerInside().into(pic);
             Toast.makeText(getContext(), "NOTE: Image may appear blurry", Toast.LENGTH_SHORT).show();
 
-            linkBtn.setVisibility(View.VISIBLE);
+            pic.setClickable(true); // Pic set to be clickable
         }
+        if (!link.equals("None")) {
+            linkBtn.setVisibility(View.VISIBLE);
 
-        // Link is open in an external device browser
-        linkBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-                startActivity(browserIntent);
-            }
-        });
-
-        // Image is clicked
-        pic.setClickable(true);
+            // Link is open in an external device browser
+            linkBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                    startActivity(browserIntent);
+                }
+            });
+        }
         pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
