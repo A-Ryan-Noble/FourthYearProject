@@ -4,5 +4,6 @@
     <color name="colorAccent">#D81B60</color>
     <color name="tealCol">#008080</color>
     <color name="darkYellow">#F0F00F</color>
+    <color name="toolBarTxt">#B6B609</color>
     <color name="white">#FFFFFF</color>
 </resources>

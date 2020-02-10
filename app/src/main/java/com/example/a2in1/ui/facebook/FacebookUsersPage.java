@@ -124,7 +124,7 @@ public class FacebookUsersPage extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // if the text of the list item clicked is not empty
-                    if (!list.getItemAtPosition(position).toString().equals("")){
+                    if (!list.getItemAtPosition(position).toString().equals("None")){
 
                         // Alerts the user that their isn't a reason to view it in more detail
                         if (imageUrl[position].equals("None") && msgTags[position].equals("None")){
@@ -279,6 +279,13 @@ public class FacebookUsersPage extends Fragment {
             } catch (NullPointerException e) {
                 Log.d(log, e.getMessage());
                 linkUrl[i] = "None";
+            }
+
+            // if there is no message in the UI adds one
+            if (userPosts[i].equals("None")) {
+                Log.d(log, "Changing the message on the UI");
+
+                userPosts[i] = "No message found";
             }
 
             ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,"fb");

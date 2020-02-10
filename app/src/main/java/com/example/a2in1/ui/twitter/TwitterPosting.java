@@ -56,8 +56,6 @@ public class TwitterPosting extends Fragment {
     private Uri imgUri;
     private Button getGallImg;
 
-    private Bitmap img;
-
     private String log = this.getClass().getSimpleName();
 
     private Context context;
@@ -126,7 +124,7 @@ public class TwitterPosting extends Fragment {
 
                 TweetComposer.Builder builder = new TweetComposer.Builder(context);
 
-                if (img != null) {
+                if (imgUri != null) {
                     builder.image(imgUri);
                 }
 
@@ -152,9 +150,8 @@ public class TwitterPosting extends Fragment {
         if (requestCode == getPicVal) {
             if (data != null) {
                 imgUri = data.getData();
-            }
-            else {
-                getGallImg.setText(getResources().getString(R.string.postPic));
+
+                getGallImg.setText(getResources().getString(R.string.picAdded));
                 getGallImg.setClickable(false);
             }
         }

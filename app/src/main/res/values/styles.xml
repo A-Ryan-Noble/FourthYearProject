@@ -3,7 +3,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/appPrimaryColor</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="titleTextColor">@color/darkYellow</item>
+        <item name="titleTextColor">@color/toolBarTxt</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 

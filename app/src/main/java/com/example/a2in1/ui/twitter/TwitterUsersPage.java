@@ -94,25 +94,30 @@ public class TwitterUsersPage extends Fragment {
 
             dbHelper = new DBHelper(context);
 
-            final int twitterAmount = dbHelper.getAllOfSite("Twitter").getCount();
+            int twitterAmount = dbHelper.getAllOfSite("Twitter").getCount();
 
-            // Used to store the message. If no message then "None" is at index
-            userPosts = new String[limit];
+            if(twitterAmount == 0){
+                // Used to store the message. If no message then "None" is at index
+                userPosts = new String[limit];
 
-            // Used to store the url of an image in a message, if no URL then "None" is at index
-            imageUrl = new String[limit];
+                // Used to store the url of an image in a message, if no URL then "None" is at index
+                imageUrl = new String[limit];
 
-            // Used to store a given Message tags. If message doesn't have a log then "None" is at the index
-            msgTags = new String[limit];
+                // Used to store a given Message tags. If message doesn't have a log then "None" is at the index
+                msgTags = new String[limit];
 
-            // Used to store the linkUrl attached to the Twitter Tweet
-            linkUrl = new String[limit];
+                // Used to store the linkUrl attached to the Twitter Tweet
+                linkUrl = new String[limit];
 
-            if (limit != twitterAmount || twitterAmount == 0){
                 twitterPosts = new TwitterPost[limit];
                 getFeed(); // Downloads then calls update of UI
             }
             else {
+                userPosts = new String[twitterAmount];
+                imageUrl = new String[twitterAmount];
+                msgTags = new String[twitterAmount];
+                linkUrl = new String[twitterAmount];
+
                 twitterPosts = dbHelper.getAllTwitter(); // UI is updated from the contents in the database
                 UpdateUI(twitterPosts);
             }
@@ -123,7 +128,7 @@ public class TwitterUsersPage extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     if (list.getItemAtPosition(position)!= null) {
                         // if the text of the list item clicked is not empty
-                        if (!list.getItemAtPosition(position).toString().equals("")) {
+                        if (!list.getItemAtPosition(position).toString().equals("None")) {
 
                             // Alerts the user that their isnt a reason to view it in more detail
                             if (imageUrl[position].equals("None") && msgTags[position].equals("None")&& !linkUrl[position].equals("None")) {
@@ -152,23 +157,23 @@ public class TwitterUsersPage extends Fragment {
             refreshBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage("Wish to refresh all of the " + twitterAmount + " tweets?");
-                        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Wish to refresh all of the " + dbHelper.getAllOfSite("Twitter").getCount() + " tweets?");
+                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                                dbHelper.deleteSiteData("Twitter"); // Empties the database of Twitter Tweets
+                            dbHelper.deleteSiteData("Twitter"); // Empties the database of Twitter Tweets
 
-                                startActivity(new Intent(context, MainActivity.class));
-                                getFeed();
-                            }
-                        });
-                        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {}
-                        });
-                        builder.show();
+                            startActivity(new Intent(context, MainActivity.class));
+                            getFeed();
+                        }
+                    });
+                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {}
+                    });
+                    builder.show();
                 }
             });
         }
@@ -328,6 +333,13 @@ public class TwitterUsersPage extends Fragment {
                 linkUrl[i] = "None";
             }
 
+            // if there is no message in the UI adds one
+            if (userPosts[i].equals("")|| userPosts[i].equals(" ")) {
+                Log.d(log, "Changing the message on the UI");
+
+                userPosts[i] = "No message found";
+            }
+
             ListAdapt adapt = new ListAdapt(getActivity(),userPosts,msgTags,"twitter");
             adapt.notifyDataSetChanged();
 
@@ -357,7 +369,7 @@ public class TwitterUsersPage extends Fragment {
 
                     // Notifies user, parses the data and sets it to arrays which can use to update the User Interface
                     try {
-                        Notifications.notifyDownload("You feed was ",context,456);
+                        Notifications.notifyDownload("Your feed was ",context,456);
 
                         downloadFeed(response.body().string());
 
@@ -377,34 +389,5 @@ public class TwitterUsersPage extends Fragment {
                 Log.e(log, "Call Failed\n" + throwable.getMessage());
             }
         });
-      /*  // Call to get from the users profile page:
-        new MyTwitterApiClient(session).getApiInterface().show("/1.1/statuses/user_timeline.json",session.getUserId(),1)
-                .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.isSuccessful()) {
-
-                            // Notifies user, parses the data and sets it to arrays which can use to update the User Interface
-                            try {
-                                Notifications.notifyDownload("You feed was ",context);
-
-                                downloadFeed(response.body().string());
-
-                                UpdateUI(twitterPosts);
-                            }
-                            catch (IOException e){
-                                Log.e(log,e.getMessage());
-                            }
-                        }
-                        else {
-                            Log.e(log, "Failed to get Posts");
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                        Log.e(log, "Call Failed\n" + throwable.getMessage());
-                    }
-                });*/
     }
 }
