@@ -306,7 +306,7 @@ public class FacebookUsersPage extends Fragment {
 
                     // Notifies user, parses the data and sets it to arrays which can use to update the User Interface
                     try {
-                        Notifications.notifyDownload(Profile.getCurrentProfile().getName() + " you feed was ",context);
+                        Notifications.notifyDownload(Profile.getCurrentProfile().getName() + " you feed was ",context,123);
 
                         downloadFeed(response.body().string());
 

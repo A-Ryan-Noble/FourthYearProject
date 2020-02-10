@@ -14,6 +14,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.a2in1.MainActivity;
 import com.example.a2in1.R;
 import com.example.a2in1.api.MyTwitterApiClient;
 import com.example.a2in1.models.Post;
@@ -32,8 +34,13 @@ import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.internal.TwitterApi;
+import com.twitter.sdk.android.core.models.Tweet;
+import com.twitter.sdk.android.core.models.TweetBuilder;
+import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -46,6 +53,7 @@ public class TwitterPosting extends Fragment {
 
     final private int getPicVal = 0;
 
+    private Uri imgUri;
     private Button getGallImg;
 
     private Bitmap img;
@@ -118,40 +126,15 @@ public class TwitterPosting extends Fragment {
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
-                TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY), getResources().getString(R.string.twitter_CONSUMER_SECRET));
-
-                TwitterConfig twitterConfig = new TwitterConfig.Builder(getActivity())
-                        .twitterAuthConfig(authConfig)
-                        .build();
-                Twitter.initialize(twitterConfig);
-
-                TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
-
-//                Call<ResponseBody> call = new MyTwitterApiClient(session).getApiInterface().show("/1.1/statuses/user_timeline.json",session.getUserId(),limit);
+                TweetComposer.Builder builder = new TweetComposer.Builder(context);
 
                 if (img != null) {
-                    Log.d("ZZZ","Image not null");
-                }else {
-
-                    Call<ResponseBody> call = new MyTwitterApiClient(session).getApiInterface().postMsgToTwitter(msg);
-
-                    call.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            if (response.isSuccessful()){
-                                Log.d(log,"Response Successful");
-                            }
-                            else {
-                                Log.d(log,"Response failed");
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Log.e(log,"Failed to call");
-                        }
-                    });
+                    builder.image(imgUri);
                 }
+
+                builder.text(msg);
+
+                builder.show();
             }
         });
 
@@ -170,7 +153,7 @@ public class TwitterPosting extends Fragment {
 
         if (requestCode == getPicVal) {
             if (data != null) {
-                Uri imgUri = data.getData();
+                imgUri = data.getData();
 
                 try {
                     img = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(imgUri));

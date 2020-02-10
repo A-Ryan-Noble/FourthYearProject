@@ -357,7 +357,7 @@ public class TwitterUsersPage extends Fragment {
 
                     // Notifies user, parses the data and sets it to arrays which can use to update the User Interface
                     try {
-                        Notifications.notifyDownload("You feed was ",context);
+                        Notifications.notifyDownload("You feed was ",context,456);
 
                         downloadFeed(response.body().string());
 
