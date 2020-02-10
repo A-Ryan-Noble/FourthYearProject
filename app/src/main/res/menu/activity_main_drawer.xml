@@ -43,7 +43,7 @@
         <menu>
             <item
                 android:id="@+id/nav_TwitterContentButton"
-                android:title="@string/viewFeed"
+                android:title="@string/viewTweets"
                 android:icon="@drawable/download_icon_foreground"/>
             <item
                 android:id="@+id/nav_TwitterPosting"

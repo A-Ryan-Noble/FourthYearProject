@@ -21,10 +21,11 @@
     <string name="action_settings">Settings</string>
     <string name="accountSection">Account Details</string>
     <string name="viewFeed">View Your Posts</string>
+    <string name="viewTweets">View Your Tweets</string>
     <string name="fbSocialFeed">Facebook Feed</string>
-    <string name="fbPosting">Posting to Facebook</string>
+    <string name="fbPosting">Post to Facebook</string>
     <string name="twitterSocialFeed">Twitter Feed</string>
-    <string name="twitterPosting">Posting to Twitter</string>
+    <string name="twitterPosting">Post to Twitter</string>
 
     <!-- Settings Preference Screen -->
     <string name="settings">Settings</string>
