@@ -1,6 +1,7 @@
 package com.example.a2in1.ui.facebook;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -46,15 +47,18 @@ public class FacebookPosting extends Fragment {
 
     private CallbackManager callbackManager;
 
+    private Context context;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_facebook_posting, container, false);
 
-        boolean isFbLoggedIn = getBoolPref("FBLoggedIn",false,getContext());
+        context = getContext();
+
+        boolean isFbLoggedIn = getBoolPref("FBLoggedIn",false,context);
 
         // if user isn't logged in on fb then go to the sign in fragment
         if (!isFbLoggedIn){
-            startActivity(new Intent(getContext(), FbSignInActivity.class));
+            startActivity(new Intent(context, FbSignInActivity.class));
         }
         else {
             callbackManager = CallbackManager.Factory.create();
@@ -65,7 +69,7 @@ public class FacebookPosting extends Fragment {
                 @Override
                 public void onClick(View v) {
                     // boolean for if the user allowed for the permission
-                    boolean hasPermission = getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                    boolean hasPermission = context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
                     if (hasPermission){
                         Intent galleryIntent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         startActivityForResult(galleryIntent, getPicVal);
@@ -87,7 +91,7 @@ public class FacebookPosting extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (!checkedText.isChecked()) {
-                        Toast.makeText(getContext(), "Must select okay!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Must select okay!", Toast.LENGTH_SHORT).show();
                     } else {
                         alertUser(getResources().getString(R.string.fb));
                     }
@@ -98,7 +102,7 @@ public class FacebookPosting extends Fragment {
     }
 
     private void alertUser(String site) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         builder.setTitle(getResources().getString(R.string.confirmTitle));
         builder.setMessage(getResources().getString(R.string.sharingTo) + " " + site);
@@ -122,7 +126,7 @@ public class FacebookPosting extends Fragment {
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(getContext(), getResources().getString(R.string.cancel) + "ed Posting", Toast.LENGTH_SHORT).show(); // Canceled message
+                Toast.makeText(context, getResources().getString(R.string.cancel) + "ed Posting", Toast.LENGTH_SHORT).show(); // Canceled message
             }
         });
         builder.setIcon(R.mipmap.upload_icon);
@@ -138,7 +142,7 @@ public class FacebookPosting extends Fragment {
                 Uri imgUri = data.getData();
 
                 try {
-                    img = BitmapFactory.decodeStream(getContext().getContentResolver().openInputStream(imgUri));
+                    img = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(imgUri));
 
                     Log.d(log, "Image chosen was made into Bitmap");
 

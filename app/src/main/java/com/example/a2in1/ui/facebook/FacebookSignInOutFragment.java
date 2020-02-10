@@ -15,11 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import android.util.Log;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.FragmentTransaction;
-
 import com.example.a2in1.MainActivity;
-import com.example.a2in1.Notifications;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -37,8 +33,6 @@ import java.util.Arrays;
 import com.example.a2in1.R;
 import com.squareup.picasso.Picasso;
 
-import static com.example.a2in1.myPreferences.getBoolPref;
-import static com.example.a2in1.myPreferences.getStringPref;
 import static com.example.a2in1.myPreferences.setBoolPref;
 import static com.example.a2in1.myPreferences.setStringPref;
 
@@ -110,7 +104,7 @@ public class FacebookSignInOutFragment extends Fragment {
                 Log.e(log,e.getMessage());
             }
 
-            String oldMsg[] = getResources().getString(R.string.fbSignedIn).split("[\\r\\n]+");
+            String oldMsg[] = getResources().getString(R.string.signedIn).split("[\\r\\n]+");
 
             // signedIn message with the logged in user's profile name in the middle of it
             String signedIngMsg = oldMsg[0] + " " + username + ". " +oldMsg[1];
