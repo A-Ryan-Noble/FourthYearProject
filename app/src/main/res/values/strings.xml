@@ -78,6 +78,7 @@
     <string name="feedIcon">Social media icon</string>
     <string name="postPic">Add a picture to your post</string>
     <string name="postVideo">Add a video to your post</string>
+    <string name="postingCheckBox">Must have box checked to share!</string>
 
     <!--  Important Facebook & Twitter values -->
     <string name="facebook_app_id">763430430754593</string>

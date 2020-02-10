@@ -104,10 +104,8 @@ public class TwitterPosting extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (!checkedText.isChecked()) {
-                        Toast.makeText(context, "Must select okay!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.postingCheckBox, Toast.LENGTH_SHORT).show();
                     } else {
-//                        Toast.makeText(context,"You entered: " +msgInput.getText().toString(),Toast.LENGTH_SHORT).show();
-
                         alertUser(getResources().getString(R.string.twitter),msgInput.getText().toString());
                     }
                 }
@@ -154,26 +152,11 @@ public class TwitterPosting extends Fragment {
         if (requestCode == getPicVal) {
             if (data != null) {
                 imgUri = data.getData();
-
-                try {
-                    img = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(imgUri));
-
-                    Log.d(log, "Image chosen was made into Bitmap");
-
-                    getGallImg.setText(getResources().getString(R.string.picAdded));
-                    getGallImg.setClickable(false);
-                }
-                catch (FileNotFoundException e) {
-                    Log.e(log, e.getMessage());
-                }
             }
             else {
                 getGallImg.setText(getResources().getString(R.string.postPic));
                 getGallImg.setClickable(false);
             }
-        }
-        else {
-            Log.d(log,"not pic getting act was the result");
         }
     }
 }

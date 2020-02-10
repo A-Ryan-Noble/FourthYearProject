@@ -91,7 +91,7 @@ public class FacebookPosting extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (!checkedText.isChecked()) {
-                        Toast.makeText(context, "Must select okay!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.postingCheckBox, Toast.LENGTH_SHORT).show();
                     } else {
                         alertUser(getResources().getString(R.string.fb));
                     }
