@@ -26,6 +26,7 @@
     <string name="fbPosting">Post to Facebook</string>
     <string name="twitterSocialFeed">Twitter Feed</string>
     <string name="twitterPosting">Post to Twitter</string>
+    <string name="BothFeeds">Both Social Feeds</string>
 
     <!-- Settings Preference Screen -->
     <string name="settings">Settings</string>

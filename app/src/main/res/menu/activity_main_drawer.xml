@@ -51,4 +51,15 @@
                 android:icon="@drawable/upload_icon_foreground"/>
         </menu>
     </item>
+
+
+<!--    View both item-->
+    <item android:title="More" >
+        <menu>
+            <item
+                android:id="@+id/nav_BothFeeds"
+                android:title="View Both feeds"/>
+        </menu>
+    </item>
+
 </menu>

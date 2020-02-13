@@ -77,7 +77,7 @@ public class TwitterUsersPage extends Fragment {
             list = root.findViewById(R.id.postsList);
 
             final Button refreshBtn = root.findViewById(R.id.refreshBtn);
-            refreshBtn.setText(R.string.refresh);
+            refreshBtn.setText(getResources().getString(R.string.refresh) + " Twitter");
 
             // Gets value from the the SharedPreferences
             limit = getIntPref("MaxTweetsNum",5,context);
@@ -118,7 +118,8 @@ public class TwitterUsersPage extends Fragment {
                 msgTags = new String[twitterAmount];
                 linkUrl = new String[twitterAmount];
 
-                twitterPosts = dbHelper.getAllTwitter(); // UI is updated from the contents in the database
+                // UI is updated from the contents in the database
+                twitterPosts = dbHelper.getAllTwitter();
                 UpdateUI(twitterPosts);
             }
 
@@ -126,8 +127,9 @@ public class TwitterUsersPage extends Fragment {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // if the text of the list item clicked is not empty
                     if (list.getItemAtPosition(position)!= null) {
-                        // if the text of the list item clicked is not empty
+                        // if the item at the given index text isn't "None"
                         if (!list.getItemAtPosition(position).toString().equals("None")) {
 
                             // Alerts the user that their isnt a reason to view it in more detail
@@ -165,8 +167,9 @@ public class TwitterUsersPage extends Fragment {
 
                             dbHelper.deleteSiteData("Twitter"); // Empties the database of Twitter Tweets
 
-                            startActivity(new Intent(context, MainActivity.class));
                             getFeed();
+
+                            reloadFrag(); // Fragment is reloaded
                         }
                     });
                     builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -185,6 +188,10 @@ public class TwitterUsersPage extends Fragment {
         return root;
     }
 
+    private void reloadFrag(){
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+    }
+
     private void downloadFeed(String feed){
 
         try {
@@ -201,7 +208,7 @@ public class TwitterUsersPage extends Fragment {
                     msg = tweetFromFeed.getString("text");
                 }
                 catch (Exception e){
-                    Log.e(log,"No message found");
+                    Log.d(log,"No message found");
                 }
 
                 String tagText = "None";
@@ -236,7 +243,7 @@ public class TwitterUsersPage extends Fragment {
                         }
                     }
                     catch (JSONException e) {
-                        Log.e(log, "No tags found");
+                        Log.d(log, "No tags found");
                         tagText = "None";
                     }
 
@@ -268,12 +275,12 @@ public class TwitterUsersPage extends Fragment {
                         }
                     }
                     catch (JSONException e) {
-                        Log.e(log, "No image Url found");
+                        Log.d(log, "No image Url found");
                         imgUrl = "None";
                     }
                 }
                 catch (JSONException e){
-                    Log.e(log,"No entities found");
+                    Log.d(log,"No entities found");
                 }
 
                 if (msg.contains("http")){

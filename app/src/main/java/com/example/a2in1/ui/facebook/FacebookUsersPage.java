@@ -76,7 +76,7 @@ public class FacebookUsersPage extends Fragment {
             list = root.findViewById(R.id.postsList);
 
             final Button refreshBtn = root.findViewById(R.id.refreshBtn);
-            refreshBtn.setText(R.string.refresh);
+            refreshBtn.setText(getResources().getString(R.string.refresh) + " Facebook");
 
             // Gets value from the the SharedPreferences
             limit = getIntPref("MaxFbNum",5,context);
@@ -125,9 +125,9 @@ public class FacebookUsersPage extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // if the text of the list item clicked is not empty
                     if (!list.getItemAtPosition(position).toString().equals("None")){
-
                         // Alerts the user that their isn't a reason to view it in more detail
                         if (imageUrl[position].equals("None") && msgTags[position].equals("None")){
+
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
                             builder.setMessage("There is only this text content for this item");
@@ -162,8 +162,9 @@ public class FacebookUsersPage extends Fragment {
 
                             dbHelper.deleteSiteData("Facebook"); // Empties the database of Facebook posts
 
-                            startActivity(new Intent(context, MainActivity.class));
                             getFeed();
+
+                            reloadFrag(); // Fragment is reloaded
                         }
                     });
                     builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -182,6 +183,10 @@ public class FacebookUsersPage extends Fragment {
         return root;
     }
 
+    private void reloadFrag(){
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+    }
+
     private void downloadFeed(String feed){
         try {
             JSONArray  postsArr =  new JSONObject(feed).getJSONArray("data");
@@ -193,7 +198,7 @@ public class FacebookUsersPage extends Fragment {
                 try {
                     msg = postsArr.getJSONObject(i).getString("message"); // This gets only the message part of the array
                 } catch (JSONException e) {
-                    Log.e(log, "Message not found at index " + i);
+                    Log.d(log, "Message not found at index " + i);
                 }
 
                 String imgUrl;
@@ -201,7 +206,7 @@ public class FacebookUsersPage extends Fragment {
                 try {
                     imgUrl = postsArr.getJSONObject(i).getString("picture");
                 } catch (JSONException e) {
-                    Log.e(log , " Url for image not found at index " + i);
+                    Log.d(log , " Url for image not found at index " + i);
                     imgUrl = "None";
                 }
 
@@ -216,7 +221,7 @@ public class FacebookUsersPage extends Fragment {
                         tagText += tagArr.getJSONObject(j).getString("name") + ",";
                     }
                 } catch (JSONException e) {
-                    Log.e(log , " No tags found at index " + i);
+                    Log.d(log , " No tags found at index " + i);
 
                     tagText = "None";
                 }
@@ -226,7 +231,7 @@ public class FacebookUsersPage extends Fragment {
                 try {
                     linkUrl = postsArr.getJSONObject(i).getString("link");
                 } catch (JSONException e) {
-                    Log.e(log, " Url for links not found at index " + i);
+                    Log.d(log, " Url for links not found at index " + i);
                     linkUrl = "None";
                 }
 
