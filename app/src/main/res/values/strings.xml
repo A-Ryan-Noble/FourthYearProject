@@ -26,7 +26,9 @@
     <string name="fbPosting">Post to Facebook</string>
     <string name="twitterSocialFeed">Twitter Feed</string>
     <string name="twitterPosting">Post to Twitter</string>
-    <string name="BothFeeds">Both Social Feeds</string>
+    <string name="moreSection">More</string>
+    <string name="bothFeeds">View Both Feeds</string>
+    <string name="postToBoth">Post To Both Sites</string>
 
     <!-- Settings Preference Screen -->
     <string name="settings">Settings</string>
@@ -64,9 +66,9 @@
     <!--  Social Sites Text -->
     <string name="createPost">Create Post</string>
     <string name="post">Post</string>
-    <string name="postTxt">Post an Update.\nAdding a message is done after clicking \'Post\' below</string>
-    <string name="postTxtV2">Post an Update</string>
+    <string name="postTxt">Post an Update to: </string>
     <string name="postWish">Wish to post</string>
+    <string name="postWish2">I wish to post</string>
     <string name="refresh">Refresh</string>
     <string name="downloadFeed">Download Feed</string>
     <string name="FeedPicDesp">Picture from Feed</string>

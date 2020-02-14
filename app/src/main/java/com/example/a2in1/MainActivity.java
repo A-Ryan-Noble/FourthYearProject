@@ -45,9 +45,7 @@ public class MainActivity extends AppCompatActivity {
         */
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
-            public void handleOnBackPressed() {
-                Log.d(log, "Phone back button clicked");
-            }
+            public void handleOnBackPressed() {}
         };
 
         getOnBackPressedDispatcher().addCallback(this, callback);
@@ -62,11 +60,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_FbButton, R.id.nav_TwitterButton, R.id.nav_FbContentButton,
-                R.id.nav_FBPosting, R.id.nav_TwitterContentButton, R.id.nav_TwitterPosting,R.id.nav_BothFeeds
-        )
-                .setDrawerLayout(drawer)
-                .build();
+                R.id.nav_home,
+                R.id.nav_FbButton, R.id.nav_TwitterButton,
+                R.id.nav_FbContentButton,R.id.nav_FBPosting,
+                R.id.nav_TwitterContentButton, R.id.nav_TwitterPosting,
+                R.id.nav_BothFeeds, R.id.nav_PostingBoth
+        ).setDrawerLayout(drawer).build();
 
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -104,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
 
@@ -133,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
     // User is logged out of Facebook and Twitter if they're logged in
     public void logoutOfSites() {
+
         // Gets the SharedPreferences for both sites logged in status
         boolean isFbLoggedIn = getBoolPref("FBLoggedIn", false, getBaseContext());
         boolean isTwitterLoggedIn = getBoolPref("TwitterLoggedIn", false, getBaseContext());
@@ -142,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
 
         DBHelper dbHelper = new DBHelper(this);
 
-        //        if (AccessToken.getCurrentAccessToken() != null) {
         // checks if facebook is logged in
         if (isFbLoggedIn){
             LoginManager.getInstance().logOut();
@@ -197,6 +201,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
     @Override
     public boolean onSupportNavigateUp() {

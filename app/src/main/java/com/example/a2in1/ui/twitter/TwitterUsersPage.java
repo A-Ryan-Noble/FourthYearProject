@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.a2in1.ListAdapt;
-import com.example.a2in1.MainActivity;
 import com.example.a2in1.Notifications;
 import com.example.a2in1.R;
 import com.example.a2in1.api.MyTwitterApiClient;
@@ -366,7 +365,7 @@ public class TwitterUsersPage extends Fragment {
 
         TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
 
-        Call<ResponseBody> call = new MyTwitterApiClient(session).getApiInterface().show("/1.1/statuses/user_timeline.json",session.getUserId(),limit);
+        Call<ResponseBody> call = new MyTwitterApiClient(session).getApiInterface().getTweetsOfUser("/1.1/statuses/user_timeline.json",session.getUserId(),limit);
 
         // Call to get from the user's page:
         call.enqueue(new Callback<ResponseBody>() {

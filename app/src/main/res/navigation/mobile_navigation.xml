@@ -44,5 +44,11 @@
     <fragment
         android:id="@+id/nav_BothFeeds"
         android:name="com.example.a2in1.feeds.BothFeedsInOne"
-        android:label="@string/BothFeeds"/>
+        android:label="@string/bothFeeds"/>
+
+    <fragment
+        android:id="@+id/nav_PostingBoth"
+        android:name="com.example.a2in1.feeds.PostToBothFeeds"
+        android:label="@string/postToBoth"/>
+
 </navigation>
