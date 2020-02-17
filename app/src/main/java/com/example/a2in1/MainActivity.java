@@ -1,6 +1,7 @@
 package com.example.a2in1;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -8,10 +9,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -32,6 +34,7 @@ import static com.example.a2in1.myPreferences.getBoolPref;
 
 public class MainActivity extends AppCompatActivity {
 
+    private DrawerLayout drawer;
     private AppBarConfiguration mAppBarConfiguration;
 
     private String log = getClass().getSimpleName();
@@ -40,33 +43,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /* Customised callback of phone back button.
-           - Stops from going back to previous view that redirected back to home
-        */
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {}
-        };
-
-        getOnBackPressedDispatcher().addCallback(this, callback);
-
         setContentView(R.layout.nav_draw);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home,
+                R.id.nav_home,R.id.nav_settings,
                 R.id.nav_FbButton, R.id.nav_TwitterButton,
                 R.id.nav_FbContentButton,R.id.nav_FBPosting,
                 R.id.nav_TwitterContentButton, R.id.nav_TwitterPosting,
                 R.id.nav_BothFeeds, R.id.nav_PostingBoth
         ).setDrawerLayout(drawer).build();
-
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
@@ -93,6 +85,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // Custom icon for Options menu on toolbar
+        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.settings_icon);
+        toolbar.setOverflowIcon(drawable);
+
+        // Custom icon for navigation bar draw icon
+//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.);
+
     }
 
     @Override
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 DBHelper dbHelper = new DBHelper(this);
                 dbHelper.emptyDB();
 
-                Toast.makeText(this,item.getTitle() + " was clicked",Toast.LENGTH_SHORT);
+                Toast.makeText(this,item.getTitle() + " was clicked",Toast.LENGTH_SHORT).show();
 
                 return true;
             default:
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // User is logged out of Facebook and Twitter if they're logged in
+    // User is logged out of Facebook and/or Twitter if they're logged in
     public void logoutOfSites() {
 
         // Gets the SharedPreferences for both sites logged in status
@@ -143,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
         boolean isTwitterLoggedIn = getBoolPref("TwitterLoggedIn", false, getBaseContext());
 
         boolean loggedOut = false;
-
 
         DBHelper dbHelper = new DBHelper(this);
 
@@ -202,7 +201,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     @Override
     public boolean onSupportNavigateUp() {

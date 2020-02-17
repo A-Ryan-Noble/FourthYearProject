@@ -1,5 +1,6 @@
 package com.example.a2in1.ui.settingsMenu;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,10 +15,12 @@ import com.example.a2in1.fragmentRedirects.NotifySettings;
 
 public class SettingsScreen extends PreferenceFragmentCompat {
 
-    private String log = getClass().getSimpleName();
-
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+
+        final String log = getClass().getSimpleName();
+
+        final Context context = getContext();
 
         addPreferencesFromResource(R.xml.preference);
 
@@ -33,7 +36,7 @@ public class SettingsScreen extends PreferenceFragmentCompat {
             public boolean onPreferenceClick(Preference preference) {
                 Log.d(log,"@string/about2in1App" + " screen called");
 
-                startActivity(new Intent(getContext(), About2in1.class));
+                startActivity(new Intent(context, About2in1.class));
 
                 return true;
             }
@@ -45,7 +48,7 @@ public class SettingsScreen extends PreferenceFragmentCompat {
             public boolean onPreferenceClick(Preference preference) {
                 Log.d(log,"@string/accountSection" + " screen called");
 
-                startActivity(new Intent(getContext(), AccSettings.class));
+                startActivity(new Intent(context, AccSettings.class));
 
                 return true;
             }
@@ -57,7 +60,7 @@ public class SettingsScreen extends PreferenceFragmentCompat {
             public boolean onPreferenceClick(Preference preference) {
                 Log.d(log,"@string/notify" + " screen called");
 
-                startActivity(new Intent(getContext(), NotifySettings.class));
+                startActivity(new Intent(context, NotifySettings.class));
 
                 return true;
             }

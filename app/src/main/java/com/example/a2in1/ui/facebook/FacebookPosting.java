@@ -2,12 +2,10 @@ package com.example.a2in1.ui.facebook;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,14 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.a2in1.fragmentRedirects.FbSignInActivity;
 import com.example.a2in1.R;
 import com.facebook.CallbackManager;
 import com.facebook.Profile;
-import com.facebook.share.model.ShareContent;
 import com.facebook.share.model.ShareHashtag;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.ShareMediaContent;
@@ -62,7 +58,7 @@ public class FacebookPosting extends Fragment {
 
         // if user isn't logged in on fb then go to the sign in fragment
         if (!isFbLoggedIn){
-            startActivity(new Intent(context, FbSignInActivity.class));
+           startActivity(new Intent(context, FbSignInActivity.class));
         }
         else {
 
@@ -106,7 +102,7 @@ public class FacebookPosting extends Fragment {
                     if (!checkedText.isChecked()) {
                         Toast.makeText(context, R.string.postingCheckBox, Toast.LENGTH_SHORT).show();
                     } else {
-                        alertUser(getResources().getString(R.string.fb),msgInput.getText().toString());
+                        alertUser(msgInput.getText().toString());
                     }
                 }
             });
@@ -114,41 +110,25 @@ public class FacebookPosting extends Fragment {
         return root;
     }
 
-    private void alertUser(String site, final String msg) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    private void alertUser(final String msg) {
 
-        builder.setTitle(getResources().getString(R.string.confirmTitle));
-        builder.setMessage(getResources().getString(R.string.sharingTo) + " " + site);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        callbackManager = CallbackManager.Factory.create();
 
-                callbackManager = CallbackManager.Factory.create();
+        // How to share a picture info learned from: https://developers.facebook.com/docs/sharing/android?sdk=fbsdk
+        ShareDialog shareDialog = new ShareDialog(getParentFragment());
 
-                // How to share a picture info learned from: https://developers.facebook.com/docs/sharing/android?sdk=fbsdk
-                ShareDialog shareDialog = new ShareDialog(getParentFragment());
+        if (img != null){
+            SharePhoto photo = new SharePhoto.Builder().setBitmap(img).build();
 
-                if (img != null){
-                    SharePhoto photo = new SharePhoto.Builder().setBitmap(img).build();
-
-                    // Share dialog that shows the user the message they entered and the image
-                    shareDialog.show(new ShareMediaContent.Builder().addMedium(photo).setShareHashtag(new ShareHashtag.Builder()
-                            .setHashtag(msg).build()).build());
-                }
-                else{
-                    // Share dialog that shows the user the message they entered
-                    shareDialog.show(new ShareLinkContent.Builder().setShareHashtag(new ShareHashtag.Builder().setHashtag(msg).build())
-                            .build());
-                }
-            }
-        });
-
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(context, getResources().getString(R.string.cancel) + "ed Posting", Toast.LENGTH_SHORT).show(); // Canceled message
-            }
-        });
-        builder.setIcon(R.mipmap.upload_icon);
-        builder.show();
+            // Share dialog that shows the user the message they entered and the image
+            shareDialog.show(new ShareMediaContent.Builder().addMedium(photo).setShareHashtag(new ShareHashtag.Builder()
+                    .setHashtag(msg).build()).build());
+        }
+        else{
+            // Share dialog that shows the user the message they entered
+            shareDialog.show(new ShareLinkContent.Builder().setShareHashtag(new ShareHashtag.Builder().setHashtag(msg).build())
+                    .build());
+        }
     }
 
     @Override

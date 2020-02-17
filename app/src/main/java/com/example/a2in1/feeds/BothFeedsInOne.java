@@ -35,7 +35,7 @@ public class BothFeedsInOne extends Fragment {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        // If the device is orientation changes thn this fragment gets reloaded and changes it's view
+        // If the device is orientation changes then this fragment gets reloaded and changes it's view
         getFragmentManager().beginTransaction().detach(this).attach(this).commit();
     }
 }

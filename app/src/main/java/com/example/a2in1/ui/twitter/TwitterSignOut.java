@@ -1,5 +1,6 @@
 package com.example.a2in1.ui.twitter;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,12 +8,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.a2in1.MainActivity;
-import com.example.a2in1.Notifications;
 import com.example.a2in1.R;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
@@ -26,19 +25,11 @@ public class TwitterSignOut extends AppCompatActivity {
     private Intent returnIntent;
     private String log = getClass().getSimpleName();
 
+    private Context context = getBaseContext();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // customised callback of phone back button
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                Log.d(log,"Phone back button clicked. Redirecting to Home Screen");
-                startActivity(new Intent(getBaseContext(), MainActivity.class));
-            }
-        };
-        getOnBackPressedDispatcher().addCallback(this,callback);
 
         //Configures twitter sdk
         TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY), getResources().getString(R.string.twitter_CONSUMER_SECRET));
@@ -75,7 +66,7 @@ public class TwitterSignOut extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 TwitterCore.getInstance().getSessionManager().clearActiveSession();
                 // Logged in status put into SharedPreferences for later
-                setBoolPref("TwitterLoggedIn",false, getBaseContext());
+                setBoolPref("TwitterLoggedIn",false, context);
 
                 Log.d(log, "Signed out of Twitter");
                 returnIntent.putExtra("result", "LoggedOut");
@@ -88,5 +79,11 @@ public class TwitterSignOut extends AppCompatActivity {
             }
         });
         builder.show();
+    }
+
+    // customised callback of phone back button
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(context, MainActivity.class));
     }
 }

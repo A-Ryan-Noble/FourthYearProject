@@ -1,20 +1,14 @@
 package com.example.a2in1.ui.twitter;
 
-
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,28 +19,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.a2in1.MainActivity;
 import com.example.a2in1.R;
-import com.example.a2in1.api.MyTwitterApiClient;
-import com.example.a2in1.models.Post;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterSession;
-import com.twitter.sdk.android.core.internal.TwitterApi;
-import com.twitter.sdk.android.core.models.Tweet;
-import com.twitter.sdk.android.core.models.TweetBuilder;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static com.example.a2in1.myPreferences.getBoolPref;
 
@@ -74,6 +53,7 @@ public class TwitterPosting extends Fragment {
         }
         else {
             TextView textView = root.findViewById(R.id.postTitleMsg);
+
             textView.setText(getResources().getString(R.string.postTxt)+ " " + getResources().getString(R.string.twitter));
 
             getGallImg = root.findViewById(R.id.getPicBtn);
@@ -96,7 +76,20 @@ public class TwitterPosting extends Fragment {
                 }
             });
 
+            //Configures twitter sdk
+            TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY), getResources().getString(R.string.twitter_CONSUMER_SECRET));
+
+            TwitterConfig twitterConfig = new TwitterConfig.Builder(context)
+                    .twitterAuthConfig(authConfig)
+                    .build();
+            Twitter.initialize(twitterConfig);
+
             final CheckBox checkedText = root.findViewById(R.id.checkedText);
+            // Changes text to contain username of the user
+            String oldText =getResources().getString(R.string.postWish);
+            String username = TwitterCore.getInstance().getSessionManager().getActiveSession().getUserName();
+            checkedText.setText("I, "+username+ " "+ oldText);
+
 
             Button postBtn = root.findViewById(R.id.postingSubmitBtn);
 
@@ -110,7 +103,7 @@ public class TwitterPosting extends Fragment {
                     if (!checkedText.isChecked()) {
                         Toast.makeText(context, R.string.postingCheckBox, Toast.LENGTH_SHORT).show();
                     } else {
-                        alertUser(getResources().getString(R.string.twitter),msgInput.getText().toString());
+                        alertUser(msgInput.getText().toString());
                     }
                 }
             });
@@ -119,32 +112,16 @@ public class TwitterPosting extends Fragment {
         return root;
     }
 
-    private void alertUser(String site, final String msg) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    private void alertUser(final String msg) {
 
-        builder.setTitle(getResources().getString(R.string.confirmTitle));
-        builder.setMessage(getResources().getString(R.string.sharingTo) + " " + site);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        TweetComposer.Builder builder = new TweetComposer.Builder(context);
 
-                TweetComposer.Builder builder = new TweetComposer.Builder(context);
+        if (imgUri != null) {
+            builder.image(imgUri);
+        }
 
-                if (imgUri != null) {
-                    builder.image(imgUri);
-                }
+        builder.text(msg);
 
-                builder.text(msg);
-
-                builder.show();
-            }
-        });
-
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(context, getResources().getString(R.string.cancel) + "ed Posting", Toast.LENGTH_SHORT).show(); // Canceled message
-            }
-        });
-        builder.setIcon(R.mipmap.upload_icon);
         builder.show();
     }
 

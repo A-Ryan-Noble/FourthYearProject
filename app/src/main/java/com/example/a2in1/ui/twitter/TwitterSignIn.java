@@ -1,8 +1,8 @@
 package com.example.a2in1.ui.twitter;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +19,7 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import static com.example.a2in1.myPreferences.setBoolPref;
+import static com.example.a2in1.myPreferences.setStringPref;
 
 public class TwitterSignIn extends AppCompatActivity {
 
@@ -26,19 +27,11 @@ public class TwitterSignIn extends AppCompatActivity {
 
     private String log = getClass().getSimpleName();
 
+    private Context context = getBaseContext();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // customised callback of phone back button
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                Log.d(log,"Phone back button clicked. Redirecting to Home Screen");
-                startActivity(new Intent(getBaseContext(), MainActivity.class));
-            }
-        };
-        getOnBackPressedDispatcher().addCallback(this,callback);
 
         //Configures twitter sdk
         TwitterAuthConfig authConfig = new TwitterAuthConfig(getResources().getString(R.string.twitter_CONSUMER_KEY), getResources().getString(R.string.twitter_CONSUMER_SECRET));
@@ -61,8 +54,11 @@ public class TwitterSignIn extends AppCompatActivity {
             public void success(Result<TwitterSession> result) {
                 Log.d(log,"Successful Login");
 
+
+                setStringPref("TwitterName",result.data.getUserName(),context);
+
                 //Logged In Added to SharedPreferences for later
-                setBoolPref("TwitterLoggedIn",true, getBaseContext());
+                setBoolPref("TwitterLoggedIn",true, context);
 
                 returnIntent.putExtra("result", "LoggedIn");
                 setResult(RESULT_OK, returnIntent);
@@ -73,6 +69,14 @@ public class TwitterSignIn extends AppCompatActivity {
                 Log.e(log,"login failed");
             }
         });
+    }
+
+    // customised callback of phone back button
+    @Override
+    public void onBackPressed()
+    {
+        Log.d(log,"Phone back button clicked. Redirecting to Home Screen");
+        startActivity(new Intent(context, MainActivity.class));
     }
 
     @Override

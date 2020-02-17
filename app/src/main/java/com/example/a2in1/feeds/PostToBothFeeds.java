@@ -2,7 +2,6 @@ package com.example.a2in1.feeds;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -10,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -23,35 +21,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.a2in1.MainActivity;
 import com.example.a2in1.R;
-import com.example.a2in1.api.APIClient;
-import com.example.a2in1.api.APIInterface;
-import com.example.a2in1.api.MyTwitterApiClient;
 import com.example.a2in1.ui.facebook.FacebookSignInOutFragment;
-import com.example.a2in1.ui.twitter.TwitterSignIn;
 import com.example.a2in1.ui.twitter.TwitterSignInOutFragment;
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import com.facebook.share.model.ShareContent;
 import com.facebook.share.model.ShareHashtag;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.ShareMediaContent;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.widget.ShareDialog;
-import com.twitter.sdk.android.core.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterConfig;
-import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
 import java.io.FileNotFoundException;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static com.example.a2in1.myPreferences.getBoolPref;
 
@@ -124,7 +105,6 @@ public class PostToBothFeeds extends Fragment {
                     }
                 }
             });
-
         }
 
         // The user isn't logged in to one/both of the sites
@@ -140,35 +120,18 @@ public class PostToBothFeeds extends Fragment {
     }
 
     private void alertUser(final String msg) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        toFacebook(msg); // Facebook share dialog
 
-        builder.setTitle(getResources().getString(R.string.confirmTitle));
-        builder.setMessage(getResources().getString(R.string.sharingTo) + " Facebook and Twitter");
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        // Twitter share dialog
+        TweetComposer.Builder builder = new TweetComposer.Builder(context);
 
-                toFacebook(msg); // Facebook share dialog
+        if (imgUri != null){
+            builder.image(imgUri);
+        }
 
-                // Twitter share dialog
-                TweetComposer.Builder builder = new TweetComposer.Builder(context);
-
-                if (imgUri != null){
-                    builder.image(imgUri);
-                }
-
-                builder.text(msg);
-                builder.show();
-
-            }
-        });
-
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(context, getResources().getString(R.string.cancel) + "ed Posting", Toast.LENGTH_SHORT).show(); // Canceled message
-            }
-        });
-        builder.setIcon(R.mipmap.upload_icon);
+        builder.text(msg);
         builder.show();
+
     }
 
     @Override
