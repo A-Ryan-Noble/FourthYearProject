@@ -22,13 +22,14 @@
     <string name="accountSection">Account Details</string>
     <string name="viewFeed">View Your Posts</string>
     <string name="viewTweets">View Your Tweets</string>
-    <string name="fbSocialFeed">Facebook Feed</string>
+    <string name="fbSocialFeed">Your Facebook Feed</string>
     <string name="fbPosting">Post to Facebook</string>
-    <string name="twitterSocialFeed">Twitter Feed</string>
+    <string name="twitterSocialFeed">Your Twitter Feed</string>
     <string name="twitterPosting">Post to Twitter</string>
     <string name="moreSection">More</string>
     <string name="bothFeeds">View Both Feeds</string>
     <string name="postToBoth">Post To Both Sites</string>
+    <string name="timeline">Latest Tweets</string>
 
     <!-- Settings Preference Screen -->
     <string name="settings">Settings</string>
@@ -74,6 +75,7 @@
     <string name="FeedPicDesp">Picture from Feed</string>
     <string name="messagesTxt">Message:</string>
     <string name="hashtags">Hashtags: </string>
+    <string name="postedBy">Posted by: </string>
     <string name="noMsg">No Messages</string>
     <string name="link">View Link</string>
     <string name="feedTitle">Item from Feed</string>
@@ -83,6 +85,7 @@
     <string name="postPic">Add a picture to your post</string>
     <string name="postVideo">Add a video to your post</string>
     <string name="postingCheckBox">Must have box checked to share!</string>
+    <string name="viewTimeLine">View Latest Tweets</string>
 
     <!--  Important Facebook & Twitter values -->
     <string name="facebook_app_id">763430430754593</string>

@@ -21,9 +21,12 @@ public interface APIInterface {
     @POST
     Call<ResponseBody> postImgMessage(@Url String url);
 
-    //This gets the current logged in users tweets
+    //This is used to get the current logged in users tweets and their home timeline(Their tweets and those of who they follow)
     @GET
     Call<ResponseBody> getTweetsOfUser(@Url String url, @Query("user_id") long userId, @Query("count")Integer count);
+
+    @GET
+    Call<ResponseBody> getTweets(@Url String url, @Query("count")Integer count);
 
     // This gets the current twitter user
     @GET("/1.1/users/show.json")

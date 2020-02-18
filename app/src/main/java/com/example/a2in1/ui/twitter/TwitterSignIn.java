@@ -27,8 +27,6 @@ public class TwitterSignIn extends AppCompatActivity {
 
     private String log = getClass().getSimpleName();
 
-    private Context context = getBaseContext();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,10 +53,10 @@ public class TwitterSignIn extends AppCompatActivity {
                 Log.d(log,"Successful Login");
 
 
-                setStringPref("TwitterName",result.data.getUserName(),context);
+                setStringPref("TwitterName",result.data.getUserName(),getBaseContext());
 
                 //Logged In Added to SharedPreferences for later
-                setBoolPref("TwitterLoggedIn",true, context);
+                setBoolPref("TwitterLoggedIn",true, getBaseContext());
 
                 returnIntent.putExtra("result", "LoggedIn");
                 setResult(RESULT_OK, returnIntent);
@@ -76,7 +74,7 @@ public class TwitterSignIn extends AppCompatActivity {
     public void onBackPressed()
     {
         Log.d(log,"Phone back button clicked. Redirecting to Home Screen");
-        startActivity(new Intent(context, MainActivity.class));
+        startActivity(new Intent(getBaseContext(), MainActivity.class));
     }
 
     @Override

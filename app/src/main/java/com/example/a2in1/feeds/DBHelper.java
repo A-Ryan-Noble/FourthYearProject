@@ -19,6 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String COLUMN_SITE = "site";
     private static final String COLUMN_MESSAGE = "message";
+    private static final String COLUMN_POSTEDBY = "postedby";
     private static final String COLUMN_IMAGE = "image";
     private static final String COLUMN_HASHTAGS = "hashtags";
     private static final String COLUMN_LINK = "link";
@@ -32,7 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table if not exists " + TABLE_NAME +" (id INTEGER PRIMARY KEY AUTOINCREMENT, site TEXT, message TEXT, image TEXT, hashtags TEXT, link TEXT)");
+        db.execSQL("create table if not exists " + TABLE_NAME +" (id INTEGER PRIMARY KEY AUTOINCREMENT, site TEXT, message TEXT, image TEXT, hashtags TEXT, link TEXT, postedBy TEXT)");
     }
 
     // Drops and recreates the database
@@ -50,7 +51,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getAllOfSite(String site){
         return database.rawQuery("select * from " + TABLE_NAME + " where " + COLUMN_SITE + " = ?", new String[]{site});
-//        return cursor;
     }
 
     public FacebookPost[] getAllFacebook(){
@@ -80,6 +80,21 @@ public class DBHelper extends SQLiteOpenHelper {
         return posts;
     }
 
+    public TwitterPost[] getAllTwitterTimeline(){
+        int amount = getAllOfSite("TwitterTimeline").getCount();
+
+        TwitterPost[] posts = new TwitterPost[amount];
+
+        String[] msg = getColumnItem("TwitterTimeline","message");
+        String[] nameOfUser = getColumnItem("TwitterTimeline","postedBy");
+        String[] link = getColumnItem("TwitterTimeline","link");
+
+        for(int i = 0; i < amount; i++){
+            posts[i] = new TwitterPost(msg[i],"","",link[i],nameOfUser[i]);
+        }
+
+        return posts;
+    }
     public TwitterPost[] getAllTwitter(){
         int amount = getAllOfSite("Twitter").getCount();
 
@@ -135,6 +150,19 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    // Update the given column id's data
+    public boolean updateData2(String id, String site, String message, String image, String link){
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_SITE, site);
+        values.put(COLUMN_MESSAGE, message);
+        values.put(COLUMN_IMAGE, image);
+        values.put(COLUMN_LINK, link);
+
+        database.update(TABLE_NAME,values,"COLUMN_ID = ?",new String[]{id});
+
+        return true;
+    }
+
     // Delete data of a given id
     public Integer deleteData(String id){
         return database.delete(TABLE_NAME,"id = ?", new String[]{id});
@@ -163,6 +191,27 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         else {
             Log.d("DB","Inserted Successful: " + message + " " + image + " " + hashtags + " "+ link);
+            return true;
+        }
+    }
+
+    // Insert into the database without Hashtags
+    public boolean insertIntoDB2(String site, String message, String postedBy, String link){
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_SITE, site);
+        values.put(COLUMN_MESSAGE, message);
+        values.put(COLUMN_POSTEDBY, postedBy);
+        values.put(COLUMN_LINK, link);
+
+        long result = database.insert(TABLE_NAME,null,values);
+
+        if (result == -1){
+            Log.d("DB","Insert FAILED: " + message + " " + postedBy + " "+ link);
+
+            return false;
+        }
+        else {
+            Log.d("DB","Inserted Successful: " + message + " " + postedBy + " "+ link);
             return true;
         }
     }

@@ -47,6 +47,11 @@
         android:label="@string/twitterPosting"/>
 
     <fragment
+        android:id="@+id/nav_timeline"
+        android:name="com.example.a2in1.ui.twitter.TwitterUsersTimeline"
+        android:label="@string/timeline"/>
+
+    <fragment
         android:id="@+id/nav_BothFeeds"
         android:name="com.example.a2in1.feeds.BothFeedsInOne"
         android:label="@string/bothFeeds"/>

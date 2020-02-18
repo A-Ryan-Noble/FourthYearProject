@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a2in1.R;
+import com.example.a2in1.fragmentRedirects.FbSignInActivity;
 import com.example.a2in1.ui.facebook.FacebookSignInOutFragment;
 import com.example.a2in1.ui.twitter.TwitterSignInOutFragment;
 import com.facebook.CallbackManager;
@@ -113,7 +114,7 @@ public class PostToBothFeeds extends Fragment {
                 startActivity(new Intent(context, TwitterSignInOutFragment.class));
             }
             if (!isFbLoggedIn) {
-                startActivity(new Intent(context, FacebookSignInOutFragment.class));
+                startActivity(new Intent(context, FbSignInActivity.class));
             }
         }
         return root;

@@ -41,7 +41,7 @@ public class FeedItemViewFragment extends Fragment {
 
         TextView msg = (TextView) root.findViewById(R.id.feedMsg);
 
-        final TextView tags = (TextView) root.findViewById(R.id.feedHastags);
+        final TextView tags = (TextView) root.findViewById(R.id.feedSecondaryInfo);
 
         Button linkBtn = (Button) root.findViewById(R.id.feedLinkBtn);
 

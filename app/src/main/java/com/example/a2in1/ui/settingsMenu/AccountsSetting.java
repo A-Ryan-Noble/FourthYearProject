@@ -66,7 +66,8 @@ public class AccountsSetting extends PreferenceFragmentCompat {
 
                     // Remove instances in DB (removes crash error when viewing feed after change)
                     DBHelper db = new DBHelper(getContext());
-                    db.deleteSiteData("Facebook");
+                    db.deleteSiteData("Twitter");
+                    db.deleteSiteData("TwitterTimeline");
 
                     return true;
                 }

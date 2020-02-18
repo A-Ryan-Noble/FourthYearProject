@@ -53,10 +53,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home,R.id.nav_settings,
+                R.id.nav_home, R.id.nav_settings,
                 R.id.nav_FbButton, R.id.nav_TwitterButton,
-                R.id.nav_FbContentButton,R.id.nav_FBPosting,
-                R.id.nav_TwitterContentButton, R.id.nav_TwitterPosting,
+                R.id.nav_FbContentButton, R.id.nav_FBPosting,
+                R.id.nav_TwitterContentButton, R.id.nav_TwitterPosting, R.id.nav_timeline,
                 R.id.nav_BothFeeds, R.id.nav_PostingBoth
         ).setDrawerLayout(drawer).build();
 
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         /* Uses Class SwipeListener to detect if the user swipes right or left:
             - If right then opens navigation draw otherwise they swiped left and thus close the navigation draw
          */
-        drawer.setOnTouchListener(new SwipeListener(this){
+        drawer.setOnTouchListener(new SwipeListener(this) {
             @Override
             public void onSwipeRight() {
 
@@ -87,12 +87,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Custom icon for Options menu on toolbar
-        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.settings_icon);
+        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.settings_icon);
         toolbar.setOverflowIcon(drawable);
-
-        // Custom icon for navigation bar draw icon
-//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.);
-
     }
 
     @Override
@@ -144,8 +140,6 @@ public class MainActivity extends AppCompatActivity {
 
         boolean loggedOut = false;
 
-        DBHelper dbHelper = new DBHelper(this);
-
         // checks if facebook is logged in
         if (isFbLoggedIn){
             LoginManager.getInstance().logOut();
@@ -155,9 +149,6 @@ public class MainActivity extends AppCompatActivity {
             loggedOut = true;
 
             Log.d("Logout", "Logged out of Facebook");
-
-            dbHelper.emptyDB();
-            Log.d("Logout", "Empty Database Option selected");
         }
 
         // checks if Twitter is logged in
@@ -176,9 +167,6 @@ public class MainActivity extends AppCompatActivity {
             loggedOut = true;
 
             Log.d("Logout", "Logged out of Twitter");
-
-            dbHelper.emptyDB();
-            Log.d("Logout", "Empty Database Option selected");
         }
 
         if (loggedOut) {
@@ -198,6 +186,10 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Logout Selected", Toast.LENGTH_SHORT).show();
             }
+
+            // Empties the database of all data
+            new DBHelper(this).emptyDB();
+            Log.d("Logout", "Database emptied");
         }
     }
 
