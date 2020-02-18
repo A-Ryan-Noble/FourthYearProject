@@ -25,8 +25,6 @@ public class TwitterSignOut extends AppCompatActivity {
     private Intent returnIntent;
     private String log = getClass().getSimpleName();
 
-    private Context context = getBaseContext();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +64,7 @@ public class TwitterSignOut extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 TwitterCore.getInstance().getSessionManager().clearActiveSession();
                 // Logged in status put into SharedPreferences for later
-                setBoolPref("TwitterLoggedIn",false, context);
+                setBoolPref("TwitterLoggedIn",false, getBaseContext());
 
                 Log.d(log, "Signed out of Twitter");
                 returnIntent.putExtra("result", "LoggedOut");
@@ -84,6 +82,6 @@ public class TwitterSignOut extends AppCompatActivity {
     // customised callback of phone back button
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(context, MainActivity.class));
+        startActivity(new Intent(getBaseContext(), MainActivity.class));
     }
 }
