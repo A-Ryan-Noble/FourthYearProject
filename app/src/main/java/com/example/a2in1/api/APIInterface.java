@@ -1,25 +1,16 @@
 package com.example.a2in1.api;
 
-import com.twitter.sdk.android.core.models.User;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 public interface APIInterface {
 
-    /* This service uses dynamic url. This is annotated with just @Url as the endpoint url.
-     Gets user's facebook feed
-     */
+    // This is used tp gets the facebook user's feed
     @GET
     Call<ResponseBody> socialFeedItems(@Url String url, @Query("limit") Integer limit);
-
-    // This posts a message and image to facebook
-    @POST
-    Call<ResponseBody> postImgMessage(@Url String url);
 
     //This is used to get the current logged in users tweets and their home timeline(Their tweets and those of who they follow)
     @GET
@@ -27,12 +18,4 @@ public interface APIInterface {
 
     @GET
     Call<ResponseBody> getTweets(@Url String url, @Query("count")Integer count);
-
-    // This gets the current twitter user
-    @GET("/1.1/users/show.json")
-    Call<User>getUserDetails();
-
-    // This posts a simple text tweet to twitter
-    @POST("/1.1/statuses/update.json")
-    Call<ResponseBody> postMsgToTwitter(@Query("status") String msg);
 }

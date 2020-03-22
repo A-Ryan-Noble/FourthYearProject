@@ -90,6 +90,8 @@
     <!--  Important Facebook & Twitter values -->
     <string name="facebook_app_id">763430430754593</string>
     <string name="fb_login_protocol_scheme">fb763430430754593</string>
+<!--    <string name="facebook_app_id">138609437507381</string>-->
+<!--    <string name="fb_login_protocol_scheme">fb138609437507381</string>-->
     <string name="twitter_app_id">16870803</string>
     <string name="twitter_CONSUMER_KEY" translatable="false">q2n0UtzerHQAlAf5DEYxJ0doF</string>
     <string name="twitter_CONSUMER_SECRET" translatable="false">qPb06Os5fjkDTE25Q4niWD3c5Dv6amOeKvwcUd9RYBbc2pLAxh</string>
